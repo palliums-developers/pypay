@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+# -*- mode: python -*-
+#
+import sys
+import os
+import signal
+
+from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType
+from PyQt5.QtGui import QGuiApplication
+from PyQt5.QtCore import QUrl, Qt
+from pypay import PayController, TokenEntry, TokenModel
+from pypay import BitTransactionEntry, BitTransactionModel
+from pypay import AddrBookEntry, AddrBookModel
+
+def quit(signum, frame):
+    sys.exit(0)
+
+if __name__ == '__main__':
+    signal.signal(signal.SIGINT, quit)
+
+    QGuiApplication.setAttribute(Qt.AA_EnableHighDpiScaling);
+
+    app = QGuiApplication(sys.argv)
+
+    qmlRegisterType(TokenEntry, "PyPay", 1, 0, "TokenEntry")
+    qmlRegisterType(TokenModel, "PyPay", 1, 0, "TokenModel")
+    qmlRegisterType(BitTransactionEntry, "PyPay", 1, 0, "BitTransactionEntry")
+    qmlRegisterType(BitTransactionModel, "PyPay", 1, 0, "BitTransactionModel")
+    qmlRegisterType(AddrBookEntry, "PyPay", 1, 0, "AddrBookEntry")
+    qmlRegisterType(AddrBookModel, "PyPay", 1, 0, "AddrBookModel")
+
+    payController = PayController()
+
+    engine = QQmlApplicationEngine()
+    engine.rootContext().setContextProperty("payController", payController)
+    engine.load(QUrl.fromLocalFile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "pypay/qml/main.qml")))
+    if not engine.rootObjects():
+        sys.exit(-1)
+
+    exitCode = app.exec_()
+
+    del engine
+    del payController
+    
+    sys.exit(exitCode)

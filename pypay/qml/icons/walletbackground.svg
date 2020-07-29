@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="897px" height="196px" viewBox="0 0 897 196" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59 (86127) - https://sketch.com -->
+    <title>编组 19</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M24,0 L873,0 C886.254834,-2.4348735e-15 897,10.745166 897,24 L897,196 L897,196 L0,196 L0,24 C-1.623249e-15,10.745166 10.745166,2.4348735e-15 24,0 Z" id="path-1"></path>
+        <linearGradient x1="42.0336982%" y1="25.719636%" x2="38.7543752%" y2="98.294272%" id="linearGradient-3">
+            <stop stop-color="#DDDDE4" offset="0%"></stop>
+            <stop stop-color="#E7E7EB" stop-opacity="0.719651242" offset="30.3973466%"></stop>
+            <stop stop-color="#EBEBEF" stop-opacity="0.585193492" offset="50.4006%"></stop>
+            <stop stop-color="#EEEEF1" stop-opacity="0.510760975" offset="65.9144113%"></stop>
+            <stop stop-color="#F2F2F4" stop-opacity="0.386767564" offset="77.9337028%"></stop>
+            <stop stop-color="#F6F6F8" stop-opacity="0.266922772" offset="88.6770498%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="0526-支付钱包UI--桌面端" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="桌面端-支付钱包-进入前输入密码备份" transform="translate(-405.000000, -141.000000)">
+            <g id="编组-19" transform="translate(405.000000, 141.000000)">
+                <g id="编组-2">
+                    <g id="编组-23">
+                        <mask id="mask-2" fill="white">
+                            <use xlink:href="#path-1"></use>
+                        </mask>
+                        <use id="蒙版" fill="#501BA2" xlink:href="#path-1"></use>
+                        <g id="编组-14" mask="url(#mask-2)">
+                            <g transform="translate(-64.037086, -125.000000)">
+                                <path d="M59.6437511,193.90327 L263.257912,34.8224534 L262.229573,155.166351 C261.969109,185.647803 247.819961,214.346016 223.799371,233.112957 L140.887638,297.890703 L140.887638,297.890703 L59.6437511,193.90327 Z" id="矩形备份-22" fill="#FFFFFF" opacity="0.05" transform="translate(161.450831, 166.356578) rotate(38.000000) translate(-161.450831, -166.356578) "></path>
+                                <path d="M114.02059,141.374015 L189.819208,82.1536445 L184.642779,166.314161 C183.711144,181.461078 176.331295,195.482033 164.372805,204.825029 L107.042596,249.616297 L107.042596,249.616297 L114.02059,141.374015 Z" id="矩形" fill="url(#linearGradient-3)" opacity="0.0413411458" transform="translate(148.430902, 165.884971) rotate(38.000000) translate(-148.430902, -165.884971) "></path>
+                                <path d="M664.408076,282.57672 L866.448587,123.579594 L866.448587,123.579594 L956.042772,238.254922 L646.365861,478.459415 L640.049822,335.699468 C639.138546,315.102095 648.205925,295.327111 664.408076,282.57672 Z" id="矩形备份-23" fill="#FFFFFF" opacity="0.05" transform="translate(797.320469, 301.019505) rotate(38.000000) translate(-797.320469, -301.019505) "></path>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

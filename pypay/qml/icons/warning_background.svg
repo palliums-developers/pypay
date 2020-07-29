@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="899px" height="53px" viewBox="0 0 899 53" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59 (86127) - https://sketch.com -->
+    <title>编组 22</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="6.35540541%" y1="49.8259065%" x2="80.5677202%" y2="50.3092105%" id="linearGradient-1">
+            <stop stop-color="#F3BA39" offset="0%"></stop>
+            <stop stop-color="#FD7F38" offset="100%"></stop>
+        </linearGradient>
+        <path d="M3,-2.27373675e-13 L895.192945,-2.27373675e-13 C896.849799,-2.27678035e-13 898.192945,1.34314575 898.192945,3 L898.192945,53 L898.192945,53 L0,53 L0,3 C-2.02906125e-16,1.34314575 1.34314575,-2.27069316e-13 3,-2.27373675e-13 Z" id="path-2"></path>
+        <linearGradient x1="96.3919218%" y1="69.9069653%" x2="14.0551727%" y2="69.9069653%" id="linearGradient-4">
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="0526-支付钱包UI--桌面端" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="桌面端-导入钱包-我的备份-2" transform="translate(-406.000000, -593.000000)">
+            <g id="编组-25" transform="translate(406.000000, 593.000000)">
+                <g id="编组-22" transform="translate(-0.000000, 0.000000)">
+                    <g id="编组-7" transform="translate(-0.000000, 0.000000)">
+                        <mask id="mask-3" fill="white">
+                            <use xlink:href="#path-2"></use>
+                        </mask>
+                        <use id="蒙版" fill="url(#linearGradient-1)" xlink:href="#path-2"></use>
+                    </g>
+                    <path d="M490,16.4753887 L476,53 L65.6929452,53 C107.224766,34.7648629 152.551544,21.3821835 201.673279,12.8519619 C294.019905,-3.18446642 390.128812,-1.97665749 490,16.4753887 Z" id="矩形复制" fill="url(#linearGradient-4)" opacity="0.270042783"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

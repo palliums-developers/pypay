@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="28px" viewBox="0 0 25 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59 (86127) - https://sketch.com -->
+    <title>编组 17复制 4</title>
+    <desc>Created with Sketch.</desc>
+    <g id="0526-支付钱包UI--桌面端" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="桌面端-适配最小尺寸1024X768" transform="translate(-65.000000, -160.000000)">
+            <g id="编组-17复制-4" transform="translate(65.000000, 160.000000)">
+                <g id="编组-17复制-3" transform="translate(3.000000, 2.000000)">
+                    <polyline id="路径" stroke="#FFFFFF" stroke-width="2.22608696" transform="translate(8.875669, 4.750555) rotate(-15.000000) translate(-8.875669, -4.750555) " points="1.93532216 4.36980201 1.98931154 1.92751449 15.673792 1.8364473 15.8160151 7.66466329"></polyline>
+                    <polygon id="路径" fill-opacity="0.5" fill="#FFFFFF" points="2.07326253 9.33047023 17.4179576 9.33047023 17.4179576 21.1904175 2.07326253 21.1904175"></polygon>
+                    <path d="M-1.11304348,6.04211459 L20.6064088,6.04211459 L20.6064088,24.3783689 L-1.11304348,24.3783689 L-1.11304348,6.04211459 Z" id="矩形" stroke="#FFFFFF" stroke-width="2.22608696" stroke-linecap="round"></path>
+                    <polyline id="路径" stroke="#FFFFFF" stroke-width="2.22608696" points="17.4212663 17.7495675 14.8417469 17.7495675 14.8417469 13.0747849 17.4212663 13.0747849"></polyline>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

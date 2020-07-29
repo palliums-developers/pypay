@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="345px" height="140px" viewBox="0 0 345 140" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59 (86127) - https://sketch.com -->
+    <title>编组 22</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M13.9857021,0.338058689 L330.985702,0.0143125394 C338.717685,0.00641601085 344.992096,6.26802484 344.999993,14.0000073 C344.999998,14.0047733 345,14.0095393 345,14.0143052 L345,126 C345,133.731986 338.731986,140 331,140 L14,140 C6.2680135,140 9.46895252e-16,133.731986 0,126 L0,14.3380514 C-9.46211519e-16,6.61164799 6.2593027,0.345949515 13.9857021,0.338058689 Z" id="path-1"></path>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="0526-支付钱包UI--桌面端" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="桌面端-币种详情" transform="translate(-1048.000000, -141.000000)">
+            <g id="编组-22" transform="translate(1048.000000, 141.000000)">
+                <g id="编组-10">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="蒙版" fill="#F7F7F9" xlink:href="#path-1"></use>
+                    <g id="编组-9" mask="url(#mask-2)">
+                        <g transform="translate(-60.000000, -104.000000)">
+                            <path d="M50.3277049,151.763697 L207.684725,28.8229195 L214.863017,125.097096 C217.142185,155.664947 204.006562,185.352012 179.851904,204.223699 L124.873292,247.177698 L124.873292,247.177698 L50.3277049,151.763697 Z" id="矩形备份-22" fill="#FFFFFF" opacity="0.516020275" transform="translate(134.419233, 138.000309) rotate(38.000000) translate(-134.419233, -138.000309) "></path>
+                            <path d="M94.8966804,110.737024 L153.309753,65.0997295 L154.935429,133.256344 C155.302105,148.629305 148.376255,163.26993 136.258751,172.737161 L96.8457916,203.52994 L96.8457916,203.52994 L94.8966804,110.737024 Z" id="矩形" fill="#FFFFFF" transform="translate(125.207451, 134.314835) rotate(38.000000) translate(-125.207451, -134.314835) "></path>
+                            <path d="M311.604237,173.603998 L358.699976,136.371645 L358.699976,136.371645 L421.404115,216.629283 L289.060681,318.429272 L289.299654,219.52858 C289.342926,201.620182 297.555678,184.710329 311.604237,173.603998 Z" id="矩形备份-23" fill="url(#linearGradient-3)" transform="translate(355.232398, 227.400458) rotate(38.000000) translate(-355.232398, -227.400458) "></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
