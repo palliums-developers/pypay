@@ -16,6 +16,8 @@ ApplicationWindow {
     visible: true
     title: qsTr("桌面支付钱包")
 
+    property bool userIsLogin: false
+
     property double leftRecWidth1 : 200
     property double leftRecWidth2 : 300
     property double topRecHeight : 64
@@ -143,7 +145,9 @@ ApplicationWindow {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            myPopupPage.open()
+                            if (appWindow.userIsLogin) {
+                                myPopupPage.open()
+                            }
                         }
                     }
                     Popup {
@@ -316,6 +320,7 @@ ApplicationWindow {
                     onLaterBackupClicked: {
                         showCreatePage(false)
                         enterPasswordPage.visible = false
+                        appWindow.userIsLogin = true
                     }
                 }
             }
@@ -343,6 +348,7 @@ ApplicationWindow {
                     onCompleteBtnClicked: {
                         showCreatePage(false)
                         enterPasswordPage.visible = false
+                        appWindow.userIsLogin = true
                     }
                 }
             }

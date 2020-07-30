@@ -13,6 +13,7 @@ Page {
             tipTimer.running = true
         } else {
             root.enterClicked()
+            appWindow.userIsLogin = true
         }
     }
 
