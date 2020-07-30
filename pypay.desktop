@@ -1,0 +1,22 @@
+# If you want Pypay to appear in a Linux app launcher ("start menu"), install this by doing:
+# sudo desktop-file-install pypay.desktop
+
+[Desktop Entry]
+Comment=Violas desktop wallet
+Exec=sh -c "PATH=\"\\$HOME/.local/bin:\\$PATH\"; pypay %u"
+GenericName[en_US]=Violas wallet
+GenericName=Violas Wallet
+Icon=pypay
+Name[en_US]=Violas Desktop Wallet
+Name=Violas Desktop Wallet
+Categories=Finance;Network;
+StartupNotify=true
+StartupWMClass=pypay
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/violas;
+Actions=Testnet;
+
+[Desktop Action Testnet]
+Exec=sh -c "PATH=\"\\$HOME/.local/bin:\\$PATH\"; pypay --testnet %u"
+Name=Testnet mode
