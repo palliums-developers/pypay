@@ -1,6 +1,6 @@
 from libra_client.json_rpc.views import TransactionView, EventView
 from libra_client.lbrtypes.account_state import AccountState
-from libra_client.error import LibraError
+from libra_client.lbrtypes.error import LibraError
 from libra_client.lbrtypes.account_config import testnet_dd_account_address
 from libra_client import Client, Wallet
 from typing import List
@@ -37,6 +37,7 @@ def test_get_balances():
     [a1] = create_accounts(1)
     client = create_client()
     client.mint_coin(a1.address_hex, 11, auth_key_prefix=a1.auth_key_prefix, currency_code="LBR")
+    client.add_currency_to_account(a1, "Coin1")
     client.mint_coin(a1.address_hex, 22, auth_key_prefix=a1.auth_key_prefix, currency_code="Coin1")
     balances = client.get_balances(a1.address_hex)
     assert balances["LBR"] == 11
