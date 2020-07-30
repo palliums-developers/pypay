@@ -6,7 +6,7 @@ import os
 import signal
 
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType
-from PyQt5.QtGui import QGuiApplication
+from PyQt5.QtGui import QGuiApplication, QIcon
 from PyQt5.QtCore import QUrl, Qt
 from pypay import PayController, TokenEntry, TokenModel
 from pypay import BitTransactionEntry, BitTransactionModel
@@ -21,6 +21,8 @@ if __name__ == '__main__':
     QGuiApplication.setAttribute(Qt.AA_EnableHighDpiScaling);
 
     app = QGuiApplication(sys.argv)
+
+    QGuiApplication.setWindowIcon(QIcon("pypay/qml/icons/pypay.png"));
 
     qmlRegisterType(TokenEntry, "PyPay", 1, 0, "TokenEntry")
     qmlRegisterType(TokenModel, "PyPay", 1, 0, "TokenModel")
