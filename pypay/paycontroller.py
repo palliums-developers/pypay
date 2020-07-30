@@ -47,31 +47,34 @@ class PayController(QObject):
         self._addrBookModel = AddrBookModel()
         self._addrBookModelData = []
         self._currentSelectedAddr = ''
+        self._walletIsCreated = False
+        self._isImportWallet = False
 
     @pyqtSlot()
     def shutdown(self):
         self.saveToFile()
 
-        self._bitThread.stop()
-        #self._bitThread.quit()
-        self._bitThread.terminate()
-        self._bitThread.wait()
+        if self._walletIsCreated == True:
+            self._bitThread.stop()
+            #self._bitThread.quit()
+            self._bitThread.terminate()
+            self._bitThread.wait()
 
-        self._libraThread.stop()
-        #self._libraThread.quit()
-        self._libraThread.terminate()
-        self._libraThread.wait()
+            self._libraThread.stop()
+            #self._libraThread.quit()
+            self._libraThread.terminate()
+            self._libraThread.wait()
 
-        self._violasThread.stop()
-        #self._violasThread.quit()
-        self._violasThread.terminate()
-        self._violasThread.wait()
+            self._violasThread.stop()
+            #self._violasThread.quit()
+            self._violasThread.terminate()
+            self._violasThread.wait()
 
-        self._lbrThread.quit()
-        self._lbrThread.wait()
+            self._lbrThread.quit()
+            self._lbrThread.wait()
 
-        self._vlsThread.quit()
-        self._vlsThread.wait()
+            self._vlsThread.quit()
+            self._vlsThread.wait()
 
     requestViolasHistory = pyqtSignal(dict)
     requestLibraHistory = pyqtSignal(dict)
@@ -111,7 +114,7 @@ class PayController(QObject):
 
         self._client = Client("violas_testnet")
         self._libraClient = LibraClient("libra_testnet")
-        if isFirstCreateWallet:
+        if isFirstCreateWallet or self._isImportWallet:
             # 默认币种列表: BTC, LBR, VLS
             self.setDefaultTokens()
 
@@ -145,7 +148,16 @@ class PayController(QObject):
         self._libraThread.balancesChanged.connect(self.updateLibraBalances)
         self._libraThread.currenciesChanged.connect(self.updateLBRCurrencies)
         self._libraThread.start()
-        
+
+        self._walletIsCreated = True
+
+    @pyqtSlot(str)
+    def createWalletFromMnemonic(self, mnemonic):
+        self._isImportWallet = True
+        fileName = "pypay.wallet"
+        with open(fileName, 'w') as f:
+            f.write(mnemonic + ';1')
+        self.createWallet()
 
     # 助记词
     mnemonicChanged = pyqtSignal()

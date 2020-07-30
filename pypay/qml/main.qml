@@ -41,6 +41,10 @@ ApplicationWindow {
         createStack.visible = b
     }
 
+    function showImportPage(b) {
+        importStack.visible = b
+    }
+
     Settings {
         id: appSettings
         fileName: "pypay.ini"
@@ -172,6 +176,9 @@ ApplicationWindow {
                     background.implicitWidth: 29
                     background.implicitHeight: 14
                     visible: !appSettings.walletIsCreate
+                    onClicked: {
+                        showImportPage(true)
+                    }
                 }
 
                 // Create button
@@ -347,6 +354,29 @@ ApplicationWindow {
                     }
                     onCompleteBtnClicked: {
                         showCreatePage(false)
+                        enterPasswordPage.visible = false
+                        appWindow.userIsLogin = true
+                    }
+                }
+            }
+
+            // Import wallet stack view
+            StackView {
+                id: importStack
+                anchors.fill: parent
+                initialItem: importPage
+                visible: false
+            }
+
+            // Import
+            Component {
+                id: importPage
+                ImportPage {
+                    onBackArrowClicked: {
+                        showImportPage(false)
+                    }
+                    onImportClicked: {
+                        showImportPage(false)
                         enterPasswordPage.visible = false
                         appWindow.userIsLogin = true
                     }
