@@ -5,6 +5,7 @@ import pickle
 import threading
 import qrcode
 import qrcode.image
+import logging
 from violas_client import Wallet, Client
 from libra_client import Client as LibraClient
 from .tokenmodel import TokenEntry, TokenModel
@@ -16,7 +17,7 @@ from .librathread import LibraThread
 from .libra import Libra
 from .violas import Violas
 from .addrbookmodel import AddrBookEntry, AddrBookModel
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, pyqtProperty, QUrl, QThread
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, pyqtProperty, QUrl, QThread, QTimer
 from PyQt5.QtGui import QClipboard, QGuiApplication, QDesktopServices
 from mnemonic import Mnemonic
 from bip32utils import BIP32Key
@@ -49,6 +50,7 @@ class PayController(QObject):
         self._currentSelectedAddr = ''
         self._walletIsCreated = False
         self._isImportWallet = False
+        self._timer = QTimer()
 
     @pyqtSlot()
     def shutdown(self):
@@ -60,22 +62,18 @@ class PayController(QObject):
             self._bitThread.terminate()
             self._bitThread.wait()
 
-            self._libraThread.stop()
-            #self._libraThread.quit()
-            self._libraThread.terminate()
-            self._libraThread.wait()
-
-            self._violasThread.stop()
-            #self._violasThread.quit()
-            self._violasThread.terminate()
-            self._violasThread.wait()
-
             self._lbrThread.quit()
             self._lbrThread.wait()
 
             self._vlsThread.quit()
             self._vlsThread.wait()
 
+    requestActiveLibraAccount = pyqtSignal()
+    requestActiveViolasAccount = pyqtSignal()
+    requestLibraCurrencies = pyqtSignal()
+    requestViolasCurrencies = pyqtSignal()
+    requestLibraBalances = pyqtSignal()
+    requestViolasBalances = pyqtSignal()
     requestViolasHistory = pyqtSignal(dict)
     requestLibraHistory = pyqtSignal(dict)
 
@@ -91,7 +89,6 @@ class PayController(QObject):
             self._wallet = Wallet.new()
             account = self._wallet.new_account()
         self._addr = self._wallet.accounts[0].address_hex
-        print("violas addr: ", self._addr)
         self.addrChanged.emit()
         self._mnemonic = self._wallet.mnemonic
         self.mnemonicChanged.emit()
@@ -103,7 +100,6 @@ class PayController(QObject):
         wif = m.WalletImportFormat()
         self._bitKey = wif_to_key(wif)
         self._bitAddr = self._bitKey.segwit_address
-        print("bitcon addr: ", self._bitAddr)
 
         self._wallet.write_recovery(fileName)
 
@@ -125,7 +121,12 @@ class PayController(QObject):
         self._lbrThread = QThread(self)
         self._lbr = Libra(self._libraClient, self._wallet.accounts)
         self._lbrThread.finished.connect(self._lbr.deleteLater)
-        self._lbr.historyChanged.connect(self.history_libra)
+        self.requestActiveLibraAccount.connect(self._lbr.requestActiveAccount)  # active account
+        self._lbr.currenciesChanged.connect(self.updateLBRCurrencies)           # currencies
+        self.requestLibraCurrencies.connect(self._lbr.requestCurrencies)
+        self._lbr.balancesChanged.connect(self.updateLibraBalances)             # balances
+        self.requestLibraBalances.connect(self._lbr.requestBalances)
+        self._lbr.historyChanged.connect(self.history_libra)                    # history
         self.requestLibraHistory.connect(self._lbr.requestHistory)
         self._lbr.moveToThread(self._lbrThread)
         self._lbrThread.start()
@@ -134,22 +135,24 @@ class PayController(QObject):
         self._vlsThread = QThread(self)
         self._vls = Violas(self._client, self._wallet.accounts)
         self._vlsThread.finished.connect(self._vls.deleteLater)
-        self._vls.historyChanged.connect(self.history_violas)
+        self.requestActiveViolasAccount.connect(self._vls.requestActiveAccount) # active account
+        self._vls.currenciesChanged.connect(self.updateVLSCurrencies)           # currencies
+        self.requestViolasCurrencies.connect(self._vls.requestCurrencies)
+        self._vls.balancesChanged.connect(self.updateViolasBalances)            # balances
+        self.requestViolasBalances.connect(self._vls.requestBalances)
+        self._vls.historyChanged.connect(self.history_violas)                   # history
         self.requestViolasHistory.connect(self._vls.requestHistory)
         self._vls.moveToThread(self._vlsThread)
         self._vlsThread.start()
 
-        self._violasThread = ViolasThread(self._client, self._addr, self._wallet.accounts, isFirstCreateWallet, self)
-        self._violasThread.balancesChanged.connect(self.updateViolasBalances)
-        self._violasThread.currenciesChanged.connect(self.updateVLSCurrencies)
-        self._violasThread.start()
-
-        self._libraThread = LibraThread(self._libraClient, self._addr, self._wallet.accounts, isFirstCreateWallet, self)
-        self._libraThread.balancesChanged.connect(self.updateLibraBalances)
-        self._libraThread.currenciesChanged.connect(self.updateLBRCurrencies)
-        self._libraThread.start()
+        if isFirstCreateWallet:
+            self.requestActiveLibraAccount.emit()
+            self.requestActiveViolasAccount.emit()
 
         self._walletIsCreated = True
+
+        self._timer.timeout.connect(self._timeUpdate)
+        self._timer.start(1000)
 
     @pyqtSlot(str)
     def createWalletFromMnemonic(self, mnemonic):
@@ -288,14 +291,12 @@ class PayController(QObject):
     # 更新Libra账户余额
     @pyqtSlot(dict)
     def updateLibraBalances(self, balances):
-        print(balances)
         for key, value in balances.items():
             self._tokenModel.changeData({'chain':'libra', 'name':key, 'amount':value, 'totalPrice':0})
 
     # 更新Violas账户余额
     @pyqtSlot(dict)
     def updateViolasBalances(self, balances):
-        print(balances)
         for key, value in balances.items():
             self._tokenModel.changeData({'chain':'violas', 'name':key, 'amount':value, 'totalPrice':0})
 
@@ -334,19 +335,16 @@ class PayController(QObject):
                 lbrTokenEntry = TokenEntry(lbrTokenData)
                 self._tokenModel.appendToken(lbrTokenEntry)
                 self._tokenModelData.append(lbrTokenData)
-                #self._tokenTypeModel.appendTokenType({"type":cur}) // TODO
 
     def updateVLSCurrencies(self, currencies):
         for cur in currencies:
-            if not cur=='VLS' and not cur == 'LBR':
+            if not cur == 'LBR':
                 vlsTokenData = {'chain':'violas', 'name':cur, 'amount':0, 'totalPrice':0, 'addr':self._addr, 'isDefault':False, 'isShow':False}
                 vlsTokenEntry = TokenEntry(vlsTokenData)
                 self._tokenModel.appendToken(vlsTokenEntry)
                 self._tokenModelData.append(vlsTokenData)
                 self._tokenTypeModel.appendTokenType({"type":cur})
         
-        self.saveToFile()
-
     # 地址薄
     @pyqtProperty(QObject, constant=True)
     def addrBookModel(self):
@@ -373,8 +371,6 @@ class PayController(QObject):
     @pyqtSlot(str, str, str)
     def sendCoin(self, addr, amount, cur):
         amount = int(amount)
-        print("amount: ", amount)
-        print("cur: ", cur)
         if cur == 'VLS':
             cur = 'LBR'
         self._client.transfer_coin(self._wallet.accounts[0], 
@@ -418,3 +414,10 @@ class PayController(QObject):
     def requestLBRHistory(self, addr, currency, flows, offset, limit):
         self.requestLibraHistory.emit({'addr':addr, 'currency':None if currency == '' else currency, 
             'flows':None if flows==-1 else flows, 'offset':offset, 'limit':limit})
+
+    # 定时器
+    def _timeUpdate(self):
+        self.requestLibraCurrencies.emit()
+        self.requestViolasCurrencies.emit()
+        self.requestLibraBalances.emit()
+        self.requestViolasBalances.emit()
