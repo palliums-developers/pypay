@@ -6,7 +6,8 @@ import "../model"
 import PyPay 1.0
 
 Control {
-    padding: 40
+    id: root
+    padding: 8
 
     signal goBack
     signal transactionDetailOpened
@@ -38,76 +39,78 @@ Control {
         Image {
             id: ima
             anchors.left: parent.left
+            anchors.leftMargin: 8
             anchors.right: parent.right
+            anchors.rightMargin: 8
             anchors.top: titleText.bottom
-            anchors.topMargin: 35
+            anchors.topMargin: 25
             height: 140
             source: "../icons/coindetailbackground.svg"
-            Control {
+            Item {
                 anchors.fill: parent
-                leftPadding: 14
-                rightPadding: 14
-                topPadding: 19
-                bottomPadding: 19
-                contentItem: Item {
-                    ColumnLayout {
-                        anchors.fill: parent
-                        Row {
-                            spacing: 8
-                            MyImage {
-                                source: {
-                                    if (payController.currentTokenEntry.chain == "bitcoin") {
-                                        return "../icons/bitcoin.svg"
-                                    } else if (payController.currentTokenEntry.chain == "violas") {
-                                        return "../icons/violas.svg"
-                                    } else if (payController.currentTokenEntry.chain == "libra") {
-                                        return "../icons/libra.svg"
-                                    } else {
-                                        return ""
-                                    }
+                ColumnLayout {
+                    id: colLayout
+                    anchors.fill: parent
+                    Row {
+                        spacing: 8
+                        MyImage {
+                            source: {
+                                if (payController.currentTokenEntry.chain == "bitcoin") {
+                                    return "../icons/bitcoin.svg"
+                                } else if (payController.currentTokenEntry.chain == "violas") {
+                                    return "../icons/violas.svg"
+                                } else if (payController.currentTokenEntry.chain == "libra") {
+                                    return "../icons/libra.svg"
+                                } else {
+                                    return ""
                                 }
-                                width: 14
-                                height: 14
-                                radius: 0.5 * width
-                                anchors.verticalCenter: nameText.verticalCenter
                             }
-                            Text {
-                                id: nameText
-                                text: payController.currentTokenEntry.name
-                                color: "#999999"
-                                font.weight: Font.Normal
-                                font.pointSize: 12
-                            }
+                            width: height
+                            height: 14
+                            radius: 0.5 * width
+                            anchors.verticalCenter: nameText.verticalCenter
                         }
                         Text {
-                            text: appSettings.eyeIsOpen ? payController.currentTokenEntry.amount : "******"
-                            color: "#333333"
-                            font.weight: Font.Bold
-                            font.pointSize: 18
-                        }
-                        Text {
-                            text: appSettings.eyeIsOpen ? "≈$" + payController.currentTokenEntry.totalPrice : "******"
+                            id: nameText
+                            text: payController.currentTokenEntry.name
                             color: "#999999"
                             font.weight: Font.Normal
                             font.pointSize: 12
                         }
-                        RowLayout {
-                            spacing: 16
-                            Text {
-                                id: addrText
-                                text: payController.currentTokenEntry.addr
-                                color: "#5C5C5C"
-                                font.weight: Font.Medium
-                                font.pointSize: 14
-                            }
-                            ImageButton {
-                                source: "../icons/copy.svg"
-                                width: 7
-                                height: 9
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: payController.copy(payController.currentTokenEntry.addr)
-                                }
+                    }
+                    Text {
+                        text: appSettings.eyeIsOpen ? payController.currentTokenEntry.amount : "******"
+                        color: "#333333"
+                        font.weight: Font.Bold
+                        font.pointSize: 18
+                    }
+                    Text {
+                        text: appSettings.eyeIsOpen ? "≈$" + payController.currentTokenEntry.totalPrice : "******"
+                        color: "#999999"
+                        font.weight: Font.Normal
+                        font.pointSize: 12
+                    }
+                    Row {
+                        spacing: 4
+                        Text {
+                            id: addrText
+                            text: payController.currentTokenEntry.addr
+                            color: "#5C5C5C"
+                            font.weight: Font.Medium
+                            font.pointSize: 14
+                            width: colLayout.width - 8 * 2 - 4 - copyImgBtn.width
+                            elide: Text.ElideMiddle
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        ImageButton {
+                            id: copyImgBtn
+                            source: "../icons/copy.svg"
+                            width: 10
+                            height: 12
+                            anchors.verticalCenter: addrText.verticalCenter
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: payController.copy(payController.currentTokenEntry.addr)
                             }
                         }
                     }

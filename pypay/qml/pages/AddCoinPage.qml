@@ -6,7 +6,7 @@ import "../model"
 import PyPay 1.0
 
 Control {
-    padding: 40
+    padding: 8
 
     signal goBack
 
@@ -39,9 +39,9 @@ Control {
             anchors.top: titleText.bottom
             anchors.topMargin: 22
             anchors.left: parent.left
-            anchors.leftMargin: 30
+            anchors.leftMargin: 8
             anchors.right: parent.right
-            anchors.rightMargin: 30
+            anchors.rightMargin: 8
             anchors.bottom: parent.bottom
             model: payController.tokenModel
             spacing: 12
@@ -55,7 +55,17 @@ Control {
                 radius: 14
                 MyImage {
                     id: itemImage
-                    source: tokenEntry.headerImage
+                    source: {
+                        if (tokenEntry.chain == "bitcoin") {
+                            return "../icons/bitcoin.svg"
+                        } else if (tokenEntry.chain == "violas") {
+                            return "../icons/violas.svg"
+                        } else if (tokenEntry.chain == "libra") {
+                            return "../icons/libra.svg"
+                        } else {
+                            return ""
+                        }
+                    }
                     radius: 20
                     width: 41
                     anchors.left: parent.left

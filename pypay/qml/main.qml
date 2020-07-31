@@ -384,30 +384,36 @@ ApplicationWindow {
             }
         }
 
+        // 币种详情
         Popup {
             id: coinDetailPage
             x: parent.width - width
             y: topRec.height
             width: 436
             height: parent.height - topRec.height
-            CoinDetailPage {
-                id: coinDetail
-                anchors.fill: parent
-                onGoBack: {
-                    coinDetailPage.close()
-                }
-                onTransactionDetailOpened: {
-                    coinDetail.visible = false
-                    transactionDetail.visible = true
-                }
+            background: Rectangle {
+                border.color: "lightsteelblue"
             }
-            TransactionDetailPage {
-                id: transactionDetail
-                anchors.fill: parent
-                visible: false
-                onGoBack: {
-                    coinDetail.visible = true
-                    transactionDetail.visible = false
+            contentItem: Item {
+                CoinDetailPage {
+                    id: coinDetail
+                    anchors.fill: parent
+                    onGoBack: {
+                        coinDetailPage.close()
+                    }
+                    onTransactionDetailOpened: {
+                        coinDetail.visible = false
+                        transactionDetail.visible = true
+                    }
+                }
+                TransactionDetailPage {
+                    id: transactionDetail
+                    anchors.fill: parent
+                    visible: false
+                    onGoBack: {
+                        coinDetail.visible = true
+                        transactionDetail.visible = false
+                    }
                 }
             }
             onOpened: {
@@ -416,13 +422,17 @@ ApplicationWindow {
             }
         }
 
+        // 添加币种
         Popup {
             id: addCoinPage
             x: parent.width - width
             y: topRec.height
             width: 436
             height: parent.height - topRec.height
-            AddCoinPage {
+            background: Rectangle {
+                border.color: "lightsteelblue"
+            }
+            contentItem: AddCoinPage {
                 id: addCoin
                 anchors.fill: parent
                 onGoBack: {
@@ -438,25 +448,30 @@ ApplicationWindow {
             y: topRec.height
             width: 436
             height: parent.height - topRec.height
-            AddrBookPage {
-                id: addrBook
-                anchors.fill: parent
-                onGoBack: {
-                    addrBookPage.close()
-                }
-                onAddAddrClicked: {
-                    addrBook.visible = false
-                    addAddrPage.visible = true
-                    console.log("main add addr")
-                }
+            background: Rectangle {
+                border.color: "lightsteelblue"
             }
-            AddAddrPage {
-                id: addAddrPage
-                anchors.fill: parent
-                visible: false
-                onGoBack: {
-                    addrBook.visible = true
-                    addAddrPage.visible = false
+            contentItem: Item {
+                AddrBookPage {
+                    id: addrBook
+                    anchors.fill: parent
+                    onGoBack: {
+                        addrBookPage.close()
+                    }
+                    onAddAddrClicked: {
+                        addrBook.visible = false
+                        addAddrPage.visible = true
+                        console.log("main add addr")
+                    }
+                }
+                AddAddrPage {
+                    id: addAddrPage
+                    anchors.fill: parent
+                    visible: false
+                    onGoBack: {
+                        addrBook.visible = true
+                        addAddrPage.visible = false
+                    }
                 }
             }
             onOpened: {
