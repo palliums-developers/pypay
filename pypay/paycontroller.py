@@ -11,7 +11,7 @@ from libra_client import Client as LibraClient
 from .tokenmodel import TokenEntry, TokenModel
 from .tokentypemodel import TokenTypeModel
 from .bittransactionmodel import BitTransactionEntry, BitTransactionModel
-from .bitthread import BitThread
+from .bit import Bit
 from .violasthread import ViolasThread
 from .librathread import LibraThread
 from .libra import Libra
@@ -53,13 +53,11 @@ class PayController(QObject):
         self._timer = QTimer()
 
     @pyqtSlot()
-    def shutdown(self):
+    def __del__(self):
         self.saveToFile()
 
         if self._walletIsCreated == True:
-            self._bitThread.stop()
-            #self._bitThread.quit()
-            self._bitThread.terminate()
+            self._bitThread.quit()
             self._bitThread.wait()
 
             self._lbrThread.quit()
@@ -68,6 +66,8 @@ class PayController(QObject):
             self._vlsThread.quit()
             self._vlsThread.wait()
 
+    requestBitBalance = pyqtSignal()
+    requestBitTransactions = pyqtSignal()
     requestActiveLibraAccount = pyqtSignal()
     requestActiveViolasAccount = pyqtSignal()
     requestLibraCurrencies = pyqtSignal()
@@ -79,6 +79,7 @@ class PayController(QObject):
 
     # 钱包
     @pyqtSlot()
+
     def createWallet(self):
         fileName = "pypay.wallet"
         isFirstCreateWallet = True
@@ -103,9 +104,14 @@ class PayController(QObject):
 
         self._wallet.write_recovery(fileName)
 
-        self._bitThread = BitThread(self._bitKey, self)
-        self._bitThread.balanceChanged.connect(self.updateBitBalance)
-        self._bitThread.transactionsChanged.connect(self.updateBitTransactions)
+        self._bitThread = QThread(self)
+        self._bit = Bit(self._bitKey)
+        self._bitThread.finished.connect(self._bit.deleteLater)
+        self.requestBitBalance.connect(self._bit.requestBalance)
+        self._bit.balanceChanged.connect(self.updateBitBalance)
+        self.requestBitTransactions.connect(self._bit.requestTransactions)
+        self._bit.transactionsChanged.connect(self.updateBitTransactions)
+        self._bit.moveToThread(self._bitThread)
         self._bitThread.start()
 
         self._client = Client("violas_testnet")
@@ -417,6 +423,8 @@ class PayController(QObject):
 
     # 定时器
     def _timeUpdate(self):
+        self.requestBitBalance.emit()
+        self.requestBitTransactions.emit()
         self.requestLibraCurrencies.emit()
         self.requestViolasCurrencies.emit()
         self.requestLibraBalances.emit()
