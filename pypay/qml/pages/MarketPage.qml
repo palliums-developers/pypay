@@ -35,7 +35,7 @@ Page {
                 radius: 100
                 color: isChangeSelected ? "#7038FD" : "#FFFFFF"
                 Text {
-                    text: qsTr("Change")
+                    text: qsTr("兑换")
                     color: isChangeSelected ? "#FFFFFF" : "#7038FD"
                     anchors.centerIn: parent
                 }   
@@ -53,7 +53,7 @@ Page {
                 radius: 100
                 color: isChangeSelected ? "#FFFFFF" : "#7038FD"
                 Text {
-                    text: qsTr("Pool")
+                    text: qsTr("资金池")
                     color: isChangeSelected ? "#7038FD" : "#FFFFFF"
                     anchors.centerIn: parent
                 }   

@@ -1,11 +1,12 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import "../controls"
 
 Page {
 
     // Rate
     Text {
-        text: qsTr("Fee Rate: ") + "0.100%"
+        text: qsTr("费率:") + "0.100%"
         font.pointSize: 14
         color: "#5C5C5C"
         anchors.right: changeInRec.right
@@ -27,7 +28,7 @@ Page {
             anchors.leftMargin: 8
             anchors.top: parent.top
             anchors.topMargin: 8
-            text: qsTr("Input")
+            text: qsTr("输入")
             font.pointSize: 14
             color: "#333333"
         }
@@ -42,12 +43,12 @@ Page {
                 border.color: "#FFFFFF"
             }
         }
-        ComboBox {
+        TokenComboBox {
             anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 12
-            model: ["Select token", "token1", "token2", "token3"]
+            model: ["VLS", "BTC", "Coin1", "Coin2", "EUR", "GBP", "SGD", "USD", "VLSEUR", "VLSGBP", "VLSSGD", "VLSUSD"]
         }
     }
 
@@ -75,7 +76,7 @@ Page {
             anchors.leftMargin: 8
             anchors.top: parent.top
             anchors.topMargin: 8
-            text: qsTr("Output")
+            text: qsTr("输出")
             font.pointSize: 14
             color: "#333333"
         }
@@ -90,12 +91,12 @@ Page {
                 border.color: "#FFFFFF"
             }
         }
-        ComboBox {
+        TokenComboBox {
             anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 12
-            model: ["Select token", "token1", "token2", "token3"]
+            model: ["VLS", "BTC", "Coin1", "Coin2", "EUR", "GBP", "SGD", "USD", "VLSEUR", "VLSGBP", "VLSSGD", "VLSUSD"]
         }
     }
     
@@ -106,43 +107,26 @@ Page {
         anchors.top: changeOutRec.bottom
         anchors.topMargin: 8
         Text {
-            text: qsTr("Change rate: ") + "--"
+            text: qsTr("兑换率: ") + "--"
             font.pointSize: 12
             color: "#5C5C5C"
         }
         Text {
-            text: qsTr("Miner fee: ") + "--"
+            text: qsTr("矿工费用: ") + "--"
             font.pointSize: 12
             color: "#5C5C5C"
         }
     }
 
     // Change button
-    Button {
+    MyButton3 {
         id: changeButton
-        text: qsTr("Change")
-        hoverEnabled: true
+        text: qsTr("兑换")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: changeOutRec.bottom
         anchors.topMargin: 77.0 / 952 * parent.height
         width: 280
         height: 46
-
-        contentItem: Text {
-            text: changeButton.text
-            font: changeButton.font
-            color: "#FFFFFF"
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
-        }
-
-        background: Rectangle {
-            implicitWidth: changeButton.width
-            implicitHeight: changeButton.height
-            color: "#6131AB"
-            radius: changeButton.height / 2
-        }
     }
 
     // Change history
@@ -151,7 +135,7 @@ Page {
         anchors.left: changeOutRec.left
         anchors.top: changeButton.bottom
         anchors.topMargin: 74.0 / 952 * parent.height
-        text: qsTr("Change histrory")
+        text: qsTr("兑换记录")
         color: "#3D3949"
         font.pointSize: 16
     }

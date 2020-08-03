@@ -64,9 +64,9 @@ ApplicationWindow {
         }
     }
 
-    //onClosing: {
-    //    payController.shutdown()
-    //}
+    onClosing: {
+        payController.shutdown()
+    }
     
     Rectangle {
         anchors.fill: parent

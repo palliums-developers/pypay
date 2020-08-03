@@ -12,8 +12,6 @@ from .tokenmodel import TokenEntry, TokenModel
 from .tokentypemodel import TokenTypeModel
 from .bittransactionmodel import BitTransactionEntry, BitTransactionModel
 from .bit import Bit
-from .violasthread import ViolasThread
-from .librathread import LibraThread
 from .libra import Libra
 from .violas import Violas
 from .addrbookmodel import AddrBookEntry, AddrBookModel
@@ -53,17 +51,21 @@ class PayController(QObject):
         self._timer = QTimer()
 
     @pyqtSlot()
-    def __del__(self):
+    def shutdown(self):
         self.saveToFile()
 
+    def __del__(self):
         if self._walletIsCreated == True:
             self._bitThread.quit()
+            #self._bitThread.terminate()
             self._bitThread.wait()
 
             self._lbrThread.quit()
+            #self._lbrThread.terminate()
             self._lbrThread.wait()
 
             self._vlsThread.quit()
+            #self._vlsThread.terminate()
             self._vlsThread.wait()
 
     requestBitBalance = pyqtSignal()

@@ -39,9 +39,13 @@ if __name__ == '__main__':
     if not engine.rootObjects():
         sys.exit(-1)
 
-    exitCode = app.exec_()
+    try:
+        exitCode = app.exec_()
 
-    del engine
-    del payController
-    
-    sys.exit(exitCode)
+        del engine
+        del payController
+        
+        sys.exit(exitCode)
+    except:
+        print("exiting")
+
