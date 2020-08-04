@@ -52,6 +52,7 @@ class PayController(QObject):
 
     @pyqtSlot()
     def shutdown(self):
+        self._timer.stop()
         self.saveToFile()
 
     def __del__(self):
