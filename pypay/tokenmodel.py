@@ -135,3 +135,9 @@ class TokenModel (QAbstractListModel):
                 entry.amount = dt['amount']
                 entry.totalPrice = dt['totalPrice']
 
+
+    def isExist(self, chain, name):
+        for entry in self._data:
+            if entry.chain == chain and entry.name == name:
+                return True
+        return False

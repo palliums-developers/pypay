@@ -48,8 +48,7 @@ Control {
             clip: true
             ScrollIndicator.vertical: ScrollIndicator { }
             delegate: Rectangle {
-                anchors.left: parent.left
-                anchors.right: parent.right
+                width: listView.width
                 height: 60
                 color: "#EBEBF1"
                 radius: 14
