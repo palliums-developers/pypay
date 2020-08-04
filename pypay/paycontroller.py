@@ -161,7 +161,7 @@ class PayController(QObject):
         self._walletIsCreated = True
 
         self._timer.timeout.connect(self._timeUpdate)
-        self._timer.start(1000)
+        self._timer.start(10000)
 
     @pyqtSlot(str)
     def createWalletFromMnemonic(self, mnemonic):
@@ -302,12 +302,18 @@ class PayController(QObject):
     def updateLibraBalances(self, balances):
         for key, value in balances.items():
             self._tokenModel.changeData({'chain':'libra', 'name':key, 'amount':value, 'totalPrice':0})
+            for data in self._tokenModelData:
+                if data['chain'] == 'libra' and data['name'] == key:
+                    data['amount'] = value
 
     # 更新Violas账户余额
     @pyqtSlot(dict)
     def updateViolasBalances(self, balances):
         for key, value in balances.items():
             self._tokenModel.changeData({'chain':'violas', 'name':key, 'amount':value, 'totalPrice':0})
+            for data in self._tokenModelData:
+                if data['chain'] == 'violas' and data['name'] == key:
+                    data['amount'] = value
 
     # tokenmodel 保存，恢复
     def loadFromFile(self):
