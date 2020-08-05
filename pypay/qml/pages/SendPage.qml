@@ -50,7 +50,6 @@ Page {
         TextFieldComboBox {
             id: amountTextField
             placeholderText: qsTr("输入金额")
-            //model: ["VLS", "BTC", "Coin1", "Coin2", "EUR", "GBP", "SGD", "USD", "VLSEUR", "VLSGBP", "VLSSGD", "VLSUSD"]
         }
     }
 
@@ -149,7 +148,7 @@ Page {
                 tipText.visible = true
                 tipTimer.running = true
             } else {
-                payController.sendCoin(addrTextField.text, amountTextField.text,  amountTextField.comboBoxCurrentText)
+                payController.sendCoin(addrTextField.text, amountTextField.text,  amountTextField.chain, amountTextField.name)
                 backArrowClicked()
             }
         }

@@ -218,6 +218,12 @@ class PayController(QObject):
     def addr(self):
         return self._addr
 
+    # btc地址
+    btcAddrChanged = pyqtSignal()
+    @pyqtProperty(str, notify=btcAddrChanged)
+    def btcAddr(self):
+        return self._bitAddr
+
     # 资产
     def setDefaultTokens(self):
         btcTokenData = {'chain':'bitcoin', 'name':'BTC', 'amount':0, 'totalPrice':0, 'addr':self._bitAddr, 'isDefault':True, 'isShow':True}
@@ -386,16 +392,20 @@ class PayController(QObject):
 
     # 发送
     @pyqtSlot(str, str, str)
-    def sendCoin(self, addr, amount, cur):
+    def sendCoin(self, addr, amount, chain, name):
         amount = int(amount)
-        if cur == 'VLS':
-            cur = 'LBR'
-        self._client.transfer_coin(self._wallet.accounts[0], 
-                addr, amount, currency_code=cur)
+        if chain == 'bitcoin':
+            pass
+        elif chain == 'libra':
+            self._libraClient.transfer_coin(self._wallet.accounts[0], 
+                    addr, amount, currency_code=name)
+        elif chain == 'violas':
+            self._client.transfer_coin(self._wallet.accounts[0], 
+                    addr, amount, currency_code=name)
 
     # 二维码
-    @pyqtSlot(str)
-    def genQR(self, token):
+    @pyqtSlot(str, str)
+    def genQR(self, chain, name):
         qr = qrcode.QRCode(
                 version = 7,
                 error_correction = qrcode.constants.ERROR_CORRECT_L,
@@ -403,10 +413,13 @@ class PayController(QObject):
                 border = 4,
                 )
         qrURL = 'noknown'
-        if token == 'BTC':
+        token = ''
+        if chain == 'bitcoin':
             qrURL = 'bitcoin' + ':' + self._bitAddr
-        else:
-            qrURL = 'violas-' + token + ':' + self._addr
+            token = 'bitcoin-BTC'
+        elif chain == 'libra' or chain == 'violas':
+            qrURL = chain + '-' + name + ':' + self._addr
+            token = chain + '-' + name
         qr.add_data(qrURL)
         qr.make(fit=True)
 

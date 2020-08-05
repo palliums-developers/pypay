@@ -10,8 +10,8 @@ Rectangle {
 
     property string placeholderText: ""
     property alias text: textField.text
-    property alias comboBoxCurrentText: control.currentText
-    property var model
+    property alias chain: control.chain
+    property alias name: control.name
 
     TextField {
         id: textField
@@ -32,9 +32,5 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 5
         anchors.verticalCenter: parent.verticalCenter
-        //model: root.model
-        //width: 100
-        //height: 33
-        property string currentText: ""
     }
 }

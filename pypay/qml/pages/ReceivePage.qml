@@ -5,10 +5,11 @@ import "../controls"
 Page {
     id: root
     signal backArrowClicked
+    property string chain: "bitcoin"
 
     function getImageSource() {
-        var src = "../icons/qr_%1.png"
-        return src.arg(tokenComboBox.currentText)
+        var src = "../icons/qr_%1-%2.png"
+        return src.arg(tokenComboBox.chain).arg(tokenComboBox.name)
     }
 
     ImageButton {
@@ -38,20 +39,21 @@ Page {
 
     TokenComboBox {
         id: tokenComboBox
-        //model: ["VLS", "BTC", "Coin1", "Coin2", "EUR", "GBP", "SGD", "USD", "VLSEUR", "VLSGBP", "VLSSGD", "VLSUSD"]
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 272.0 / 952 * parent.height
         width: 100
         height: 33
-        //onActivated: {
-        //    payController.genQR(currentText)
-        //    qrImage.source = getImageSource()
-        //}
-        //Component.onCompleted: {
-        //    payController.genQR(currentText)
-        //    qrImage.source = getImageSource()
-        //}
+        onTokenSelected: {
+            payController.genQR(chain, name)
+            qrImage.source = getImageSource()
+            root.chain = chain
+        }
+        Component.onCompleted: {
+            payController.genQR(chain, name)
+            qrImage.source = getImageSource()
+            root.chain = chain
+        }
     }
 
     // 二维码 TODO
@@ -72,7 +74,7 @@ Page {
         spacing: 16
         Text {
             id: addrText
-            text: payController.addr
+            text: root.chain == "bitcoin" ? payController.btcAddr : payController.addr
             color: "#382F44"
             font.weight: Font.Medium
             font.pointSize: 18

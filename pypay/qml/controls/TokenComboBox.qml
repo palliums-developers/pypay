@@ -11,6 +11,9 @@ Rectangle {
     radius: 16
     color: isListPopOpen ? "#6131AB" : "#d3d3d3"
     property bool isListPopOpen: false
+    property alias chain: tkEntry.chain
+    property alias name: tkEntry.name
+    signal tokenSelected
 
     TokenEntry {
         id: tkEntry
@@ -140,6 +143,7 @@ Rectangle {
                             tkEntry.chain = tokenEntry.chain
                             tkEntry.name = tokenEntry.name
                             popup.close()
+                            tokenSelected()
                         }
                     }
                 }
