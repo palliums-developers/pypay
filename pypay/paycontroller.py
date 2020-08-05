@@ -346,19 +346,21 @@ class PayController(QObject):
     def updateLBRCurrencies(self, currencies):
         for cur in currencies:
             if not cur=='LBR':
-                lbrTokenData = {'chain':'libra', 'name':cur, 'amount':0, 'totalPrice':0, 'addr':self._addr, 'isDefault':False, 'isShow':False}
-                lbrTokenEntry = TokenEntry(lbrTokenData)
-                self._tokenModel.appendToken(lbrTokenEntry)
-                self._tokenModelData.append(lbrTokenData)
+                if not self._tokenModel.isExist('libra', cur):
+                    lbrTokenData = {'chain':'libra', 'name':cur, 'amount':0, 'totalPrice':0, 'addr':self._addr, 'isDefault':False, 'isShow':False}
+                    lbrTokenEntry = TokenEntry(lbrTokenData)
+                    self._tokenModel.appendToken(lbrTokenEntry)
+                    self._tokenModelData.append(lbrTokenData)
 
     def updateVLSCurrencies(self, currencies):
         for cur in currencies:
             if not cur == 'LBR':
-                vlsTokenData = {'chain':'violas', 'name':cur, 'amount':0, 'totalPrice':0, 'addr':self._addr, 'isDefault':False, 'isShow':False}
-                vlsTokenEntry = TokenEntry(vlsTokenData)
-                self._tokenModel.appendToken(vlsTokenEntry)
-                self._tokenModelData.append(vlsTokenData)
-                self._tokenTypeModel.appendTokenType({"type":cur})
+                if not self._tokenModel.isExist('violas', cur):
+                    vlsTokenData = {'chain':'violas', 'name':cur, 'amount':0, 'totalPrice':0, 'addr':self._addr, 'isDefault':False, 'isShow':False}
+                    vlsTokenEntry = TokenEntry(vlsTokenData)
+                    self._tokenModel.appendToken(vlsTokenEntry)
+                    self._tokenModelData.append(vlsTokenData)
+                    self._tokenTypeModel.appendTokenType({"type":cur})
         
     # 地址薄
     @pyqtProperty(QObject, constant=True)
