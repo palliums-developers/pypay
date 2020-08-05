@@ -5,15 +5,16 @@ from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtQuick import QQuickView
 
 class TokenEntry (QObject):
-    def __init__(self, dict, parent = None):
+    def __init__(self, dict = None, parent = None):
         QObject.__init__(self, parent)
-        self._chain = dict['chain']
-        self._name = dict['name']
-        self._amount = dict['amount']
-        self._totalPrice = dict['totalPrice']
-        self._addr = dict['addr']
-        self._isDefault = dict['isDefault']
-        self._isShow = dict['isShow']
+        if dict is not None:
+            self._chain = dict['chain']
+            self._name = dict['name']
+            self._amount = dict['amount']
+            self._totalPrice = dict['totalPrice']
+            self._addr = dict['addr']
+            self._isDefault = dict['isDefault']
+            self._isShow = dict['isShow']
 
     # chain
     chainChanged = pyqtSignal()

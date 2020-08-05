@@ -1,83 +1,149 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
+import "../controls"
+import PyPay 1.0
 
-ComboBox {
-    id: control
-    width: 70
-    spacing: 2
+Rectangle {
+    id: root
+    width: 100
+    height: 32
+    radius: 16
+    color: isListPopOpen ? "#6131AB" : "#d3d3d3"
+    property bool isListPopOpen: false
 
-    delegate: ItemDelegate {
-        width: control.width
-        contentItem: Text {
-            text: modelData
-            color: control.pressed? "#FFFFFF" : "#501BA2"
-            font: control.font
-            elide: Text.ElideRight
-            verticalAlignment: Text.AlignVCenter
-        }
-        highlighted: control.highlightedIndex === index
+    TokenEntry {
+        id: tkEntry
+        chain: "bitcoin"
+        name: "BTC"
     }
 
-    indicator: Canvas {
-        id: canvas
-        x: control.width - width - control.rightPadding
-        y: control.topPadding + (control.availableHeight - height) / 2
-        width: 12
-        height: 8
-        contextType: "2d"
-
-        Connections {
-            target: control
-            function onPressedChanged() { canvas.requestPaint(); }
+    RowLayout {
+        anchors.fill: parent
+        spacing: 4
+        MyImage {
+            id: itemImage
+            source: {
+                if (tkEntry.chain == "bitcoin") {
+                    return "../icons/bitcoin.svg"
+                } else if (tkEntry.chain == "libra") {
+                    return "../icons/libra.svg"
+                } else if (tkEntry.chain == "violas") {
+                    return "../icons/violas.svg"
+                } else {
+                    return ""
+                }
+            }
+            width: root.height - 10
+            height: width
+            radius: width / 2
+            Layout.preferredWidth: width
+            Layout.leftMargin: 8
         }
 
-        onPaint: {
-            var ctx = getContext("2d")
-            ctx.strokeStyle = "#7038FD"
-            ctx.beginPath()
-            ctx.moveTo(2,2)
-            ctx.lineTo(width/2,height - 2)
-            ctx.lineTo(width - 2,2)
-            ctx.stroke()
+        Text {
+            id: curName
+            color: root.isListPopOpen ? "#FFFFFF" : "#7038FD" 
+            text: tkEntry.name
+            font.pointSize: 12
+            Layout.fillWidth: true
+            Layout.leftMargin: 4
+        }
+
+        Canvas {
+            id: canvas
+            Layout.preferredWidth: 12
+            Layout.preferredHeight: 8
+            Layout.rightMargin: 8
+            contextType: "2d"
+
+            onPaint: {
+                var ctx = getContext("2d")
+                ctx.strokeStyle = root.isListPopOpen ? "#FFFFFF" : "#7038FD"
+                ctx.beginPath()
+                ctx.moveTo(2,2)
+                ctx.lineTo(width/2,height - 2)
+                ctx.lineTo(width - 2,2)
+                ctx.stroke()
+            }
         }
     }
 
-    contentItem: Text {
-        leftPadding: 10
-        rightPadding: control.indicator.width + control.spacing
-
-        text: control.displayText
-        font: control.font
-        color: control.pressed? "#FFFFFF" : "#501BA2"
-        verticalAlignment: Text.AlignVCenter
-        elide: Text.ElideRight
-    }
-
-    background: Rectangle {
-        implicitWidth: 95
-        implicitHeight: 24
-        color: control.pressed? "#501BA2" : "#F1EEFB"
-        radius: width / 2
-    }
-
-    popup: Popup {
-        y: control.height - 1
-        width: control.width
-        implicitHeight: contentItem.implicitHeight
-        padding: 1
-
-        contentItem: ListView {
-            clip: true
-            implicitHeight: contentHeight
-            model: control.popup.visible ? control.delegateModel : null
-            currentIndex: control.highlightedIndex
-
-            ScrollIndicator.vertical: ScrollIndicator { }
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            popup.open()
         }
+    }
 
+    Popup {
+        id: popup
+        x: parent.width / 2 - width / 2
+        y: parent.height + 20
+        width: 375
+        height: 338
+        onOpened: {
+            root.isListPopOpen = true
+            canvas.requestPaint()
+        }
+        onClosed: {
+            root.isListPopOpen = false
+            canvas.requestPaint()
+        }
         background: Rectangle {
-            color: "#F1EEFB"
+            border.color: "lightsteelblue"
+            radius: 10
+        }
+        contentItem: Item {
+            ListView {
+                id: listView
+                anchors.fill: parent
+                model: payController.tokenModel
+                spacing: 8
+                clip: true
+                ScrollIndicator.vertical: ScrollIndicator { }
+                delegate: Rectangle {
+                    width: listView.width
+                    height: 60
+                    radius: 8
+                    color: "#EBEBF1"
+                    RowLayout {
+                        anchors.fill: parent
+                        MyImage {
+                            id: itemImage
+                            source: {
+                                if (tokenEntry.chain == "bitcoin") {
+                                    return "../icons/bitcoin.svg"
+                                } else if (tokenEntry.chain == "libra") {
+                                    return "../icons/libra.svg"
+                                } else if (tokenEntry.chain == "violas") {
+                                    return "../icons/violas.svg"
+                                } else {
+                                    return ""
+                                }
+                            }
+                            radius: 20
+                            width: 40
+                            height: width
+                            Layout.preferredWidth: width
+                            Layout.leftMargin: 8
+                        }
+                        Text {
+                            text: tokenEntry.name
+                            Layout.fillWidth: true
+                            Layout.leftMargin: 8
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            tkEntry.chain = tokenEntry.chain
+                            tkEntry.name = tokenEntry.name
+                            popup.close()
+                        }
+                    }
+                }
+            }
         }
     }
 }

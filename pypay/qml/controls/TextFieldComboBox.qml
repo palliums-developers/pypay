@@ -32,8 +32,9 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 5
         anchors.verticalCenter: parent.verticalCenter
-        model: root.model
-        width: 100
-        height: 33
+        //model: root.model
+        //width: 100
+        //height: 33
+        property string currentText: ""
     }
 }

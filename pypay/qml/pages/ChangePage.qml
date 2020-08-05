@@ -48,7 +48,7 @@ Page {
             anchors.rightMargin: 8
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 12
-            model: ["VLS", "BTC", "Coin1", "Coin2", "EUR", "GBP", "SGD", "USD", "VLSEUR", "VLSGBP", "VLSSGD", "VLSUSD"]
+            //model: ["VLS", "BTC", "Coin1", "Coin2", "EUR", "GBP", "SGD", "USD", "VLSEUR", "VLSGBP", "VLSSGD", "VLSUSD"]
         }
     }
 
@@ -96,7 +96,7 @@ Page {
             anchors.rightMargin: 8
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 12
-            model: ["VLS", "BTC", "Coin1", "Coin2", "EUR", "GBP", "SGD", "USD", "VLSEUR", "VLSGBP", "VLSSGD", "VLSUSD"]
+            //model: ["VLS", "BTC", "Coin1", "Coin2", "EUR", "GBP", "SGD", "USD", "VLSEUR", "VLSGBP", "VLSSGD", "VLSUSD"]
         }
     }
     

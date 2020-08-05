@@ -50,7 +50,7 @@ Page {
         TextFieldComboBox {
             id: amountTextField
             placeholderText: qsTr("输入金额")
-            model: ["VLS", "BTC", "Coin1", "Coin2", "EUR", "GBP", "SGD", "USD", "VLSEUR", "VLSGBP", "VLSSGD", "VLSUSD"]
+            //model: ["VLS", "BTC", "Coin1", "Coin2", "EUR", "GBP", "SGD", "USD", "VLSEUR", "VLSGBP", "VLSSGD", "VLSUSD"]
         }
     }
 

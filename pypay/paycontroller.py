@@ -57,16 +57,16 @@ class PayController(QObject):
 
     def __del__(self):
         if self._walletIsCreated == True:
-            self._bitThread.quit()
-            #self._bitThread.terminate()
+            #self._bitThread.quit()
+            self._bitThread.terminate()
             self._bitThread.wait()
 
-            self._lbrThread.quit()
-            #self._lbrThread.terminate()
+            #self._lbrThread.quit()
+            self._lbrThread.terminate()
             self._lbrThread.wait()
 
-            self._vlsThread.quit()
-            #self._vlsThread.terminate()
+            #self._vlsThread.quit()
+            self._vlsThread.terminate()
             self._vlsThread.wait()
 
     requestBitBalance = pyqtSignal()

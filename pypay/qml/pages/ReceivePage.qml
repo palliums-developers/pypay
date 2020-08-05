@@ -38,20 +38,20 @@ Page {
 
     TokenComboBox {
         id: tokenComboBox
-        model: ["VLS", "BTC", "Coin1", "Coin2", "EUR", "GBP", "SGD", "USD", "VLSEUR", "VLSGBP", "VLSSGD", "VLSUSD"]
+        //model: ["VLS", "BTC", "Coin1", "Coin2", "EUR", "GBP", "SGD", "USD", "VLSEUR", "VLSGBP", "VLSSGD", "VLSUSD"]
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 272.0 / 952 * parent.height
         width: 100
         height: 33
-        onActivated: {
-            payController.genQR(currentText)
-            qrImage.source = getImageSource()
-        }
-        Component.onCompleted: {
-            payController.genQR(currentText)
-            qrImage.source = getImageSource()
-        }
+        //onActivated: {
+        //    payController.genQR(currentText)
+        //    qrImage.source = getImageSource()
+        //}
+        //Component.onCompleted: {
+        //    payController.genQR(currentText)
+        //    qrImage.source = getImageSource()
+        //}
     }
 
     // 二维码 TODO
