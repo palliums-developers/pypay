@@ -15,6 +15,7 @@ class TokenEntry (QObject):
             self._addr = dict['addr']
             self._isDefault = dict['isDefault']
             self._isShow = dict['isShow']
+            self._isAddCur = dict['isAddCur']
 
     # chain
     chainChanged = pyqtSignal()
@@ -99,6 +100,18 @@ class TokenEntry (QObject):
     def isShow(self, b):
         self._isShow = b
         self.isShowChanged.emit()
+
+    # isAddCur
+    isAddCurChanged = pyqtSignal()
+
+    @pyqtProperty(bool, notify=isAddCurChanged)
+    def isAddCur(self):
+        return self._isAddCur
+
+    @isAddCur.setter
+    def isAddCur(self, b):
+        self._isAddCur = b
+        self.isAddCurChanged.emit()
 
 
 class TokenModel (QAbstractListModel):

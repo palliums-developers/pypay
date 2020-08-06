@@ -36,7 +36,7 @@ class PayController(QObject):
         self._addr = ''
         self._tokenModel = TokenModel()
         self._tokenModelData = []
-        self._currentTokenEntry = TokenEntry({'chain':'violas', 'name':'LBR', 'amount':0.0000, 'totalPrice':0.00, 'addr':'', 'isDefault':False, 'isShow':False})
+        self._currentTokenEntry = TokenEntry({'chain':'violas', 'name':'LBR', 'amount':0.0000, 'totalPrice':0.00, 'addr':'', 'isDefault':False, 'isShow':False, 'isAddCur':False})
         self._tokenTypeModel = TokenTypeModel()
         self._bitKey = None
         self._bitAddr = ''
@@ -230,17 +230,17 @@ class PayController(QObject):
 
     # 资产
     def setDefaultTokens(self):
-        btcTokenData = {'chain':'bitcoin', 'name':'BTC', 'amount':0, 'totalPrice':0, 'addr':self._bitAddr, 'isDefault':True, 'isShow':True}
+        btcTokenData = {'chain':'bitcoin', 'name':'BTC', 'amount':0, 'totalPrice':0, 'addr':self._bitAddr, 'isDefault':True, 'isShow':True, 'isAddCur':True}
         btcTokenEntry = TokenEntry(btcTokenData)
         self._tokenModel.appendToken(btcTokenEntry)
         self._tokenModelData.append(btcTokenData)
         #self._tokenTypeModel.appendTokenType({"type":"BTC"})   // TODO
-        lbrTokenData = {'chain':'libra', 'name':'LBR', 'amount':0, 'totalPrice':0, 'addr':self._addr, 'isDefault':True, 'isShow':True}
+        lbrTokenData = {'chain':'libra', 'name':'LBR', 'amount':0, 'totalPrice':0, 'addr':self._addr, 'isDefault':True, 'isShow':True, 'isAddCur':True}
         lbrTokenEntry = TokenEntry(lbrTokenData)
         self._tokenModel.appendToken(lbrTokenEntry)
         self._tokenModelData.append(lbrTokenData)
         #self._tokenTypeModel.appendTokenType({"type":"LBR"})   // TODO
-        vlsTokenData = {'chain':'violas', 'name':'LBR', 'amount':0, 'totalPrice':0, 'addr':self._addr, 'isDefault':True, 'isShow':True}
+        vlsTokenData = {'chain':'violas', 'name':'LBR', 'amount':0, 'totalPrice':0, 'addr':self._addr, 'isDefault':True, 'isShow':True, 'isAddCur':True}
         vlsTokenEntry = TokenEntry(vlsTokenData)
         self._tokenModel.appendToken(vlsTokenEntry)
         self._tokenModelData.append(vlsTokenData)
@@ -352,18 +352,20 @@ class PayController(QObject):
         for data in self._tokenModelData:
             if data['chain'] == chain and data['name'] == name:
                 data['isShow'] = isShow
-        if chain == 'libra':
-            self.requestLBRAddCurOfAccount.emit(name, isShow)
-        elif chain == 'violas':
-            self.requestVLSAddCurOfAccount.emit(name, isShow)
-        else:
-            pass
+                if isShow == True and data['isAddCur'] == False:
+                    data['isAddCur'] = True
+                    if chain == 'libra':
+                        self.requestLBRAddCurOfAccount.emit(name, True)
+                    elif chain == 'violas':
+                        self.requestVLSAddCurOfAccount.emit(name, True)
+                    else:
+                        pass
 
     def updateLBRCurrencies(self, currencies):
         for cur in currencies:
             if not cur=='LBR':
                 if not self._tokenModel.isExist('libra', cur):
-                    lbrTokenData = {'chain':'libra', 'name':cur, 'amount':0, 'totalPrice':0, 'addr':self._addr, 'isDefault':False, 'isShow':False}
+                    lbrTokenData = {'chain':'libra', 'name':cur, 'amount':0, 'totalPrice':0, 'addr':self._addr, 'isDefault':False, 'isShow':False, 'isAddCur':False}
                     lbrTokenEntry = TokenEntry(lbrTokenData)
                     self._tokenModel.appendToken(lbrTokenEntry)
                     self._tokenModelData.append(lbrTokenData)
@@ -372,7 +374,7 @@ class PayController(QObject):
         for cur in currencies:
             if not cur == 'LBR':
                 if not self._tokenModel.isExist('violas', cur):
-                    vlsTokenData = {'chain':'violas', 'name':cur, 'amount':0, 'totalPrice':0, 'addr':self._addr, 'isDefault':False, 'isShow':False}
+                    vlsTokenData = {'chain':'violas', 'name':cur, 'amount':0, 'totalPrice':0, 'addr':self._addr, 'isDefault':False, 'isShow':False, 'isAddCur':False}
                     vlsTokenEntry = TokenEntry(vlsTokenData)
                     self._tokenModel.appendToken(vlsTokenEntry)
                     self._tokenModelData.append(vlsTokenData)
