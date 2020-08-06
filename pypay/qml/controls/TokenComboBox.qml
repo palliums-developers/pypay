@@ -107,7 +107,8 @@ Rectangle {
                 ScrollIndicator.vertical: ScrollIndicator { }
                 delegate: Rectangle {
                     width: listView.width
-                    height: 60
+                    height: tokenEntry.isShow ? 60 : -8
+                    visible: tokenEntry.isShow
                     radius: 8
                     color: "#EBEBF1"
                     RowLayout {
