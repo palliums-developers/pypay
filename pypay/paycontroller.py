@@ -450,7 +450,8 @@ class PayController(QObject):
 
     @pyqtSlot(str, str, int, int, int)
     def requestVLSHistory(self, addr, currency, flows, offset, limit):
-        pass
+        self.requestViolasHistory.emit({'addr':addr, 'currency':None if currency == '' else currency, 
+            'flows':None if flows==-1 else flows, 'offset':offset, 'limit':limit})
 
     @pyqtSlot(str, str, int, int, int)
     def requestLBRHistory(self, addr, currency, flows, offset, limit):

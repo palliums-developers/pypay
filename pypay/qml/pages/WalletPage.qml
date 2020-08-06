@@ -213,7 +213,13 @@ Page {
                     anchors.fill: parent
                     onClicked: {
                         payController.currentTokenEntry = tokenEntry
-                        payController.requestLBRHistory(tokenEntry.addr, tokenEntry.name, -1, 0, 10)
+                        if (tokenEntry.chain == 'libra') {
+                            payController.requestLBRHistory(tokenEntry.addr, tokenEntry.name, -1, 0, 10)
+                        } else if (tokenEntry.chain == 'violas') {
+                            payController.requestVLSHistory(tokenEntry.addr, tokenEntry.name, -1, 0, 10)
+                        } else {
+                            console.log("invalid")
+                        }
                         coinDetailPage.open()
                     }
                 }
