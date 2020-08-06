@@ -6,6 +6,7 @@ Page {
     id: root
     signal backArrowClicked
     signal createClicked
+    property bool isSelected: false
 
     ImageButton {
         anchors.top: parent.top
@@ -72,7 +73,11 @@ Page {
             //    tipText.text = qsTr("密码长度应为8~20位")
             //    tipText.visible = true
             //    tipTimer.running = true
-            //} else {
+            //} else if (root.isSelected == false) {
+            //    tipText.text = qsTr("请勾选服务与隐私政策")
+            //    tipText.visible = true
+            //    tipTimer.running = true
+            //    } else {
                 appSettings.password = passwordText.text    // TODO
                 root.createClicked()
                 payController.createWallet()
@@ -95,5 +100,35 @@ Page {
         id: tipTimer
         interval: 3000
         onTriggered: tipText.visible = false
+    }
+
+    Row {
+        anchors.top: tipText.bottom
+        anchors.topMargin: 48
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: 5
+        Image {
+            anchors.verticalCenter: checkText.verticalCenter
+            width: 14
+            height: 14
+            source: root.isSelected ? "../icons/xuanze-2.svg" : "../icons/xuanze.svg"
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    root.isSelected = !root.isSelected
+                }
+            }
+        }
+        Text {
+            id: checkText
+            text: qsTr("我已阅读并同意<b>《服务与隐私政策》</b>")
+            color: "#999999"
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    payController.openUrl("https://violas.io")
+                }
+            }
+        }
     }
 }
