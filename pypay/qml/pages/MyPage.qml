@@ -36,12 +36,11 @@ Control {
                 spacing: 5
                 Text {
                     text: qsTr("总资产子和")
-                    font.pointSize: 12
+                    font.pointSize: 10
                     color: "#999999"
                 }
                 Text {
                     text: appSettings.eyeIsOpen ? qsTr("$ 0.00") : "******"
-                    font.weight: Font.Blod
                     font.pointSize: 18
                 }
             }
@@ -52,12 +51,13 @@ Control {
             spacing: 8
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: totalRec.bottom
-            anchors.topMargin: 8
+            anchors.topMargin: 16
             // Send
-            MyButton2 {
+            MyButton4 {
                 icon.source: "../icons/send.svg"
                 text: qsTr("转账")
                 width: 69
+                height: 26
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
@@ -67,11 +67,12 @@ Control {
                 }
             }
             // Receive
-            MyButton2 {
+            MyButton4 {
                 id: receiveBtn
                 icon.source: "../icons/receive.svg"
                 text: qsTr("收款")
                 width: 69
+                height: 26
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
@@ -83,7 +84,7 @@ Control {
 
         Row {
             id: walletMgrRow
-            spacing: 5
+            spacing: 10
             anchors.top: sendAndReceiveRow.bottom
             anchors.topMargin: 15
             anchors.left: sendAndReceiveRow.left
@@ -92,17 +93,31 @@ Control {
                 source: "../icons/wallet.svg"
                 fillMode: Image.PreserveAspectFit
                 width: 16
+                anchors.verticalCenter: walletText.verticalCenter
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        
+                    }
+                }
             }
             Text {
+                id: walletText
                 text: qsTr("钱包管理")
                 color: "#FFFFFF"
-                font.pointSize: 14
+                font.pointSize: 13
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        
+                    }
+                }
             }
         }
 
         Row {
             id: helpRow
-            spacing: 5
+            spacing: 10
             anchors.top: walletMgrRow.bottom
             anchors.topMargin: 15
             anchors.left: walletMgrRow.left
@@ -110,28 +125,56 @@ Control {
                 source: "../icons/help.svg"
                 fillMode: Image.PreserveAspectFit
                 width: 16
+                anchors.verticalCenter: helpText.verticalCenter
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        payController.openUrl("https://violas.io")
+                    }
+                }
             }
             Text {
+                id: helpText
                 text: qsTr("帮助中心")
                 color: "#FFFFFF"
-                font.pointSize: 14
+                font.pointSize: 13
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        payController.openUrl("https://violas.io")
+                    }
+                }
             }
         }
 
         Row {
-            spacing: 5
+            spacing: 10
             anchors.top: helpRow.bottom
             anchors.topMargin: 15
             anchors.left: helpRow.left
             Image {
-                source: "../icons/help.svg"
+                source: "../icons/quit.svg"
                 fillMode: Image.PreserveAspectFit
                 width: 16
+                anchors.verticalCenter: quitText.verticalCenter
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        appWindow.close()
+                    }
+                }
             }
             Text {
+                id: quitText
                 text: qsTr("退出")
                 color: "#FFFFFF"
-                font.pointSize: 14
+                font.pointSize: 13
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        appWindow.close()
+                    }
+                }
             }
         }
     }

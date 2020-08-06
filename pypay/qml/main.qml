@@ -159,11 +159,21 @@ ApplicationWindow {
                         x: parent.x
                         y: parent.y + parent.height + 5
                         width: 170
-                        height: 220
-                        padding: 0
-                        MyPage {
+                        height: 250
+                        background: Rectangle {
+                            border.color: "lightsteelblue"
+                        }
+                        contentItem: MyPage {
                             id: myPage
                             anchors.fill: parent
+                            onReceiveClicked: {
+                                walletStack.push(receivePage)
+                                myPopupPage.close()
+                            }
+                            onSendClicked: {
+                                walletStack.push(sendPage)
+                                myPopupPage.close()
+                            }
                         }
                     }
                 }
