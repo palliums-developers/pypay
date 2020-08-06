@@ -14,6 +14,7 @@ Control {
 
     signal sendClicked
     signal receiveClicked
+    signal walletManageClicked
     
     contentItem: Rectangle {
         color: "#501BA2"
@@ -97,7 +98,7 @@ Control {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        
+                        walletManageClicked()
                     }
                 }
             }
@@ -109,7 +110,7 @@ Control {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        
+                        walletManageClicked()
                     }
                 }
             }

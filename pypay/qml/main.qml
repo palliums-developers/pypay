@@ -174,6 +174,10 @@ ApplicationWindow {
                                 walletStack.push(sendPage)
                                 myPopupPage.close()
                             }
+                            onWalletManageClicked: {
+                                walletStack.push(walletManagePage)
+                                myPopupPage.close()
+                            }
                         }
                     }
                 }
@@ -274,7 +278,15 @@ ApplicationWindow {
                     onBackArrowClicked: {
                         walletStack.pop()
                     }
-                    onSendClicked: {
+                }
+            }
+
+            // 钱包管理
+            Component {
+                id: walletManagePage
+                WalletManagePage {
+                    onBackArrowClicked: {
+                        walletStack.pop()
                     }
                 }
             }
