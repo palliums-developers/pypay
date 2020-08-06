@@ -86,7 +86,7 @@ Control {
                     checked: tokenEntry.isShow
                     onClicked: {
                         tokenEntry.isShow = !tokenEntry.isShow
-                        payController.updateTokenShow(tokenEntry.name, tokenEntry.isShow)
+                        payController.updateTokenShow(tokenEntry.chain, tokenEntry.name, tokenEntry.isShow)
                     }
                 }
             }

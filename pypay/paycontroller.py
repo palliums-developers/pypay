@@ -79,6 +79,8 @@ class PayController(QObject):
     requestViolasBalances = pyqtSignal()
     requestViolasHistory = pyqtSignal(dict)
     requestLibraHistory = pyqtSignal(dict)
+    requestLBRAddCurOfAccount = pyqtSignal(str, bool)
+    requestVLSAddCurOfAccount = pyqtSignal(str, bool)
 
     # 钱包
     @pyqtSlot()
@@ -137,6 +139,7 @@ class PayController(QObject):
         self.requestLibraBalances.connect(self._lbr.requestBalances)
         self._lbr.historyChanged.connect(self.history_libra)                    # history
         self.requestLibraHistory.connect(self._lbr.requestHistory)
+        self.requestLBRAddCurOfAccount.connect(self._lbr.requestAddCurOfAccount)
         self._lbr.moveToThread(self._lbrThread)
         self._lbrThread.start()
 
@@ -151,6 +154,7 @@ class PayController(QObject):
         self.requestViolasBalances.connect(self._vls.requestBalances)
         self._vls.historyChanged.connect(self.history_violas)                   # history
         self.requestViolasHistory.connect(self._vls.requestHistory)
+        self.requestVLSAddCurOfAccount.connect(self._vls.requestAddCurOfAccount)
         self._vls.moveToThread(self._vlsThread)
         self._vlsThread.start()
 
@@ -343,11 +347,17 @@ class PayController(QObject):
             pickle.dump(self._addrBookModelData, f)
 
     # 更新是否显示token
-    @pyqtSlot(str, bool)
-    def updateTokenShow(self, name, isShow):
+    @pyqtSlot(str, str, bool)
+    def updateTokenShow(self, chain, name, isShow):
         for data in self._tokenModelData:
-            if data['name'] == name:
+            if data['chain'] == chain and data['name'] == name:
                 data['isShow'] = isShow
+        if chain == 'libra':
+            self.requestLBRAddCurOfAccount.emit(name, isShow)
+        elif chain == 'violas':
+            self.requestVLSAddCurOfAccount.emit(name, isShow)
+        else:
+            pass
 
     def updateLBRCurrencies(self, currencies):
         for cur in currencies:
@@ -453,3 +463,5 @@ class PayController(QObject):
         self.requestViolasCurrencies.emit()
         self.requestLibraBalances.emit()
         self.requestViolasBalances.emit()
+
+        self.saveToFile()

@@ -12,8 +12,11 @@ class Libra(QObject):
 
     @pyqtSlot()
     def requestActiveAccount(self):
-        self._client.mint_coin(self._accounts[0].address, 500_000,
-                auth_key_prefix=self._accounts[0].auth_key_prefix, currency_code="LBR")
+        try:
+            self._client.mint_coin(self._accounts[0].address, 500_000,
+                    auth_key_prefix=self._accounts[0].auth_key_prefix, currency_code="LBR")
+        except Exception as result:
+            print(result)
 
     # currencies
 
@@ -52,3 +55,14 @@ class Libra(QObject):
             self.historyChanged.emit(r.json())
         else:
             print("request error")
+            
+    # add cur of account
+    @pyqtSlot(str, bool)
+    def requestAddCurOfAccount(self, cur, isShow):
+        if isShow:
+            try:
+                self._client.add_currency_to_account(self._accounts[0], cur)
+            except Exception as result:
+                print(result)
+        else:
+            pass
