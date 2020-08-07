@@ -15,6 +15,7 @@ from .bit import Bit
 from .libra import Libra
 from .violas import Violas
 from .addrbookmodel import AddrBookEntry, AddrBookModel
+from .historymodel import HistoryEntry, HistoryModel
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, pyqtProperty, QUrl, QThread, QTimer
 from PyQt5.QtGui import QClipboard, QGuiApplication, QDesktopServices
 from mnemonic import Mnemonic
@@ -49,6 +50,7 @@ class PayController(QObject):
         self._walletIsCreated = False
         self._isImportWallet = False
         self._timer = QTimer()
+        self._historyModel = HistoryModel()
 
     @pyqtSlot()
     def shutdown(self):
@@ -442,19 +444,29 @@ class PayController(QObject):
     # 交易记录
     @pyqtSlot(dict)
     def history_libra(self, dt):
-        print(dt)
+        data = dt['data']
+        for d in data:
+            historyEntry = HistoryEntry(d)
+            self._historyModel.append(historyEntry)
 
     @pyqtSlot(dict)
     def history_violas(self, dt):
-        print(dt)
+        data = dt['data']
+        for d in data:
+            historyEntry = HistoryEntry(d)
+            self._historyModel.append(historyEntry)
+
+
 
     @pyqtSlot(str, str, int, int, int)
     def requestVLSHistory(self, addr, currency, flows, offset, limit):
+        self._historyModel.clear()
         self.requestViolasHistory.emit({'addr':addr, 'currency':None if currency == '' else currency, 
             'flows':None if flows==-1 else flows, 'offset':offset, 'limit':limit})
 
     @pyqtSlot(str, str, int, int, int)
     def requestLBRHistory(self, addr, currency, flows, offset, limit):
+        self._historyModel.clear()
         self.requestLibraHistory.emit({'addr':addr, 'currency':None if currency == '' else currency, 
             'flows':None if flows==-1 else flows, 'offset':offset, 'limit':limit})
 
@@ -468,3 +480,8 @@ class PayController(QObject):
         self.requestViolasBalances.emit()
 
         self.saveToFile()
+
+    # 交易历史
+    @pyqtProperty(QObject, constant=True)
+    def historyModel(self):
+        return self._historyModel

@@ -214,9 +214,9 @@ Page {
                     onClicked: {
                         payController.currentTokenEntry = tokenEntry
                         if (tokenEntry.chain == 'libra') {
-                            payController.requestLBRHistory(tokenEntry.addr, tokenEntry.name, -1, 0, 10)
+                            payController.requestLBRHistory(tokenEntry.addr, tokenEntry.name, -1, 0, 100)
                         } else if (tokenEntry.chain == 'violas') {
-                            payController.requestVLSHistory(tokenEntry.addr, tokenEntry.name, -1, 0, 10)
+                            payController.requestVLSHistory(tokenEntry.addr, tokenEntry.name, -1, 0, 100)
                         } else {
                             console.log("invalid")
                         }

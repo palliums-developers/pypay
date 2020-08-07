@@ -7,3 +7,4 @@ from .tokenmodel import TokenEntry, TokenModel
 from .tokentypemodel import TokenTypeModel
 from .bittransactionmodel import BitTransactionEntry, BitTransactionModel
 from .addrbookmodel import AddrBookEntry, AddrBookModel
+from .historymodel import HistoryEntry, HistoryModel

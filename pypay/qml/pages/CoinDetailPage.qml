@@ -142,7 +142,13 @@ Control {
                     onClicked: {
                         rowBar.disableSelect()
                         parent.isSelected = !parent.isSelected
-                
+                        if (payController.currentTokenEntry.chain == "libra") {
+                            payController.requestLBRHistory(payController.currentTokenEntry.addr, payController.currentTokenEntry.name, -1, 0, 100)
+                        } else if (payController.currentTokenEntry.chain == "violas") {
+                            payController.requestVLSHistory(payController.currentTokenEntry.addr, payController.currentTokenEntry.name, -1, 0, 100)
+                        } else {
+                            console.log("invaild")
+                        }
                     }
                 }
             }
@@ -156,7 +162,13 @@ Control {
                     onClicked: {
                         rowBar.disableSelect()
                         parent.isSelected = !parent.isSelected
-                
+                        if (payController.currentTokenEntry.chain == "libra") {
+                            payController.requestLBRHistory(payController.currentTokenEntry.addr, payController.currentTokenEntry.name, 1, 0, 100)
+                        } else if (payController.currentTokenEntry.chain == "violas") {
+                            payController.requestVLSHistory(payController.currentTokenEntry.addr, payController.currentTokenEntry.name, 1, 0, 100)
+                        } else {
+                            console.log("invaild")
+                        }
                     }
                 }
             }
@@ -170,7 +182,13 @@ Control {
                     onClicked: {
                         rowBar.disableSelect()
                         parent.isSelected = !parent.isSelected
-                
+                        if (payController.currentTokenEntry.chain == "libra") {
+                            payController.requestLBRHistory(payController.currentTokenEntry.addr, payController.currentTokenEntry.name, 0, 0, 100)
+                        } else if (payController.currentTokenEntry.chain == "violas") {
+                            payController.requestVLSHistory(payController.currentTokenEntry.addr, payController.currentTokenEntry.name, 0, 0, 100)
+                        } else {
+                            console.log("invaild")
+                        }
                     }
                 }
             }
@@ -184,31 +202,45 @@ Control {
             anchors.right: ima.right
             anchors.rightMargin: 16
             anchors.bottom: parent.bottom
-            model: payController.bitTransactionModel
-            spacing: 12
+            model: payController.historyModel
+            spacing: 8
             clip: true
+            ScrollIndicator.vertical: ScrollIndicator { }
             delegate: Rectangle {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: 60
-                color: "#FFFFFF"
-                RowLayout {
-                    anchors.fill: parent
-                    Item {
-                        Layout.preferredWidth: parent.width
-                        Text {
-                            text: bitTransactionEntry.txid
-                            color: "#333333"
-                            font.pointSize: 14
-                            elide: Text.ElideMiddle
-                            width: parent.width
-                        }
-                    }
+                width: listView.width
+                height: 40
+                color: "#EBEBF1"
+                Image {
+                    id: itemImage
+                    source: "../icons/history.svg"
+                    width: 24
+                    fillMode: Image.PreserveAspectFit
+                    anchors.left: parent.left
+                    anchors.leftMargin: 8
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Text {
+                    id: versionText
+                    text: historyEntry.version
+                    anchors.left: itemImage.right
+                    anchors.leftMargin: 16
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: "#333333"
+                    font.pointSize: 12
+                }
+                Text {
+                    id: amountText
+                    text: historyEntry.amount
+                    anchors.right: parent.right
+                    anchors.rightMargin: 8
+                    anchors.verticalCenter: parent.verticalCenter   
+                    color: "#333333"
+                    font.pointSize: 12
                 }
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        payController.currentBitTransactionEntry = bitTransactionEntry
+                        //payController.currentBitTransactionEntry = bitTransactionEntry
                         transactionDetailOpened()
                     }
                 }
