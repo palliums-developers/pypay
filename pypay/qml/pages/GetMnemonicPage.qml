@@ -10,9 +10,9 @@ Page {
 
     ImageButton {
         anchors.top: parent.top
-        anchors.topMargin: 98
+        anchors.topMargin: 24
         anchors.left: parent.left
-        anchors.leftMargin: 92
+        anchors.leftMargin: 24
         width: 32
         source: "../icons/backarrow2.svg"
         MouseArea {
@@ -30,7 +30,7 @@ Page {
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 197.0 / 952 * parent.height
+        anchors.topMargin: 48
     }
     Text {
         id: title2Text
@@ -39,83 +39,98 @@ Page {
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: titleText.bottom
-        anchors.topMargin: 3
+        anchors.topMargin: 4
     }
 
     Image {
+        id: mneImage
         source: "../icons/mne_image.svg"
         fillMode: Image.PreserveAspectFit
         width: 140
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: title2Text.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: 32 / 952 * parent.height
     }
 
-    // 小圆圈
-    Rectangle {
-        width: 4
-        height: 4
-        radius: 2
-        color: "#3B3847"
-        anchors.verticalCenter: backupText.verticalCenter
-        anchors.right: backupText.left
-        anchors.rightMargin: 5
-    }
-    Text {
-        id: backupText
-        anchors.left: offlineStoreTextDetail.left
-        anchors.top: parent.top
-        anchors.topMargin: 436.0 / 952 * parent.height
-        text: qsTr("备份助记词")
-        font.pointSize: 16
-        color: "#3B3847"
-    }
-
-    Text {
-        anchors.left: offlineStoreTextDetail.left
-        anchors.top: backupText.bottom
-        anchors.topMargin: 8
-        font.pointSize: 12
-        color: "#3B3847"
-        text: qsTr("使用纸和笔正确抄写助记词，如果你的手机丢失、被盗、损坏，Keystore将可以回复你的资产")
-    }
-
-    // 小圆圈
-    Rectangle {
-        width: 4
-        height: 4
-        radius: 2
-        color: "#3B3847"
-        anchors.verticalCenter: offlineStoreText.verticalCenter
-        anchors.right: offlineStoreText.left
-        anchors.rightMargin: 5
-    }
-    Text {
-        id: offlineStoreText
-        anchors.left: offlineStoreTextDetail.left
-        anchors.top: parent.top
-        anchors.topMargin: 513.0 / 952 * parent.height
-        text: qsTr("离线保管")
-        font.pointSize: 16
-        color: "#3B3847"
-    }
-
-    // 这个的文字最长，其他文字以它为基准对齐
-    Text {
-        id: offlineStoreTextDetail
+    Item {
+        id: textItem
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: offlineStoreText.bottom
-        anchors.topMargin: 8
-        font.pointSize: 12
-        color: "#3B3847"
-        text: qsTr("请妥善保管至隔离网络的安全地方，请勿将助记词在联网环境下分享和存储，比如邮件、相册、社交应用等")
+        width: 0.65 * parent.width
+        height: backupText.height + backupDetailText.height + offlineStoreText.height + offlineStoreDetailText.height + 3 * 4
+        anchors.top: mneImage.bottom    
+        anchors.topMargin: 32 / 952 * parent.height
+        
+        // 小圆圈
+        Rectangle {
+            id: backupRec
+            width: 4
+            height: 4
+            radius: 2
+            color: "#3B3847"
+            anchors.left: parent.left
+            anchors.top: parent.top
+        }
+        Text {
+            id: backupText
+            anchors.left: backupRec.left
+            anchors.leftMargin: 4
+            anchors.verticalCenter: backupRec.verticalCenter
+            text: qsTr("备份助记词")
+            font.pointSize: 12
+            color: "#3B3847"
+        }
+
+        Text {
+            id: backupDetailText
+            anchors.left: backupText.left
+            anchors.top: backupText.bottom
+            anchors.topMargin: 4
+            font.pointSize: 12
+            color: "#3B3847"
+            text: qsTr("使用纸和笔正确抄写助记词，如果你的手机丢失、被盗、损坏，Keystore将可以回复你的资产")
+            width: parent.width - backupRec.width - 4 - backupRec.width
+            elide: Text.ElideRight
+        }
+
+        // 小圆圈
+        Rectangle {
+            id: offlineRec
+            width: 4
+            height: 4
+            radius: 2
+            color: "#3B3847"
+            anchors.left: backupRec.left
+            anchors.top: backupDetailText.bottom
+            anchors.topMargin: 4
+        }
+        Text {
+            id: offlineStoreText
+            anchors.left: offlineRec.left
+            anchors.leftMargin: 4
+            anchors.verticalCenter: offlineRec.verticalCenter
+            text: qsTr("离线保管")
+            font.pointSize: 12
+            color: "#3B3847"
+        }
+
+        Text {
+            id: offlineStoreDetailText
+            anchors.left: offlineStoreText.left
+            anchors.top: offlineStoreText.bottom
+            anchors.topMargin: 4
+            font.pointSize: 12
+            color: "#3B3847"
+            text: qsTr("请妥善保管至隔离网络的安全地方，请勿将助记词在联网环境下分享和存储，比如邮件、相册、社交应用等")
+            width: parent.width - offlineRec.width - 4 - offlineRec.width
+            elide: Text.ElideRight
+        }
     }
 
     // 按钮
     MyButton3 {
         id: backupBtn
-        anchors.top: parent.top
-        anchors.topMargin: 614.0 / 952 * parent.height
+        anchors.top: textItem.bottom
+        anchors.topMargin: 56 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("开始备份")
         width: 200

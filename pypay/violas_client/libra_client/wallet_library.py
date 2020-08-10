@@ -18,7 +18,7 @@ class Wallet():
     @classmethod
     def new(cls):
         m = Mnemonic("english")
-        mnemonic = m.generate(192)
+        mnemonic = m.generate(128)
         return cls.new_from_mnemonic(mnemonic)
 
     @classmethod

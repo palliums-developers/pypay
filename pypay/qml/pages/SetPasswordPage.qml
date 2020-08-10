@@ -10,9 +10,9 @@ Page {
 
     ImageButton {
         anchors.top: parent.top
-        anchors.topMargin: 98
+        anchors.topMargin: 24
         anchors.left: parent.left
-        anchors.leftMargin: 92
+        anchors.leftMargin: 24
         width: 32
         source: "../icons/backarrow2.svg"
         MouseArea {
@@ -30,16 +30,15 @@ Page {
         color: "#3C3848"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 203.0 / 952 * parent.height
+        anchors.topMargin: 48
     }
 
     TextFieldEye {
         id: passwordText
-        anchors.top: parent.top
-        anchors.topMargin: 278.0 / 952 * parent.height
+        anchors.top: titleText.bottom
+        anchors.topMargin: 56 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 642.0 / 1160 * parent.width
-        height: 50.0 / 952 * parent.height
+        width: 0.65 * parent.width
         placeholderText: qsTr("8-20位，大小写字母，数字")
         imageSource: eyeIsClose ? "../icons/eye_close.svg" : "../icons/eye_open.svg"
     }
@@ -47,10 +46,9 @@ Page {
     TextFieldEye {
         id: confirmText
         anchors.top: passwordText.bottom
-        anchors.topMargin: 20
+        anchors.topMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 642.0 / 1160 * parent.width
-        height: 50.0 / 952 * parent.height
+        width: 0.65 * parent.width
         placeholderText: qsTr("重复输入密码")
         imageSource: eyeIsClose ? "../icons/eye_close.svg" : "../icons/eye_open.svg"
     }
@@ -58,7 +56,7 @@ Page {
     MyButton3 {
         id: createBtn
         anchors.top: confirmText.bottom
-        anchors.topMargin: 160
+        anchors.topMargin: 160 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("创建")
         width: 200
@@ -104,7 +102,7 @@ Page {
 
     Row {
         anchors.top: tipText.bottom
-        anchors.topMargin: 48
+        anchors.topMargin: 24
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 5
         Image {

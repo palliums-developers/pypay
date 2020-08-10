@@ -23,17 +23,15 @@ Page {
         font.pointSize: 20
         color: "#3C3848"
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        anchors.topMargin: 203.0 / 952 * parent.height
+        anchors.bottom: passwordText.top
+        anchors.bottomMargin: 50
     }
 
     TextFieldEye {
         id: passwordText
-        anchors.top: parent.top
-        anchors.topMargin: 278.0 / 952 * parent.height
-        anchors.horizontalCenter: parent.horizontalCenter
-        //width: 642.0 / 1160 * parent.width
-        //height: 50.0 / 952 * parent.height
+        width: 0.65 * parent.width
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: -50
         placeholderText: qsTr("8-20位，大小写字母，数字")
         imageSource: eyeIsClose ? "../icons/eye_close.svg" : "../icons/eye_open.svg"
         onReturnKeyPressed: {
@@ -44,7 +42,7 @@ Page {
     MyButton3 {
         id: enterBtn
         anchors.top: passwordText.bottom
-        anchors.topMargin: 160
+        anchors.topMargin: 100
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("进入")
         width: 200
@@ -60,7 +58,7 @@ Page {
         color: "#F74E4E"
         font.pointSize: 14
         anchors.top: enterBtn.bottom
-        anchors.topMargin: 56
+        anchors.topMargin: 50
         anchors.horizontalCenter: parent.horizontalCenter
         MouseArea {
             anchors.fill: parent

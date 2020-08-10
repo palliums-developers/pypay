@@ -262,15 +262,17 @@ Page {
         }
         Row {
             id: tipRow1
-            anchors.left: tipRow2.left
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            anchors.right: parent.right
             anchors.top: backgroundImage.bottom
             anchors.topMargin: 28
             Rectangle {
+                id: row1Rec
                 color: "#3D3949"   
                 width: 4
                 height: 4
                 radius: 2
-                anchors.verticalCenter: tipText1.verticalCenter
             }
             spacing: 5
             Text {
@@ -278,14 +280,21 @@ Page {
                 text: qsTr("您的身份助记词未备份，请务必备份助记词")
                 font.pointSize: 14
                 color: "#3D3949"
+                width: tipRow1.width - spacing - row1Rec.width - 8
+                elide: Text.ElideRight
+                anchors.verticalCenter: row1Rec.verticalCenter
             }
         }
         Row {
             id: tipRow2
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            anchors.right: parent.right
             anchors.top: tipRow1.bottom
             anchors.topMargin: 5
+            width: parent.width
             Rectangle {
+                id: row2Rec
                 color: "#3D3949"   
                 width: 4
                 height: 4
@@ -298,6 +307,9 @@ Page {
                 text: qsTr("助记词可用于恢复身份下钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失")
                 font.pointSize: 14
                 color: "#3D3949"
+                width: tipRow2.width - spacing - row2Rec.width - 8
+                elide: Text.ElideRight
+                anchors.verticalCenter: row2Rec.verticalCenter
             }
         }
         

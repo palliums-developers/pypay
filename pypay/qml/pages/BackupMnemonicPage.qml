@@ -9,9 +9,9 @@ Page {
 
     ImageButton {
         anchors.top: parent.top
-        anchors.topMargin: 98
+        anchors.topMargin: 24
         anchors.left: parent.left
-        anchors.leftMargin: 92
+        anchors.leftMargin: 24
         width: 32
         source: "../icons/backarrow2.svg"
         MouseArea {
@@ -29,7 +29,7 @@ Page {
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 197.0 / 952 * parent.height
+        anchors.topMargin: 48
     }
     Text {
         id: title2Text
@@ -44,8 +44,8 @@ Page {
     Grid {
         id: mnemonicGrid
         columns: 3
-        anchors.top: parent.top
-        anchors.topMargin: 299.0 / 952 * parent.height
+        anchors.top: title2Text.bottom
+        anchors.topMargin: 24
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 16
         Repeater {
@@ -68,7 +68,7 @@ Page {
         anchors.left: mnemonicGrid.left
         anchors.right: mnemonicGrid.right
         anchors.top: mnemonicGrid.bottom
-        anchors.topMargin: 40
+        anchors.topMargin: 24
         spacing: 10
         Image {
             id: noPictureImage
@@ -92,7 +92,7 @@ Page {
     MyButton3 {
         id: nextBtn
         anchors.top: tipRow.bottom
-        anchors.topMargin: 62
+        anchors.topMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("下一步")
         width: 200

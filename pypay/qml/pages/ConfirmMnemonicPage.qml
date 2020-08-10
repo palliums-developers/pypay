@@ -10,9 +10,9 @@ Page {
 
     ImageButton {
         anchors.top: parent.top
-        anchors.topMargin: 98
+        anchors.topMargin: 24
         anchors.left: parent.left
-        anchors.leftMargin: 92
+        anchors.leftMargin: 24
         width: 32
         source: "../icons/backarrow2.svg"
         MouseArea {
@@ -30,7 +30,7 @@ Page {
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 197.0 / 952 * parent.height
+        anchors.topMargin: 48
     }
     Text {
         id: title2Text
@@ -39,13 +39,13 @@ Page {
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: titleText.bottom
-        anchors.topMargin: 3
+        anchors.topMargin: 4
     }
 
     Row {
         id: gridRow
         anchors.top: title2Text.bottom
-        anchors.topMargin: 58
+        anchors.topMargin: 48 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 68
         
@@ -124,7 +124,7 @@ Page {
     MyButton3 {
         id: nextBtn
         anchors.top: gridRow.bottom
-        anchors.topMargin: 62
+        anchors.topMargin: 82 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("完成")
         width: 200
