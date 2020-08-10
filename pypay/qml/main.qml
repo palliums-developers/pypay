@@ -11,8 +11,8 @@ ApplicationWindow {
     id: appWindow
     width: 1440
     height: 1024
-    minimumWidth: 1024
-    minimumHeight: 768
+    minimumWidth: 960
+    minimumHeight: 540
     visible: true
     title: qsTr("桌面支付钱包")
 

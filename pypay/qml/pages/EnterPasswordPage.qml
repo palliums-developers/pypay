@@ -32,8 +32,8 @@ Page {
         anchors.top: parent.top
         anchors.topMargin: 278.0 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 642.0 / 1160 * parent.width
-        height: 50.0 / 952 * parent.height
+        //width: 642.0 / 1160 * parent.width
+        //height: 50.0 / 952 * parent.height
         placeholderText: qsTr("8-20位，大小写字母，数字")
         imageSource: eyeIsClose ? "../icons/eye_close.svg" : "../icons/eye_open.svg"
         onReturnKeyPressed: {
