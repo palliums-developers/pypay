@@ -56,8 +56,8 @@ class PayController(QObject):
     def shutdown(self):
         self._timer.stop()
         self.saveToFile()
-        #del self._client
-        #del self._libraClient
+        del self._client
+        del self._libraClient
 
     def __del__(self):
         if self._walletIsCreated == True:
