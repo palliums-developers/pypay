@@ -21,7 +21,7 @@ from libra_client.lbrtypes.account_state import AccountState
 from libra_client.lbrtypes.account_config import config_address
 from libra_client.lbrtypes.account_config import LBR_NAME
 from libra_client.lbrtypes.event import EventKey
-from libra_client.lbrtypes.chain_id import NamedChain
+from libra_client.lbrtypes import NamedChain
 
 import os
 from pathlib import Path
@@ -49,6 +49,11 @@ NETWORKS = {
     'bj_testnet': {
         "url": "http://47.93.114.230:50001",
         "faucet_file": f"{pre_path}/mint_bj.key",
+        'chain_id': NamedChain.TESTING
+},
+    'tmp_testnet': {
+        "url": "http://47.93.114.230:37339",
+        "faucet_file": f"{pre_path}/mint_tmp.key",
         'chain_id': NamedChain.TESTING
 }
 }
@@ -289,6 +294,8 @@ class Client():
                 response = requests.post(self.faucet_server, params=params)
                 if response.status_code == requests.codes.ok:
                     break
+                if response.status_code == 429:
+                    raise Exception(response.text)
             except:
                 import time
                 time.sleep(1)

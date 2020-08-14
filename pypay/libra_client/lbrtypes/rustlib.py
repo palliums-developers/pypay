@@ -1,4 +1,4 @@
-from libra_client.lbrtypes.error import LibraError
+from libra_client.error.error import LibraError
 from libra_client.lbrtypes.vm_error import StatusCode
 
 def ensure(code, msg):

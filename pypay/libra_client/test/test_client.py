@@ -1,6 +1,6 @@
 from libra_client.json_rpc.views import TransactionView, EventView
 from libra_client.lbrtypes.account_state import AccountState
-from libra_client.lbrtypes.error import LibraError
+from libra_client.error.error import LibraError
 from libra_client.lbrtypes.account_config import testnet_dd_account_address
 from libra_client import Client, Wallet
 from typing import List

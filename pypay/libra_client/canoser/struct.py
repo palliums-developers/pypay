@@ -89,7 +89,7 @@ class Struct(Base):
             assert mtype == prop.expected_type
             v = mtype.from_value(value.get(name))
             prop.__set__(ret, v)
-        if len(value) != len(ret.__dict__):
+        if len(value) > len(ret.__dict__):
             if not (value.get("type") is not None and len(value) == len(ret.__dict__)+1):
                 raise TypeError(f"Type mismatched {len(value)} != {len(ret.__dict__)}\n"
                                 f"source:{value},\n "
