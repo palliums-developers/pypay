@@ -1,18 +1,22 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import "../controls"
 
 Page {
-    Button {
+    MyButton5 {
         anchors.left: parent.left
         anchors.leftMargin: 68
         anchors.top: parent.top
         anchors.topMargin: 31
-        text: qsTr("My pool")
+        text: qsTr("我的资金池")
+        icon.source: "../icons/me.svg"
+        icon.width: 20
+        icon.height: 20
     }
 
     // Rate
     Text {
-        text: qsTr("Fee Rate: ") + "0.100%"
+        text: qsTr("费率: ") + "0.100%"
         font.pointSize: 14
         color: "#5C5C5C"
         anchors.right: changeInRec.right
@@ -27,44 +31,46 @@ Page {
         anchors.topMargin: 118.0 / 1024 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
         width: 635.0 / 1160 * parent.width
-        height: 94.0 / 952 * parent.height
+        height: 64
         border.color: inText.activeFocus ? "red" : "#C2C2C2"
         Text {
+            id: inT
             anchors.left: parent.left
-            anchors.leftMargin: 8
+            anchors.leftMargin: 2
             anchors.top: parent.top
-            anchors.topMargin: 8
-            text: qsTr("Input")
-            font.pointSize: 14
+            anchors.topMargin: 2
+            text: qsTr("转入")
+            font.pointSize: 12
             color: "#333333"
         }
         TextField {
             id: inText
-            anchors.left: parent.left
-            anchors.leftMargin: 8
+            anchors.left: inT.left
+            anchors.top: inT.bottom
+            anchors.topMargin: 2
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 8
-            width: 200
+            anchors.bottomMargin: 2
+            width: parent.width - inTokenComboBox.width - 4 * 2
             background: Rectangle {
                 border.color: "#FFFFFF"
             }
         }
-        ComboBox {
+        TokenComboBox {
+            id: inTokenComboBox
             anchors.right: parent.right
-            anchors.rightMargin: 8
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 12
-            model: ["Select token", "token1", "token2", "token3"]
+            anchors.rightMargin: 4
+            anchors.verticalCenter: inText.verticalCenter
         }
     }
 
-    Text {
+    Image {
         id: changeImage
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: changeInRec.bottom
-        anchors.topMargin: 5
+        anchors.topMargin: 4
         height: 24
-        text: "&"
+        fillMode: Image.PreserveAspectFit
+        source: "../icons/change.svg"
     }
 
     // Out
@@ -74,90 +80,80 @@ Page {
         anchors.topMargin: 5
         anchors.horizontalCenter: parent.horizontalCenter
         width: 635.0 / 1160 * parent.width
-        height: 94.0 / 952 * parent.height
+        height: 64
         border.color: outText.activeFocus ? "red" : "#C2C2C2"
         Text {
+            id: outT
             anchors.left: parent.left
-            anchors.leftMargin: 8
+            anchors.leftMargin: 2
             anchors.top: parent.top
-            anchors.topMargin: 8
-            text: qsTr("Output")
-            font.pointSize: 14
+            anchors.topMargin: 2
+            text: qsTr("转入")
+            font.pointSize: 12
             color: "#333333"
         }
         TextField {
             id: outText
-            anchors.left: parent.left
-            anchors.leftMargin: 8
+            anchors.left: outT.left
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 8
-            width: 200
+            anchors.bottomMargin: 2
+            anchors.top: outT.bottom
+            anchors.topMargin: 2
+            width: parent.width - outTokenComboBox.width - 4 * 2
             background: Rectangle {
                 border.color: "#FFFFFF"
             }
         }
-        ComboBox {
+        TokenComboBox {
+            id: outTokenComboBox
             anchors.right: parent.right
-            anchors.rightMargin: 8
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 12
-            model: ["Select token", "token1", "token2", "token3"]
+            anchors.rightMargin: 4
+            anchors.verticalCenter: outText.verticalCenter
         }
     }
     
-    // Change Rate and Fee
+    // Change Rate
     Column {
         anchors.left: changeOutRec.left
         anchors.leftMargin: 8
         anchors.top: changeOutRec.bottom
         anchors.topMargin: 8
         Text {
-            text: qsTr("Change rate: ") + "--"
+            text: qsTr("兑换率: ") + "--"
             font.pointSize: 12
             color: "#5C5C5C"
         }
         Text {
-            text: qsTr("Miner fee: ") + "--"
+            text: qsTr("当前资金池大小: ") + "--"
+            font.pointSize: 12
+            color: "#5C5C5C"
+        }
+        Text {
+            text: qsTr("你的资金池共有: ") + "--"
             font.pointSize: 12
             color: "#5C5C5C"
         }
     }
 
-    // Change button
-    Button {
+    // button
+    MyButton3 {
         id: changeButton
-        text: qsTr("Change")
+        text: qsTr("转入")
         hoverEnabled: true
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: changeOutRec.bottom
         anchors.topMargin: 77.0 / 952 * parent.height
         width: 280
         height: 46
-
-        contentItem: Text {
-            text: changeButton.text
-            font: changeButton.font
-            color: "#FFFFFF"
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
-        }
-
-        background: Rectangle {
-            implicitWidth: changeButton.width
-            implicitHeight: changeButton.height
-            color: "#6131AB"
-            radius: changeButton.height / 2
-        }
     }
 
-    // Change history
+    // history
     Text {
         id: changeHistoryText
         anchors.left: changeOutRec.left
         anchors.top: changeButton.bottom
         anchors.topMargin: 74.0 / 952 * parent.height
-        text: qsTr("Pool histrory")
+        text: qsTr("资金池记录")
         color: "#3D3949"
         font.pointSize: 16
     }
