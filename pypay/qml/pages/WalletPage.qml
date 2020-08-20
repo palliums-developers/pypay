@@ -9,8 +9,9 @@ Page {
     rightPadding: 138
     topPadding: 69
     signal backupMnemonicClicked
-    signal receiveClicked
     signal sendClicked
+    signal receiveClicked
+    signal exchangeClicked
 
     Image {       
         id: walletImage
@@ -77,6 +78,23 @@ Page {
             id: receiveBtn
             icon.source: "../icons/receive.svg"
             text: qsTr("收款")
+            anchors.right: exchangeBtn.left
+            anchors.rightMargin: 30
+            anchors.verticalCenter: amountText.verticalCenter
+            width: 114
+            visible: appSettings.walletIsCreate
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    receiveClicked()
+                }
+            }
+        }
+        // 映射
+        MyButton2 {
+            id: exchangeBtn
+            icon.source: "../icons/exchange.svg"
+            text: qsTr("映射")
             anchors.right: parent.right
             anchors.rightMargin: 60
             anchors.verticalCenter: amountText.verticalCenter
@@ -85,7 +103,7 @@ Page {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    receiveClicked()
+                    exchangeClicked()
                 }
             }
         }

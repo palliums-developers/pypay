@@ -258,6 +258,9 @@ ApplicationWindow {
                     onSendClicked: {
                         walletStack.push(sendPage)
                     }
+                    onExchangeClicked: {
+                        walletStack.push(exchangePage)
+                    }
                 }
             }
 
@@ -275,6 +278,16 @@ ApplicationWindow {
             Component {
                 id: sendPage
                 SendPage {
+                    onBackArrowClicked: {
+                        walletStack.pop()
+                    }
+                }
+            }
+
+            // 映射
+            Component {
+                id: exchangePage
+                ExchangePage {
                     onBackArrowClicked: {
                         walletStack.pop()
                     }
