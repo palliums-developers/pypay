@@ -3,7 +3,21 @@
 #
 import sys
 import os
-import signal
+
+MIN_PYTHON_VERSION = "3.6.1"  # FIXME duplicated from setup.py
+_min_python_version_tuple = tuple(map(int, (MIN_PYTHON_VERSION.split("."))))
+
+if sys.version_info[:3] < _min_python_version_tuple:
+    sys.exit("Error: PyPay requires Python version >= %s..." % MIN_PYTHON_VERSION)
+
+def check_imports():
+    # pure-python dependencies need to be imported here for pyinstaller
+    try:
+        import qrcode
+    except ImportError as e:
+        sys.exit(f"Error: {str(e)}. Try 'sudo python3 -m pip install <module-name>'")
+
+check_imports()
 
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PyQt5.QtGui import QGuiApplication, QIcon
@@ -12,13 +26,11 @@ from pypay import PayController, TokenEntry, TokenModel
 from pypay import HistoryEntry, HistoryModel
 from pypay import BitTransactionEntry, BitTransactionModel
 from pypay import AddrBookEntry, AddrBookModel
-
-def quit(signum, frame):
-    sys.exit(0)
+from pypay import util
 
 if __name__ == '__main__':
-    #signal.signal(signal.SIGINT, quit)
-
+    # The hook will only be used in the Qt GUI right now
+    util.setup_thread_excepthook()
     QGuiApplication.setAttribute(Qt.AA_EnableHighDpiScaling);
 
     app = QGuiApplication(sys.argv)
