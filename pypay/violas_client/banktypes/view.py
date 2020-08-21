@@ -37,6 +37,7 @@ class TransactionView(LibraTransactionView):
         event = self.get_bank_event()
         if event is not None:
             return event.get_amount()
+        return amount
 
     def get_currency_code(self):
         currency_code = super().get_currency_code()
@@ -45,6 +46,7 @@ class TransactionView(LibraTransactionView):
         event = self.get_bank_event()
         if event is not None:
             return event.get_currency_code()
+        return currency_code
 
     def get_data(self):
         data = super().get_data()
@@ -52,6 +54,7 @@ class TransactionView(LibraTransactionView):
             event = self.get_bank_event()
             if event is not None:
                 return event.get_data()
+        return data
 
 
 
