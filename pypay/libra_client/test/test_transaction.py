@@ -97,7 +97,7 @@ def test_get_data():
     [a1, a2] = create_accounts(2)
     seq = client.mint_coin(a1.address, 100, auth_key_prefix=a1.auth_key_prefix, is_blocking=True)
     tx = client.get_account_transaction(testnet_dd_account_address(), seq)
-    assert tx.get_data() == None
+    assert tx.get_data() == ""
 
     data = b"data"
     seq = client.mint_coin(a2.address, 100, auth_key_prefix=a2.auth_key_prefix, is_blocking=True)

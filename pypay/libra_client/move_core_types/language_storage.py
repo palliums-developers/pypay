@@ -3,7 +3,6 @@ from .account_address import AccountAddress
 from .identifier import Identifier
 from libra_client.crypto.hash import gen_hasher
 
-
 CODE_TAG = 0
 RESOURCE_TAG = 1
 

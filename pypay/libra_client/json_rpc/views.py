@@ -32,7 +32,6 @@ class ParentVASPView(Struct):
 class AccountRoleView(RustEnum):
     _enums = [
         ("unknown", None),
-        ("empty", None),
         ("child_vasp", str),
         ("parent_vasp", ParentVASPView),
         ("designated_dealer", DesignatedDealerView)
@@ -40,16 +39,15 @@ class AccountRoleView(RustEnum):
 
     @classmethod
     def from_value(cls, value):
-        if value == "unknown":
+        tp = value.get("type")
+        if tp == "unknown":
             return cls("unknown", None)
-        if value == "empty":
-            return cls("empty", None)
-        if value.get("child_vasp") is not None:
-            return cls("child_vasp", value.get("child_vasp"))
-        if value.get("parent_vasp") is not None:
-            return cls("parent_vasp", ParentVASPView.from_value(value.get("parent_vasp")))
-        if value.get("designated_dealer") is not None:
-            return cls("designated_dealer", DesignatedDealerView.from_value(value.get("designated_dealer")))
+        if tp == ("child_vasp"):
+            return cls("child_vasp", value)
+        if tp == ("parent_vasp"):
+            return cls("parent_vasp", ParentVASPView.from_value(value))
+        if tp == ("designated_dealer"):
+            return cls("designated_dealer", DesignatedDealerView.from_value(value))
 
 class AccountView(Struct):
     _fields = [
@@ -583,23 +581,21 @@ class VMStatusView(RustEnum):
 
     @classmethod
     def from_value(cls, value):
-        if isinstance(value, str):
-            if value == "executed":
-                return cls("Executed", None)
-            if value == "out_of_gas":
-                return cls("OutOfGas", None)
-            if value == "verification_error":
-                return cls("VerificationError", None)
-            if value == "deserialization_error":
-                return cls("DeserializationError", None)
-            if value == "publishing_failure":
-                return cls("PublishingFailure", None)
-        if isinstance(value, dict):
-            if value.get("move_abort"):
-                return cls("MoveAbort", MoveAbortView.from_value(value.get("move_abort")))
-            if value.get("execution_failure"):
-                return cls("ExecutionFailure", ExecutionFailureView.from_value(value.get("execution_failure")))
-
+        tp = value.get("type")
+        if tp == "executed":
+            return cls("Executed", None)
+        if tp == "out_of_gas":
+            return cls("OutOfGas", None)
+        if tp == "move_abort":
+            return cls("MoveAbort", MoveAbortView.from_value(value))
+        if tp == "execution_failure":
+            return cls("ExecutionFailure", ExecutionFailureView.from_value(value))
+        if tp == "verification_error":
+            return cls("VerificationError", None)
+        if tp == "deserialization_error":
+            return cls("DeserializationError", None)
+        if tp == "publishing_failure":
+            return cls("PublishingFailure", None)
 
 class TransactionView(Struct):
     _fields = [

@@ -74,7 +74,6 @@ class Struct(Base):
             prop = getattr(ret, name)
             mtype = type_mapping(atype)
             assert mtype == prop.expected_type
-
             value = mtype.decode(cursor)
             prop.__set__(ret, value)
         return ret
