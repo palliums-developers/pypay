@@ -8,6 +8,11 @@ Page {
     signal backArrowClicked
     signal sendClicked
 
+    function getBalnace(chain, name) {
+        console.log("chain: ", chain, "name: ", name)
+        payController.getCurBalance(chain, name)
+    }
+
     ImageButton {
         anchors.top: parent.top
         anchors.topMargin: 98
@@ -50,13 +55,19 @@ Page {
         TextFieldComboBox {
             id: amountTextField
             placeholderText: qsTr("输入金额")
+            Component.onCompleted: {
+                getBalnace(chain, name)
+            }
+            onTokenSelectedChanged: {
+                getBalnace(chain, name)
+            }
         }
     }
 
     // 余额
     Text {
         id: balanceText
-        text: qsTr("余额: ")
+        text: qsTr("余额: ") + payController.curBalance
         anchors.left: inputColumn.left
         anchors.leftMargin: 10
         anchors.top: inputColumn.bottom

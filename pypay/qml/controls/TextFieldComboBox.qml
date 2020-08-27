@@ -12,6 +12,7 @@ Rectangle {
     property alias text: textField.text
     property alias chain: control.chain
     property alias name: control.name
+    signal tokenSelectedChanged
 
     TextField {
         id: textField
@@ -32,5 +33,8 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 5
         anchors.verticalCenter: parent.verticalCenter
+        onTokenSelected: {
+            tokenSelectedChanged()
+        }
     }
 }

@@ -53,6 +53,7 @@ class PayController(QObject):
         self._historyModel = HistoryModel()
         self._rates = {}
         self._totalBalance = 0
+        self._curBalance = 0
 
     @pyqtSlot()
     def shutdown(self):
@@ -542,3 +543,17 @@ class PayController(QObject):
     @pyqtProperty(float, notify=totalBalanceChanged)
     def totalBalance(self):
         return self._totalBalance
+
+    # 币种余额
+    @pyqtSlot(str, str)
+    def getCurBalance(self, chain, name):
+        for data in self._tokenModelData:
+            if data['chain'] == chain and data['name'] == name:
+                print("getCurBalance: ", data['amount'])
+                self._curBalance = data['amount']
+        self.curBalanceChanged.emit()
+
+    curBalanceChanged = pyqtSignal()
+    @pyqtProperty(float, notify=curBalanceChanged)
+    def curBalance(self):
+        return self._curBalance
