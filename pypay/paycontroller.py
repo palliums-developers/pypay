@@ -329,7 +329,7 @@ class PayController(QObject):
         for key, value in balances.items():
             amount = value / 1_000_000
             rate = self.getRate(key)
-            totalPrice = amount * rate
+            totalPrice = round(amount * rate, 2)
             print("rate: ", rate)
             self._tokenModel.changeData({'chain':'libra', 'name':key, 'amount':amount, 'totalPrice':totalPrice})
             for data in self._tokenModelData:
@@ -346,7 +346,7 @@ class PayController(QObject):
         for key, value in balances.items():
             amount = value / 1_000_000
             rate = self.getRate(key)
-            totalPrice = amount * rate
+            totalPrice = round(amount * rate, 2)
             print("rate: ", rate)
             self._tokenModel.changeData({'chain':'violas', 'name':key, 'amount':amount, 'totalPrice':totalPrice})
             for data in self._tokenModelData:
@@ -533,8 +533,9 @@ class PayController(QObject):
     def updateTotalBalance(self):
         sum = 0
         for data in self._tokenModelData:
+            #print("totalBalance: ", data['totalPrice'])
             sum += data['totalPrice']
-        self._totalBalance = sum
+        self._totalBalance = round(sum, 2)
         self.totalBalanceChanged.emit()
 
     totalBalanceChanged = pyqtSignal()
