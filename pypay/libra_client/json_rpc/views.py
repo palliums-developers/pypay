@@ -473,7 +473,8 @@ class UserTransaction(Struct):
 class BlockMetadataView(Struct):
     _fields = [
         ("version", Uint64),
-        ("timestamp", Uint64)
+        ("timestamp", Uint64),
+        ("chain_id", Uint8)
     ]
 
     @classmethod
@@ -485,6 +486,9 @@ class BlockMetadataView(Struct):
 
     def get_timestamp(self):
         return self.timestamp // 10**6
+
+    def get_chain_id(self):
+        return int(self.chain_id)
 
 class BlockMetadata(Struct):
     _fields = [

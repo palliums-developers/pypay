@@ -66,3 +66,13 @@ class Violas(QObject):
                 print(result)
         else:
             pass
+
+    # exchange rates
+    
+    exchangeRatesChanged = pyqtSignal(dict)
+
+    @pyqtSlot()
+    def requestExchangeRates(self):
+        r = requests.get('https://api.exchangeratesapi.io/latest?base=USD')
+        rates = r.json()['rates']
+        self.exchangeRatesChanged.emit(rates)

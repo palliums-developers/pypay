@@ -51,6 +51,8 @@ class PayController(QObject):
         self._isImportWallet = False
         self._timer = QTimer()
         self._historyModel = HistoryModel()
+        self._rates = {}
+        self._totalBalance = 0
 
     @pyqtSlot()
     def shutdown(self):
@@ -85,6 +87,8 @@ class PayController(QObject):
     requestLibraHistory = pyqtSignal(dict)
     requestLBRAddCurOfAccount = pyqtSignal(str, bool)
     requestVLSAddCurOfAccount = pyqtSignal(str, bool)
+    requestExchangeRates = pyqtSignal()
+    requestTotalBalances = pyqtSignal()
 
     # 钱包
     @pyqtSlot()
@@ -159,6 +163,8 @@ class PayController(QObject):
         self._vls.historyChanged.connect(self.history_violas)                   # history
         self.requestViolasHistory.connect(self._vls.requestHistory)
         self.requestVLSAddCurOfAccount.connect(self._vls.requestAddCurOfAccount)
+        self.requestExchangeRates.connect(self._vls.requestExchangeRates)
+        self._vls.exchangeRatesChanged.connect(self.updateExchangeRates)
         self._vls.moveToThread(self._vlsThread)
         self._vlsThread.start()
 
@@ -168,8 +174,11 @@ class PayController(QObject):
 
         self._walletIsCreated = True
 
+        self.requestTotalBalances.connect(self.updateTotalBalance)
         self._timer.timeout.connect(self._timeUpdate)
-        self._timer.start(10000)
+        self._timer.start(5000)
+
+        self.requestExchangeRates.emit()
 
     @pyqtSlot(str)
     def createWalletFromMnemonic(self, mnemonic):
@@ -280,7 +289,7 @@ class PayController(QObject):
     def updateBitBalance(self, balance, usdBalance):
         self._tokenModel.changeData({'chain':'bitcoin', 'name':"BTC", 'amount':balance, 'totalPrice':usdBalance})
         for data in self._tokenModelData:
-            if data['name'] == 'BTC':
+            if data['chain'] == 'bitcoin' and data['name'] == 'BTC':
                 data['amount'] = balance
                 data['totalPrice'] = usdBalance
 
@@ -314,20 +323,36 @@ class PayController(QObject):
     # 更新Libra账户余额
     @pyqtSlot(dict)
     def updateLibraBalances(self, balances):
+        print("libra: ", balances)
+        if not balances:
+            self.requestActiveLibraAccount.emit()
         for key, value in balances.items():
-            self._tokenModel.changeData({'chain':'libra', 'name':key, 'amount':value, 'totalPrice':0})
+            amount = value / 1_000_000
+            rate = self.getRate(key)
+            totalPrice = amount * rate
+            print("rate: ", rate)
+            self._tokenModel.changeData({'chain':'libra', 'name':key, 'amount':amount, 'totalPrice':totalPrice})
             for data in self._tokenModelData:
                 if data['chain'] == 'libra' and data['name'] == key:
-                    data['amount'] = value
+                    data['amount'] = amount
+                    data['totalPrice'] = totalPrice
 
     # 更新Violas账户余额
     @pyqtSlot(dict)
     def updateViolasBalances(self, balances):
+        print("violas: ", balances)
+        if not balances:
+            self.requestActiveViolasAccount.emit()
         for key, value in balances.items():
-            self._tokenModel.changeData({'chain':'violas', 'name':key, 'amount':value, 'totalPrice':0})
+            amount = value / 1_000_000
+            rate = self.getRate(key)
+            totalPrice = amount * rate
+            print("rate: ", rate)
+            self._tokenModel.changeData({'chain':'violas', 'name':key, 'amount':amount, 'totalPrice':totalPrice})
             for data in self._tokenModelData:
                 if data['chain'] == 'violas' and data['name'] == key:
-                    data['amount'] = value
+                    data['amount'] = amount
+                    data['totalPrice'] = totalPrice
 
     # tokenmodel 保存，恢复
     def loadFromFile(self):
@@ -343,6 +368,8 @@ class PayController(QObject):
                 for d in self._addrBookModelData:
                     entry = AddrBookEntry(d)
                     self._addrBookModel.append(entry)
+
+        self.updateTotalBalance()
 
     def saveToFile(self):
         with open('pypay.tokenmodel', 'wb') as f:
@@ -407,7 +434,7 @@ class PayController(QObject):
         self.currentSelectedAddrChanged.emit()
 
     # 发送
-    @pyqtSlot(str, str, str)
+    @pyqtSlot(str, str, str, str)
     def sendCoin(self, addr, amount, chain, name):
         amount = int(amount)
         if chain == 'bitcoin':
@@ -480,6 +507,7 @@ class PayController(QObject):
         self.requestViolasCurrencies.emit()
         self.requestLibraBalances.emit()
         self.requestViolasBalances.emit()
+        self.requestTotalBalances.emit()
 
         self.saveToFile()
 
@@ -487,3 +515,29 @@ class PayController(QObject):
     @pyqtProperty(QObject, constant=True)
     def historyModel(self):
         return self._historyModel
+
+    # 汇率
+    @pyqtSlot(dict)
+    def updateExchangeRates(self, rates):
+        print("rates: ", rates)
+        self._rates = rates
+
+    def getRate(self, cur):
+        for c, r in self._rates.items():
+            if c in cur:
+                return r
+        return 1
+
+    # 总资产
+    @pyqtSlot()
+    def updateTotalBalance(self):
+        sum = 0
+        for data in self._tokenModelData:
+            sum += data['totalPrice']
+        self._totalBalance = sum
+        self.totalBalanceChanged.emit()
+
+    totalBalanceChanged = pyqtSignal()
+    @pyqtProperty(float, notify=totalBalanceChanged)
+    def totalBalance(self):
+        return self._totalBalance

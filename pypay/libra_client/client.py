@@ -289,6 +289,7 @@ class Client():
             "auth_key": (auth_key_prefix+receiver).hex(),
             "currency_code": currency_code
         }
+        try_time = 3
         while True:
             try:
                 response = requests.post(self.faucet_server, params=params)
@@ -296,7 +297,10 @@ class Client():
                     break
                 if response.status_code == 429:
                     raise Exception(response.text)
-            except:
+            except Exception as e:
+                try_time -= 1
+                if try_time < 0:
+                    raise e
                 import time
                 time.sleep(1)
         body = response.text

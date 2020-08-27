@@ -51,7 +51,7 @@ Page {
             anchors.top: totalText.bottom
             anchors.topMargin: 20
             anchors.left: totalText.left
-            text: appSettings.eyeIsOpen ? qsTr("$ 0.00") : "******"
+            text: appSettings.eyeIsOpen ? qsTr("$ ") + payController.totalBalance : "******"
             font.pointSize: 20
             color: "#FFFFFF"
         }

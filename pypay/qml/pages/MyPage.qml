@@ -41,7 +41,7 @@ Control {
                     color: "#999999"
                 }
                 Text {
-                    text: appSettings.eyeIsOpen ? qsTr("$ 0.00") : "******"
+                    text: appSettings.eyeIsOpen ? qsTr("$ ") + payController.totalBalance : "******"
                     font.pointSize: 18
                 }
             }
