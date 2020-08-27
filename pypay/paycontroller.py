@@ -128,7 +128,8 @@ class PayController(QObject):
         self._bit.moveToThread(self._bitThread)
         self._bitThread.start()
 
-        self._client = Client("violas_testnet")
+        #self._client = Client("violas_testnet")
+        self._client = Client("violas_testnet_out")
         self._libraClient = LibraClient("libra_testnet")
         if isFirstCreateWallet or self._isImportWallet:
             # 默认币种列表: BTC, LBR, VLS
@@ -437,13 +438,16 @@ class PayController(QObject):
     # 发送
     @pyqtSlot(str, str, str, str)
     def sendCoin(self, addr, amount, chain, name):
-        amount = int(amount)
+        amount = float(amount)
         if chain == 'bitcoin':
+            amount = int(amount * 1_0000_0000)
             pass
         elif chain == 'libra':
+            amount = int(amount * 1_000_000)
             self._libraClient.transfer_coin(self._wallet.accounts[0], 
                     addr, amount, currency_code=name)
         elif chain == 'violas':
+            amount = int(amount * 1_000_000)
             self._client.transfer_coin(self._wallet.accounts[0], 
                     addr, amount, currency_code=name)
 
@@ -527,7 +531,7 @@ class PayController(QObject):
         for c, r in self._rates.items():
             if c in cur:
                 return r
-        return 1
+        return 0
 
     # 总资产
     @pyqtSlot()

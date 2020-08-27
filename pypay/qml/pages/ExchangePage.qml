@@ -7,6 +7,10 @@ Page {
     signal backArrowClicked
     property string chain: "bitcoin"
 
+    function getBalance(chain, name) {
+        payController.getCurBalance(chain, name)
+    }
+
     ImageButton {
         id: backBtn
         anchors.top: parent.top
@@ -48,7 +52,7 @@ Page {
         }
         Text {
             anchors.verticalCenter: tipImage.verticalCenter
-            text: qsTr("可用余额: ")
+            text: qsTr("可用余额: ") + payController.curBalance
             font.pointSize: 12
             color: "#5C5C5C"
         }
@@ -62,6 +66,13 @@ Page {
         anchors.top: parent.top
         anchors.topMargin: 147 / 825 * parent.height
         width: 636 / 1160 * parent.width
+        isShowViolasCoin: false
+        Component.onCompleted: {
+            getBalance(chain, name)
+        }
+        onTokenSelectedChanged: {
+            getBalance(chain, name)
+        }
     }
     
     // 箭头

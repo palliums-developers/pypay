@@ -219,6 +219,7 @@ Page {
                         text: appSettings.eyeIsOpen ? tokenEntry.amount : "******"
                         color: "#333333"
                         font.pointSize: 16
+                        anchors.right: parent.right
                     }
                     Text {
                         text: appSettings.eyeIsOpen ? "≈$" + tokenEntry.totalPrice : "******"

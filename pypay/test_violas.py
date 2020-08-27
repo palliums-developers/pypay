@@ -1,27 +1,90 @@
 # violas test
-# addr: 34a1a1b8e159193a524bb26f40e8eacf
 
 from violas_client import Wallet, Client
 
+##wallet = Wallet.new()
+#wallet = Wallet.new_from_mnemonic("exercise kitchen spawn catalog hair intact shrimp stem version flee ozone exhibit")
+#mnemonic = wallet.mnemonic
+#print("mnemonic: ", mnemonic)
+#
+#account = wallet.new_account()
+#address = wallet.accounts[0].address_hex
+#print("address: ", address)
+#
+##client = Client("violas_testnet")
+#client = Client("violas_testnet_out")
+#balance = client.get_balance(account.address, "LBR")
+#print("balance: ", balance)
+#
+#client.mint_coin(account.address, 10_000_000, auth_key_prefix=account.auth_key_prefix, is_blocking=True)
+#balance = client.get_balance(account.address, "LBR")
+#print("balance: ", balance)
+#
+#client.mint_coin(account.address, 10_000_000, auth_key_prefix=account.auth_key_prefix, is_blocking=True, currency_code="EUR")
+#client.transfer_coin(account, '332c87f481f1180a34410d795d12cf9d', 100, currency_code='EUR')
+
+
+
+# --------------------------------------
+# 钱包                                                                                            
+#wallet = Wallet.new_from_mnemonic('head invite face tomato away romance kite avoid edge hotel try debate')                                                                               
+#print("mnemonic: ", wallet.mnemonic)                                                                
+
+# 账户地址                                                                                          
+#account = wallet.new_account()                                                                      
+#print("account addr: ", account.address.hex())                                                      
+#account1 = wallet.new_account()                                                                     
+#print("account1 addr: ", account1.address.hex())                                                    
+
+# 账户余额                                                                                          
+#client = Client("violas_testnet_out")                                                                   
+#print("account balance: ", client.get_balance(account.address))                                     
+#print("account1 balance: ", client.get_balance(account1.address))                                   
+
+# 铸币                                                                                              
+#client.mint_coin(account.address, 10_000_000, auth_key_prefix=account.auth_key_prefix, currency_code="LBR")
+#client.mint_coin(account1.address, 10_000_000, auth_key_prefix=account1.auth_key_prefix, currency_code="LBR")
+#print("account balance: ", client.get_balance(account.address))                                     
+#print("account1 balance: ", client.get_balance(account1.address))                                   
+
+# 转账                                                                                              
+#client.mint_coin(account1.address, 1_000_000, auth_key_prefix=account.auth_key_prefix, currency_code="LBR")
+#client.transfer_coin(account, account1.address, 1_000_000)                                          
+#print("account balance: ", client.get_balance(account.address))                                     
+#print("account1 balance: ", client.get_balance(account1.address))                                   
+
+# 添加币种                                                                                          
+#client.add_currency_to_account(account, currency_code="Coin1")                                      
+#client.mint_coin(account.address_hex, 10_000_000, auth_key_prefix=account.auth_key_prefix, currency_code="Coin1")
+#balances = client.get_balances(account.address_hex)                                                 
+#print("Coin1: ", balances["Coin1"])                                                                 
+
+# 转账Coin1                                                                                         
+#client.add_currency_to_account(account1, currency_code="Coin1")                                     
+#client.mint_coin(account1.address_hex, 10_000_000, auth_key_prefix=account1.auth_key_prefix, currency_code="Coin1")
+#client.transfer_coin(account, account1.address, 1_000_000, currency_code="Coin1")                   
+#balances = client.get_balances(account.address_hex)                                                 
+#print("account Coin1: ", balances["Coin1"])                                                         
+#balances1 = client.get_balances(account1.address_hex)                                               
+#print("account1 Coin1: ", balances1["Coin1"])
+
+
+# -------------------------------------------------------
 #wallet = Wallet.new()
-wallet = Wallet.new_from_mnemonic("exercise kitchen spawn catalog hair intact shrimp stem version flee ozone exhibit")
+wallet = Wallet.new_from_mnemonic('tobacco pass render slam margin annual essay evoke expand finger eager host')                                                                               
 mnemonic = wallet.mnemonic
-print("mnemonic: ", mnemonic)
+print(mnemonic)
+client = Client("violas_testnet_out")                                                                   
 
-account = wallet.new_account()
-address = wallet.accounts[0].address_hex
-print("address: ", address)
+account = wallet.new_account()                                                                      
+print("account addr: ", account.address.hex())                                                      
 
-client = Client()
-balance = client.get_balance(account.address, "LBR")
-print("balance: ", balance)
+client.mint_coin(account.address, 10_000_000, auth_key_prefix=account.auth_key_prefix, currency_code="LBR")
 
-'''
-client.mint_coin(account.address, 10_000_000, auth_key_prefix=account.auth_key_prefix, is_blocking=True)
-balance = client.get_balance(account.address, "LBR")
-print("balance: ", balance)
-'''
+client.add_currency_to_account(account, currency_code="EUR")                                      
+client.mint_coin(account.address, 10_000_000, auth_key_prefix=account.auth_key_prefix, currency_code="EUR")
 
+client.transfer_coin(account, 'd62d9449068aa3a39ccf13669c6080ed', 1_000_000, currency_code="EUR")                   
 
-client.mint_coin(account.address, 10_000_000, auth_key_prefix=account.auth_key_prefix, is_blocking=True, currency_code="VLSUSD")
-client.transfer_coin(account, '332c87f481f1180a34410d795d12cf9d', 100, currency_code='VLSUSD')
+balances = client.get_balances(account.address_hex)                                                 
+print(balances)

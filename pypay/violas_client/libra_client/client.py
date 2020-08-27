@@ -44,6 +44,10 @@ NETWORKS = {
         "url": "http://51.140.241.96:50001",
         "faucet_file": f"{pre_path}/mint_test.key"
     },
+    'violas_testnet_out':{
+        "url": "http://52.151.2.66:50001",
+        "faucet_file": f"{pre_path}/mint_external.key"
+    },
     'tmp_testnet': {
         "url": "http://47.93.114.230:37339",
         "faucet_file": f"{pre_path}/mint_tmp.key"

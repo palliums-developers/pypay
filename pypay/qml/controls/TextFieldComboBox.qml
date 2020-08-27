@@ -13,6 +13,7 @@ Rectangle {
     property alias chain: control.chain
     property alias name: control.name
     signal tokenSelectedChanged
+    property bool isShowViolasCoin: true
 
     TextField {
         id: textField
@@ -33,6 +34,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 5
         anchors.verticalCenter: parent.verticalCenter
+        isShowViolasCoin: root.isShowViolasCoin
         onTokenSelected: {
             tokenSelectedChanged()
         }

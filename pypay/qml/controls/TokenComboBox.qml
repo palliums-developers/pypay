@@ -14,6 +14,7 @@ Rectangle {
     property alias chain: tkEntry.chain
     property alias name: tkEntry.name
     signal tokenSelected
+    property bool isShowViolasCoin: true
 
     TokenEntry {
         id: tkEntry
@@ -107,8 +108,8 @@ Rectangle {
                 ScrollIndicator.vertical: ScrollIndicator { }
                 delegate: Rectangle {
                     width: listView.width
-                    height: tokenEntry.isShow ? 60 : -8
-                    visible: tokenEntry.isShow
+                    height: (tokenEntry.isShow && (root.isShowViolasCoin ? true : tokenEntry.chain != 'violas')) ? 60 : -8
+                    visible: tokenEntry.isShow && (root.isShowViolasCoin ? true : tokenEntry.chain != 'violas')
                     radius: 8
                     color: "#EBEBF1"
                     RowLayout {
