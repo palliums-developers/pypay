@@ -18,11 +18,17 @@ Button {
         source: control.selected? "../icons/menubuttonbackground.svg" : ""
     }
 
-    contentItem: RowLayout {
+    contentItem: Row {
+        anchors.left: parent.left
+        anchors.leftMargin: 50
+        anchors.verticalCenter: parent.verticalCenter
         spacing: 8
         Image {
-            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+            id: conImage
             source: control.icon.source
+            anchors.verticalCenter: parent.verticalCenter
+            width: 24
+            fillMode: Image.PreserveAspectFit
         }
         Text {
             text: control.text
@@ -31,6 +37,7 @@ Button {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
+            anchors.verticalCenter: parent.verticalCenter
         }
     }
 }

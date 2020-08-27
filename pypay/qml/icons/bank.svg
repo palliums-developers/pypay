@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59 (86127) - https://sketch.com -->
+    <title>编组 16</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="数字银行首页-已登录" transform="translate(-87.000000, -329.000000)">
+            <g id="编组-16" transform="translate(87.000000, 329.000000)">
+                <rect id="矩形" fill="#FFFFFF" opacity="0" x="0" y="0" width="24" height="24"></rect>
+                <g id="编组-24" transform="translate(4.000000, 3.000000)">
+                    <path d="M8,3.49636914 C10.4099698,3.49636914 12.3636364,5.45003569 12.3636364,7.86000551 L12.3636364,15.2529114 L10.9083636,15.2523691 L10.9090909,8 C10.9090909,6.39335346 9.60664654,5.09090909 8,5.09090909 C6.39335346,5.09090909 5.09090909,6.39335346 5.09090909,8 L5.09036364,15.2523691 L3.63636364,15.2529114 L3.63636364,7.86000551 C3.63636364,5.45003569 5.59003018,3.49636914 8,3.49636914 Z M8,6.54545455 C8.80332327,6.54545455 9.45454545,7.19667673 9.45454545,8 L9.45436364,15.2523691 L6.54536364,15.2523691 L6.54545455,8 C6.54545455,7.19667673 7.19667673,6.54545455 8,6.54545455 Z" id="形状结合" fill="#A78DD0"></path>
+                    <polyline id="路径-20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="square" points="0 5.09090909 7.95579578 0 16 5.09090909"></polyline>
+                    <line x1="0.727272727" y1="17.0909091" x2="15.2727273" y2="17.0909091" id="路径-25" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="square"></line>
+                    <line x1="1.45454545" y1="8.72727273" x2="1.45454545" y2="14.5454545" id="路径-27" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="square"></line>
+                    <line x1="14.5454545" y1="8.72727273" x2="14.5454545" y2="14.5454545" id="路径-27备份" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="square"></line>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

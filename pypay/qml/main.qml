@@ -26,15 +26,28 @@ ApplicationWindow {
     function showWalletPage() {
         walletMenuBtn.selected = true
         marketMenuBtn.selected = false
+        bankMenuBtn.selected = false
         walletStack.visible = true
         marketStack.visible = false
+        bankStack.visible = false
     }
 
     function showMarketPage() {
         walletMenuBtn.selected = false
         marketMenuBtn.selected = true
+        bankMenuBtn.selected = false
         walletStack.visible = false
         marketStack.visible = true
+        bankStack.visible = false
+    }
+
+    function showBankPage() {
+        walletMenuBtn.selected = false
+        marketMenuBtn.selected = false
+        bankMenuBtn.selected = true
+        walletStack.visible = false
+        marketStack.visible = false
+        bankStack.visible = true
     }
 
     function showCreatePage(b) {
@@ -78,7 +91,8 @@ ApplicationWindow {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            width: parent.width > 1920 ? leftRecWidth2 : leftRecWidth1
+            //width: parent.width > 1920 ? leftRecWidth2 : leftRecWidth1
+            width: leftRecWidth1
             color: "#501BA2"
             z: 999
             // logo
@@ -120,6 +134,19 @@ ApplicationWindow {
                 text: qsTr("市场")
                 onClicked: {
                     showMarketPage()
+                }
+            }
+            MenuButton {
+                id: bankMenuBtn
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: marketMenuBtn.bottom
+                anchors.topMargin: 10
+                height: 80
+                icon.source: "icons/bank.svg"
+                text: qsTr("数字银行")
+                onClicked: {
+                    showBankPage()
                 }
             }
         }
@@ -316,6 +343,21 @@ ApplicationWindow {
             Component {
                 id: marketPage
                 MarketPage {
+                }
+            }
+
+            // Bank view
+            StackView {
+                id: bankStack
+                anchors.fill: parent
+                initialItem: bankPage
+                visible: false
+            }
+
+            // Bank page
+            Component {
+                id: bankPage
+                BankPage {
                 }
             }
 
