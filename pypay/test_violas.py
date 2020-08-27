@@ -20,8 +20,8 @@ from violas_client import Wallet, Client
 #balance = client.get_balance(account.address, "LBR")
 #print("balance: ", balance)
 #
-#client.mint_coin(account.address, 10_000_000, auth_key_prefix=account.auth_key_prefix, is_blocking=True, currency_code="EUR")
-#client.transfer_coin(account, '332c87f481f1180a34410d795d12cf9d', 100, currency_code='EUR')
+#client.mint_coin(account.address, 10_000_000, auth_key_prefix=account.auth_key_prefix, is_blocking=True, currency_code="VLSUSD")
+#client.transfer_coin(account, '332c87f481f1180a34410d795d12cf9d', 100, currency_code='VLSUSD')
 
 
 
@@ -81,10 +81,10 @@ print("account addr: ", account.address.hex())
 
 client.mint_coin(account.address, 10_000_000, auth_key_prefix=account.auth_key_prefix, currency_code="LBR")
 
-client.add_currency_to_account(account, currency_code="EUR")                                      
-client.mint_coin(account.address, 10_000_000, auth_key_prefix=account.auth_key_prefix, currency_code="EUR")
+#client.add_currency_to_account(account, currency_code="VLSUSD")
+client.mint_coin(account.address, 10_000_000, auth_key_prefix=account.auth_key_prefix, currency_code="VLSUSD")
 
-client.transfer_coin(account, 'd62d9449068aa3a39ccf13669c6080ed', 1_000_000, currency_code="EUR")                   
+#client.transfer_coin(account, 'e2edbffdec21a9873e79baebd80dc47f', 1_000_000, currency_code="VLSUSD")
 
-balances = client.get_balances(account.address_hex)                                                 
+balances = client.get_balances(account.address_hex)
 print(balances)
