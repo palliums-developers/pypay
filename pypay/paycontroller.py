@@ -6,6 +6,7 @@ import threading
 import qrcode
 import qrcode.image
 import logging
+import pathlib
 from violas_client import Wallet, Client
 from libra_client import Client as LibraClient
 from .tokenmodel import TokenEntry, TokenModel
@@ -54,6 +55,12 @@ class PayController(QObject):
         self._rates = {}
         self._totalBalance = 0
         self._curBalance = 0
+        self._datadir = self.get_datadir() / "pypay"
+        self.datadirChanged.emit()
+        try:
+            self._datadir.mkdir(parents = True)
+        except FileExistsError:
+            pass
 
     @pyqtSlot()
     def shutdown(self):
@@ -64,16 +71,16 @@ class PayController(QObject):
 
     def __del__(self):
         if self._walletIsCreated == True:
-            #self._bitThread.quit()
-            self._bitThread.terminate()
+            self._bitThread.quit()
+            #self._bitThread.terminate()
             self._bitThread.wait()
 
-            #self._lbrThread.quit()
-            self._lbrThread.terminate()
+            self._lbrThread.quit()
+            #self._lbrThread.terminate()
             self._lbrThread.wait()
 
-            #self._vlsThread.quit()
-            self._vlsThread.terminate()
+            self._vlsThread.quit()
+            #self._vlsThread.terminate()
             self._vlsThread.wait()
 
     requestBitBalance = pyqtSignal()
@@ -95,7 +102,7 @@ class PayController(QObject):
     @pyqtSlot()
 
     def createWallet(self):
-        fileName = "pypay.wallet"
+        fileName = self._datadir / "pypay.wallet"
         isFirstCreateWallet = True
         if os.path.exists(fileName):
             self._wallet = Wallet.recover(fileName)
@@ -185,7 +192,7 @@ class PayController(QObject):
     @pyqtSlot(str)
     def createWalletFromMnemonic(self, mnemonic):
         self._isImportWallet = True
-        fileName = "pypay.wallet"
+        fileName = self._datadir / "pypay.wallet"
         with open(fileName, 'w') as f:
             f.write(mnemonic + ';1')
         self.createWallet()
@@ -358,14 +365,16 @@ class PayController(QObject):
 
     # tokenmodel 保存，恢复
     def loadFromFile(self):
-        if os.path.exists('pypay.tokenmodel'):
-            with open('pypay.tokenmodel', 'rb') as f:
+        filename = self._datadir / 'pypay.tokenmodel'
+        if os.path.exists(filename):
+            with open(filename, 'rb') as f:
                 self._tokenModelData = pickle.load(f)
                 for d in self._tokenModelData:
                     entry = TokenEntry(d)
                     self._tokenModel.appendToken(entry)
-        if os.path.exists('pypay.addrbookmodel'):
-            with open('pypay.addrbookmodel', 'rb') as f:
+        filename = self._datadir / 'pypay.addrbookmodel'
+        if os.path.exists(filename):
+            with open(filename, 'rb') as f:
                 self._addrBookModelData = pickle.load(f)
                 for d in self._addrBookModelData:
                     entry = AddrBookEntry(d)
@@ -374,9 +383,11 @@ class PayController(QObject):
         self.updateTotalBalance()
 
     def saveToFile(self):
-        with open('pypay.tokenmodel', 'wb') as f:
+        filename = self._datadir / 'pypay.tokenmodel'
+        with open(filename, 'wb') as f:
             pickle.dump(self._tokenModelData, f)
-        with open('pypay.addrbookmodel', 'wb') as f:
+        filename = self._datadir / 'pypay.addrbookmodel'
+        with open(filename, 'wb') as f:
             pickle.dump(self._addrBookModelData, f)
 
     # 更新是否显示token
@@ -472,7 +483,7 @@ class PayController(QObject):
         qr.make(fit=True)
 
         img = qr.make_image(fill_color="black", back_color="white")
-        imgFile = 'pypay/qml/icons/qr_{}.png'
+        imgFile = str(self._datadir) + '/qr_{}.png'
         img.save(imgFile.format(token))
 
     # 交易记录
@@ -561,3 +572,29 @@ class PayController(QObject):
     @pyqtProperty(float, notify=curBalanceChanged)
     def curBalance(self):
         return self._curBalance
+
+    def get_datadir(self) -> pathlib.Path:
+        """
+        Returns a parent directory path
+        where persistent application data can be stored.
+
+        # linux: ~/.local/share
+        # macOS: ~/Library/Application Support
+        # windows: C:/Users/<USER>/AppData/Roaming
+        """
+
+        home = pathlib.Path.home()
+
+        if sys.platform == "win32":
+            return home / "AppData/Roaming"
+        elif sys.platform == "linux":
+            return home / ".local/share"
+        elif sys.platform == "darwin":
+            return home / "Library/Application Support"
+
+    datadirChanged = pyqtSignal()
+    @pyqtProperty(str, notify=datadirChanged)
+    def datadir(self):
+        return str(self._datadir)
+
+

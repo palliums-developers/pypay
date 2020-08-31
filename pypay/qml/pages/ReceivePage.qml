@@ -8,7 +8,7 @@ Page {
     property string chain: "bitcoin"
 
     function getImageSource() {
-        var src = "../icons/qr_%1-%2.png"
+        var src = payController.datadir + "/qr_%1-%2.png"
         return src.arg(tokenComboBox.chain).arg(tokenComboBox.name)
     }
 

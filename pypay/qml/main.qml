@@ -60,7 +60,7 @@ ApplicationWindow {
 
     Settings {
         id: appSettings
-        fileName: "pypay.ini"
+        fileName: payController.datadir + "/pypay.ini"
         property alias x: appWindow.x
         property alias y: appWindow.y
         property alias width: appWindow.width
@@ -75,6 +75,7 @@ ApplicationWindow {
         if (appSettings.walletIsCreate) {   // TODO load
             payController.createWallet()
         }
+        console.log(payController.datadir)
     }
 
     onClosing: {
