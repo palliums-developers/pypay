@@ -64,16 +64,16 @@ class PayController(QObject):
 
     def __del__(self):
         if self._walletIsCreated == True:
-            self._bitThread.quit()
-            #self._bitThread.terminate()
+            #self._bitThread.quit()
+            self._bitThread.terminate()
             self._bitThread.wait()
 
-            self._lbrThread.quit()
-            #self._lbrThread.terminate()
+            #self._lbrThread.quit()
+            self._lbrThread.terminate()
             self._lbrThread.wait()
 
-            self._vlsThread.quit()
-            #self._vlsThread.terminate()
+            #self._vlsThread.quit()
+            self._vlsThread.terminate()
             self._vlsThread.wait()
 
     requestBitBalance = pyqtSignal()
@@ -118,7 +118,7 @@ class PayController(QObject):
 
         self._wallet.write_recovery(fileName)
 
-        self._bitThread = QThread(self)
+        self._bitThread = QThread(parent=self)
         self._bit = Bit(self._bitKey)
         self._bitThread.finished.connect(self._bit.deleteLater)
         self.requestBitBalance.connect(self._bit.requestBalance)
@@ -139,7 +139,7 @@ class PayController(QObject):
             self.loadFromFile()
 
         # libra相关操作
-        self._lbrThread = QThread(self)
+        self._lbrThread = QThread(parent=self)
         self._lbr = Libra(self._libraClient, self._wallet.accounts)
         self._lbrThread.finished.connect(self._lbr.deleteLater)
         self.requestActiveLibraAccount.connect(self._lbr.requestActiveAccount)  # active account
@@ -154,7 +154,7 @@ class PayController(QObject):
         self._lbrThread.start()
 
         # violas相关操作
-        self._vlsThread = QThread(self)
+        self._vlsThread = QThread(parent=self)
         self._vls = Violas(self._client, self._wallet.accounts)
         self._vlsThread.finished.connect(self._vls.deleteLater)
         self.requestActiveViolasAccount.connect(self._vls.requestActiveAccount) # active account
