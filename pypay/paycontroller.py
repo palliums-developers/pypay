@@ -7,6 +7,7 @@ import qrcode
 import qrcode.image
 import logging
 import pathlib
+import json
 from violas_client import Wallet, Client
 from libra_client import Client as LibraClient
 from .tokenmodel import TokenEntry, TokenModel
@@ -56,6 +57,7 @@ class PayController(QObject):
         self._totalBalance = 0
         self._curBalance = 0
         self._datadir = self.get_datadir() / "pypay"
+        self._swap_to_addr = {}
         self.datadirChanged.emit()
         try:
             self._datadir.mkdir(parents = True)
@@ -188,6 +190,8 @@ class PayController(QObject):
         self._timer.start(5000)
 
         self.requestExchangeRates.emit()
+
+        # TODO https://api .violas.io//1.0/market/exchange/crosschain/address/info
 
     @pyqtSlot(str)
     def createWalletFromMnemonic(self, mnemonic):
@@ -598,3 +602,66 @@ class PayController(QObject):
         return str(self._datadir)
 
 
+    @pyqtSlot(str, str, float, str, str, float)
+    def swap_from_violas_or_libra(self, chain_name_in, coin_name_in, coin_amount_in, chain_name_out, coin_name_out, coin_amount_out):
+        flag = ''
+        type = ''
+        to_addr = ''
+        to_addr2 = ''
+
+        if chain_name_in == 'libra' and chain_name_out == 'violas':
+            flag = 'libra'
+            if coin_name_out == 'VLSUSD':
+                type = 'l2vusd'
+            elif coin_name_out == 'VLSGBP':
+                type = 'l2vgbp'
+            elif coin_name_out == 'VLSEUR':
+                type = 'l2veur'
+            elif coin_name_out == 'VLSJPY':
+                type = 'l2vjpy'
+            elif coin_name_out == 'VLSSGD':
+                type = 'l2vsgd'
+            to_addr = self._swap_to_addr[type]
+            to_addr2 = "00000000000000000000000000000000" + self._swap_to_addr[type]
+
+        else if chain_name_in == 'libra' and chain_name_out == 'bitcoin':
+            flag = 'libra'
+            type = 'l2b'
+            to_addr = self._swap_to_addr[type]
+            to_addr2 = self._swap_to_addr[type]
+
+        else if chain_name_in == 'violas' and chain_name_out == 'libra':
+            flag = 'violas'
+            if coin_name_out == 'Coin1':
+                type = 'v2lusd'
+            elif coin_name_out == 'Coin2':
+                type = 'v2leur'
+            to_addr = self._swap_to_addr[type]
+            to_addr2 = "00000000000000000000000000000000" + self._swap_to_addr[type]
+
+        else if chain_name_in == 'violas' and chain_name_out == 'bitcoin':
+            flag = 'violas'
+            type = 'v2b'
+            to_addr = self._swap_to_addr[type]
+            to_addr2 = self._swap_to_addr[type]
+
+        print("flag: ", flag, "type: ", type, "to_address: ", to_addr)
+        payload = {"flag": flag, "type": type, "to_address": to_address2, "state":"start", "out_amount":coin_amount_out * 1_000_000, "times":0}
+
+        if chain_name_in == 'libra':
+            self._libraClient.transfer_coin(self._wallet.accounts[0], 
+                    to_addr, coin_amount_in * 1_000_000, currency_code=coin_name_in, data=json.dumps(payload))
+        elif chain_name_in == 'violas':
+            self._client.transfer_coin(self._wallet.accounts[0], 
+                    to_addr, coin_amount_in * 1_000_000, currency_code=coin_name_in, data=json.dumps(payload))
+
+
+    @pyqtSlot(float, str, str, float)
+    def swap_from_bitcoin(self, coin_amount_in, chain_name_out, coin_name_out, coin_amount_out):
+        pass
+        #mark = 0x76696f6c6173
+        #version = 0x0003
+
+        #type = 
+        #if chain_name_out == 'violas':
+        #    if coin_name_out == 'VLSUSD':
