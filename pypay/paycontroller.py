@@ -11,6 +11,8 @@ import json
 from violas_client import Wallet, Client
 from libra_client import Client as LibraClient
 from .tokenmodel import TokenEntry, TokenModel
+from .depositmodel import DepositEntry, DepositModel
+from .borrowmodel import BorrowEntry, BorrowModel
 from .tokentypemodel import TokenTypeModel
 from .bittransactionmodel import BitTransactionEntry, BitTransactionModel
 from .bit import Bit
@@ -58,6 +60,12 @@ class PayController(QObject):
         self._curBalance = 0
         self._datadir = self.get_datadir() / "pypay"
         self._swap_to_addr = {}
+        self._deposit = 0
+        self._borrow = 0
+        self._income = 0
+        self._lastdayincome = 0
+        self._depositModel = DepositModel()
+        self._borrowModel = BorrowModel()
         self.datadirChanged.emit()
         try:
             self._datadir.mkdir(parents = True)
@@ -73,16 +81,16 @@ class PayController(QObject):
 
     def __del__(self):
         if self._walletIsCreated == True:
-            self._bitThread.quit()
-            #self._bitThread.terminate()
+            #self._bitThread.quit()
+            self._bitThread.terminate()
             self._bitThread.wait()
 
-            self._lbrThread.quit()
-            #self._lbrThread.terminate()
+            #self._lbrThread.quit()
+            self._lbrThread.terminate()
             self._lbrThread.wait()
 
-            self._vlsThread.quit()
-            #self._vlsThread.terminate()
+            #self._vlsThread.quit()
+            self._vlsThread.terminate()
             self._vlsThread.wait()
 
     requestBitBalance = pyqtSignal()
@@ -624,13 +632,13 @@ class PayController(QObject):
             to_addr = self._swap_to_addr[type]
             to_addr2 = "00000000000000000000000000000000" + self._swap_to_addr[type]
 
-        else if chain_name_in == 'libra' and chain_name_out == 'bitcoin':
+        elif chain_name_in == 'libra' and chain_name_out == 'bitcoin':
             flag = 'libra'
             type = 'l2b'
             to_addr = self._swap_to_addr[type]
             to_addr2 = self._swap_to_addr[type]
 
-        else if chain_name_in == 'violas' and chain_name_out == 'libra':
+        elif chain_name_in == 'violas' and chain_name_out == 'libra':
             flag = 'violas'
             if coin_name_out == 'Coin1':
                 type = 'v2lusd'
@@ -639,7 +647,7 @@ class PayController(QObject):
             to_addr = self._swap_to_addr[type]
             to_addr2 = "00000000000000000000000000000000" + self._swap_to_addr[type]
 
-        else if chain_name_in == 'violas' and chain_name_out == 'bitcoin':
+        elif chain_name_in == 'violas' and chain_name_out == 'bitcoin':
             flag = 'violas'
             type = 'v2b'
             to_addr = self._swap_to_addr[type]
@@ -665,3 +673,37 @@ class PayController(QObject):
         #type = 
         #if chain_name_out == 'violas':
         #    if coin_name_out == 'VLSUSD':
+
+    # 存款总额
+    depositChanged = pyqtSignal()
+    @pyqtProperty(float, notify=depositChanged)
+    def deposit(self):
+        return self._deposit
+
+    # 可借总额
+    borrowChanged = pyqtSignal()
+    @pyqtProperty(float, notify=borrowChanged)
+    def borrow(self):
+        return self._borrow
+
+    # 累计收益
+    incomeChanged = pyqtSignal()
+    @pyqtProperty(float, notify=incomeChanged)
+    def income(self):
+        return self._income
+
+    # 昨日收益
+    lastdayincomeChanged = pyqtSignal()
+    @pyqtProperty(float, notify=lastdayincomeChanged)
+    def lastdayincome(self):
+        return self._lastdayincome
+
+    # 存款
+    @pyqtProperty(QObject, constant=True)
+    def depositModel(self):
+        return self._depositModel
+
+    # 借款
+    @pyqtProperty(QObject, constant=True)
+    def borrowModel(self):
+        return self._borrowModel

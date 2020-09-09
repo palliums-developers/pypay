@@ -8,3 +8,5 @@ from .tokentypemodel import TokenTypeModel
 from .bittransactionmodel import BitTransactionEntry, BitTransactionModel
 from .addrbookmodel import AddrBookEntry, AddrBookModel
 from .historymodel import HistoryEntry, HistoryModel
+from .depositmodel import DepositEntry, DepositModel
+from .borrowmodel import BorrowEntry, BorrowModel

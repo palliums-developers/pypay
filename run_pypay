@@ -22,15 +22,12 @@ check_imports()
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PyQt5.QtGui import QGuiApplication, QIcon
 from PyQt5.QtCore import QUrl, Qt
-from pypay import PayController, TokenEntry, TokenModel
+from pypay import PayController, TokenEntry, TokenModel, DepositEntry, DepositModel, BorrowEntry, BorrowModel
 from pypay import HistoryEntry, HistoryModel
 from pypay import BitTransactionEntry, BitTransactionModel
 from pypay import AddrBookEntry, AddrBookModel
-from pypay import util
 
 if __name__ == '__main__':
-    # The hook will only be used in the Qt GUI right now
-    util.setup_thread_excepthook()
     QGuiApplication.setAttribute(Qt.AA_EnableHighDpiScaling);
 
     app = QGuiApplication(sys.argv)
@@ -45,6 +42,10 @@ if __name__ == '__main__':
     qmlRegisterType(AddrBookModel, "PyPay", 1, 0, "AddrBookModel")
     qmlRegisterType(HistoryEntry, "PyPay", 1, 0, "HistoryEntry")
     qmlRegisterType(HistoryModel, "PyPay", 1, 0, "HistoryModel")
+    qmlRegisterType(DepositEntry, "PyPay", 1, 0, "DepositEntry")
+    qmlRegisterType(DepositModel, "PyPay", 1, 0, "DepositModel")
+    qmlRegisterType(BorrowEntry, "PyPay", 1, 0, "BorrowEntry")
+    qmlRegisterType(BorrowModel, "PyPay", 1, 0, "BorrowModel")
 
     payController = PayController()
 
