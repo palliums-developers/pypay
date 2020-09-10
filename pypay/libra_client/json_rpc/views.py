@@ -27,6 +27,8 @@ class ParentVASPView(Struct):
         ("expiration_time", Uint64),
         ("compliance_key", str),
         ("num_children", Uint64),
+        ("compliance_key_rotation_events_key", str),
+        ("base_url_rotation_events_key", str)
     ]
 
 class AccountRoleView(RustEnum):
@@ -242,7 +244,26 @@ class UnknownEvent(Struct):
         return None
 
     def get_data(self):
-        return None
+        return self.raw
+
+
+class ReceivedMint(Struct):
+    _fields = [
+        ("amount", AmountView),
+        ("destination_address", str)
+    ]
+
+class ComplianceKeyRotation(Struct):
+    _fields = [
+        ("new_compliance_public_key", str),
+        ("time_rotated_seconds", Uint64)
+    ]
+
+class BaseUrlRotation(Struct):
+    _fields = [
+        ("new_base_url", str),
+        ("time_rotated_seconds", Uint64),
+    ]
 
 class EventDataView(RustEnum):
     _enums = [
@@ -256,6 +277,9 @@ class EventDataView(RustEnum):
         ("Upgrade", UpgradeEvent),
         ("NewEpoch", NewEpochEvent),
         ("NewBlock", NewBlockEvent),
+        ("ReceivedMint", ReceivedMint),
+        ("ComplianceKeyRotation", ComplianceKeyRotation),
+        ("BaseUrlRotation", BaseUrlRotation),
         ("Unknown", UnknownEvent)
     ]
 
@@ -279,6 +303,12 @@ class EventDataView(RustEnum):
             return cls("NewEpoch", NewEpochEvent.from_value(value))
         if value["type"] == "newblock":
             return cls("NewBlock", NewBlockEvent.from_value(value))
+        if value["type"] == "receivedmint":
+            return cls("NewBlock", ReceivedMint.from_value(value))
+        if value["type"] == "compliancekeyrotation":
+            return cls("NewBlock", ComplianceKeyRotation.from_value(value))
+        if value["type"] == "baseurlrotation":
+            return cls("NewBlock", BaseUrlRotation.from_value(value))
         if value["type"] == "unknown":
             return cls("Unknown", UnknownEvent.from_value(value))
 
@@ -287,8 +317,8 @@ class EventDataView(RustEnum):
             return self.value.get_amount()
 
     def get_data(self):
-        if self.enum_name != "Unknown":
-            return self.value.get_data()
+        # if self.enum_name != "Unknown":
+        return self.value.get_data()
 
 
 class EventView(Struct):
@@ -679,26 +709,26 @@ class TransactionView(Struct):
 
     def get_receiver(self):
         receiver = self.transaction.get_receiver()
-        if receiver is None and self.get_code_type() in (CodeType.TESTNET_MINT, ):
-            for event in self.events:
-                if event.data.enum_name == "ReceivedPayment":
-                    return event.get_address()
+        # if receiver is None and self.get_code_type() in (CodeType.TESTNET_MINT, ):
+        #     for event in self.events:
+        #         if event.data.enum_name == "ReceivedPayment":
+        #             return event.get_address()
         return receiver
 
     def get_amount(self):
         amount = self.transaction.get_amount()
-        if amount is None and self.get_code_type() in (CodeType.TESTNET_MINT, ):
-            for event in self.events:
-                if event.data.enum_name == "ReceivedPayment":
-                    return event.get_amount().amount
+        # if amount is None and self.get_code_type() in (CodeType.TESTNET_MINT, ):
+        #     for event in self.events:
+        #         if event.data.enum_name == "ReceivedPayment":
+        #             return event.get_amount().amount
         return amount
 
     def get_currency_code(self):
         currency = self.transaction.get_currency_code()
-        if currency is None and self.get_code_type() in (CodeType.TESTNET_MINT, ):
-            for event in self.events:
-                if event.data.enum_name == "ReceivedPayment":
-                    return event.get_amount().currency
+        # if currency is None and self.get_code_type() in (CodeType.TESTNET_MINT, ):
+        #     for event in self.events:
+        #         if event.data.enum_name == "ReceivedPayment":
+        #             return event.get_amount().currency
         return currency
 
     def get_data(self):

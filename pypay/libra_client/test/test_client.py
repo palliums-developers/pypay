@@ -79,7 +79,6 @@ def test_get_currency_info():
     assert info != None
 
 
-
 def test_mint_coin():
     [a1] = create_accounts(1)
     client = create_client()
@@ -179,4 +178,3 @@ def test_get_event():
     assert len(events) == 0
     events = client.get_received_events(a3.address, 10, 10)
     assert len(events) == 0
-

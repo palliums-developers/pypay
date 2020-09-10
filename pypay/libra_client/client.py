@@ -68,7 +68,7 @@ class Client():
     WAIT_TRANSACTION_COUNT = 1000
     WAIT_TRANSACTION_INTERVAL = 0.1
 
-    def __init__(self, network="violas_testnet", waypoint: Optional[Waypoint]=None):
+    def __init__(self, network="libra_testnet", waypoint: Optional[Waypoint]=None):
         ensure(network in NETWORKS, "The specified chain does not exist")
         chain = NETWORKS[network]
         ensure("url" in chain, "The specified chain has no url")
@@ -163,12 +163,12 @@ class Client():
 
     def get_sent_events(self, address: Union[bytes, str], start: int, limit: int):
         address = Address.normalize_to_bytes(address)
-        event_key = EventKey.new_from_address(address, 1)
+        event_key = EventKey.new_from_address(address, 3)
         return self.client.get_events_by_access_path(event_key, start, limit)
 
     def get_received_events(self, address: Union[bytes, str], start: int, limit: int):
         address = Address.normalize_to_bytes(address)
-        event_key = EventKey.new_from_address(address, 0)
+        event_key = EventKey.new_from_address(address, 2)
         return self.client.get_events_by_access_path(event_key, start, limit)
 
     def get_specific_events(self, address: Union[bytes, str], id, start: int, limit: int):

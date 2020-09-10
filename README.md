@@ -7,5 +7,5 @@ pip install -r requirements.txt
 ```
 
 ## [client](https://github.com/palliums-developers/libra-client.git)
-- [libra](https://github.com/palliums-developers/libra-client/tree/v0.21/libra_client)
-- [violas](https://github.com/palliums-developers/libra-client/tree/v0.18/violas_client)
+- [libra](https://github.com/palliums-developers/libra-client/tree/v0.23/libra_client)
+- [violas](https://github.com/palliums-developers/libra-client/tree/v0.21-compoundv2/violas_client)

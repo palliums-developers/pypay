@@ -52,7 +52,7 @@ class JsonRpcClient():
         try:
             data = json.dumps(request)
             result = self.http.request("POST", self.url, body=data, timeout=JSON_RPC_TIMEOUT, preload_content=False)
-            result.release_conn()
+            # result.release_conn()
             return result
         except Exception as e:
             print(e)
