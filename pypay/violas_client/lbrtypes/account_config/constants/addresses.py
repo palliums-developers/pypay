@@ -15,3 +15,7 @@ def treasury_compliance_account_address() -> AccountAddress:
 
 def reserved_vm_address() ->AccountAddress:
     return AccountAddress.from_hex("0x0")
+
+def testnet_dd_account_address() ->AccountAddress:
+    return AccountAddress.from_hex("0xDD")
+

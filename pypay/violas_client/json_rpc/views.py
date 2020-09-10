@@ -1,5 +1,5 @@
 from typing import List
-from violas_client.canoser import Struct, Uint64, BoolT, StrT, RustEnum
+from violas_client.canoser import Struct, Uint64, BoolT, StrT, RustEnum, Uint8, Uint16
 from violas_client.lbrtypes.account_state import AccountState
 from violas_client.lbrtypes.bytecode import get_code_type, CodeType
 
@@ -7,6 +7,17 @@ class AmountView(Struct):
     _fields = [
         ("amount", Uint64),
         ("currency", StrT)
+    ]
+
+class DesignatedDealerView(Struct):
+    _fields = [
+        ("human_name", str),
+        ("base_url", str),
+        ("expiration_time", Uint64),
+        ("compliance_key", str),
+        ("preburn_balances", [AmountView]),
+        ("received_mint_events_key", str),
+
     ]
 
 class ParentVASPView(Struct):
@@ -21,24 +32,22 @@ class ParentVASPView(Struct):
 class AccountRoleView(RustEnum):
     _enums = [
         ("unknown", None),
-        ("unhosted", None),
-        ("empty", None),
         ("child_vasp", str),
         ("parent_vasp", ParentVASPView),
+        ("designated_dealer", DesignatedDealerView)
     ]
 
     @classmethod
     def from_value(cls, value):
-        if value == "unknown":
+        tp = value.get("type")
+        if tp == "unknown":
             return cls("unknown", None)
-        if value == "unhosted":
-            return cls("unhosted", None)
-        if value == "empty":
-            return cls("empty", None)
-        if value.get("child_vasp") is not None:
-            return cls("child_vasp", value.get("child_vasp"))
-        if value.get("parent_vasp") is not None:
-            return cls("parent_vasp", ParentVASPView.from_value(value.get("parent_vasp")))
+        if tp == ("child_vasp"):
+            return cls("child_vasp", value)
+        if tp == ("parent_vasp"):
+            return cls("parent_vasp", ParentVASPView.from_value(value))
+        if tp == ("designated_dealer"):
+            return cls("designated_dealer", DesignatedDealerView.from_value(value))
 
 class AccountView(Struct):
     _fields = [
@@ -187,6 +196,7 @@ class NewBlockEvent(Struct):
 class ReceivedPaymentEvent(Struct):
     _fields = [
         ("amount", AmountView),
+        ("currency_code", StrT),
         ("sender", StrT),
         ("metadata", StrT),
     ]
@@ -204,6 +214,7 @@ class ReceivedPaymentEvent(Struct):
 class SentPaymentEvent(Struct):
     _fields = [
         ("amount", AmountView),
+        ("currency_code", StrT),
         ("receiver", StrT),
         ("metadata", StrT),
     ]
@@ -231,7 +242,7 @@ class UnknownEvent(Struct):
         return None
 
     def get_data(self):
-        return None
+        return self.raw
 
 class EventDataView(RustEnum):
     _enums = [
@@ -276,8 +287,8 @@ class EventDataView(RustEnum):
             return self.value.get_amount()
 
     def get_data(self):
-        if self.enum_name != "Unknown":
-            return self.value.get_data()
+        # if self.enum_name != "Unknown":
+        return self.value.get_data()
 
 
 class EventView(Struct):
@@ -338,9 +349,9 @@ class PeerToPeerScript(Struct):
 class MintScript(Struct):
     _fields = [
         ("receiver", StrT),
+        ("currency", StrT),
         ("auth_key_prefix", StrT),
         ("amount", Uint64),
-        ("currency", StrT),
     ]
 
     def get_receiver(self):
@@ -400,11 +411,13 @@ class UserTransaction(Struct):
         ("signature", StrT),
         ("public_key", StrT),
         ("sequence_number", Uint64),
+        ("chain_id", Uint8),
         ("max_gas_amount", Uint64),
         ("gas_unit_price", Uint64),
         ("gas_currency", str),
-        ("expiration_time", Uint64),
+        ("expiration_timestamp_secs", Uint64),
         ("script_hash", StrT),
+        ("script_bytes", str),
         ("script", ScriptView)
     ]
 
@@ -433,7 +446,7 @@ class UserTransaction(Struct):
         return self.gas_unit_price
 
     def get_expiration_time(self):
-        return self.expiration_time
+        return self.expiration_timestamp_secs
 
     def get_script_hash(self):
         return self.script_hash
@@ -460,7 +473,8 @@ class UserTransaction(Struct):
 class BlockMetadataView(Struct):
     _fields = [
         ("version", Uint64),
-        ("timestamp", Uint64)
+        ("timestamp", Uint64),
+        ("chain_id", Uint8)
     ]
 
     @classmethod
@@ -472,6 +486,9 @@ class BlockMetadataView(Struct):
 
     def get_timestamp(self):
         return self.timestamp // 10**6
+
+    def get_chain_id(self):
+        return int(self.chain_id)
 
 class BlockMetadata(Struct):
     _fields = [
@@ -542,13 +559,56 @@ class TransactionDataView(RustEnum):
         if self.enum_name == "UnknownTransaction":
             return CodeType.UNKNOWN
 
+class MoveAbortView(Struct):
+    _fields = [
+        ("location", StrT),
+        ("abort_code", Uint64),
+    ]
+
+class ExecutionFailureView(Struct):
+    _fields = [
+        ("location", StrT),
+        ("function_index", Uint16),
+        ("code_offset", Uint16),
+    ]
+
+class VMStatusView(RustEnum):
+    _enums = [
+        ("Executed", None),
+        ("OutOfGas", None),
+        ("MoveAbort", MoveAbortView),
+        ("ExecutionFailure", ExecutionFailureView),
+        ("VerificationError", None),
+        ("DeserializationError", None),
+        ("PublishingFailure", None),
+    ]
+
+    @classmethod
+    def from_value(cls, value):
+        tp = value.get("type")
+        if tp == "executed":
+            return cls("Executed", None)
+        if tp == "out_of_gas":
+            return cls("OutOfGas", None)
+        if tp == "move_abort":
+            return cls("MoveAbort", MoveAbortView.from_value(value))
+        if tp == "execution_failure":
+            return cls("ExecutionFailure", ExecutionFailureView.from_value(value))
+        if tp == "verification_error":
+            return cls("VerificationError", None)
+        if tp == "deserialization_error":
+            return cls("DeserializationError", None)
+        if tp == "publishing_failure":
+            return cls("PublishingFailure", None)
+
 class TransactionView(Struct):
     _fields = [
         ("version", Uint64),
         ("transaction", TransactionDataView),
         ("hash", str),
+        ("bytes", str),
         ("events", [EventView]),
-        ("vm_status", Uint64),
+        ("vm_status", VMStatusView),
         ("gas_used", Uint64)
     ]
 
@@ -583,7 +643,7 @@ class TransactionView(Struct):
         return response.value
 
     def is_successful(self) -> bool:
-        return self.vm_status == 4001
+        return self.vm_status.enum_name == "Executed"
 
     def get_version(self) -> int:
         return self.version
@@ -594,7 +654,7 @@ class TransactionView(Struct):
     def get_events(self) -> List[EventView]:
         return self.events
 
-    def get_vm_status(self) -> int:
+    def get_vm_status(self):
         return self.vm_status
 
     def get_gas_used(self) -> int:
@@ -619,26 +679,26 @@ class TransactionView(Struct):
 
     def get_receiver(self):
         receiver = self.transaction.get_receiver()
-        if receiver is None and self.get_code_type() in (CodeType.MINT, ):
-            for event in self.events:
-                if event.data.enum_name == "ReceivedPayment":
-                    return event.get_address()
+        # if receiver is None and self.get_code_type() in (CodeType.TESTNET_MINT, ):
+        #     for event in self.events:
+        #         if event.data.enum_name == "ReceivedPayment":
+        #             return event.get_address()
         return receiver
 
     def get_amount(self):
         amount = self.transaction.get_amount()
-        if amount is None and self.get_code_type() in (CodeType.MINT, ):
-            for event in self.events:
-                if event.data.enum_name == "ReceivedPayment":
-                    return event.get_amount().amount
+        # if amount is None and self.get_code_type() in (CodeType.TESTNET_MINT, ):
+        #     for event in self.events:
+        #         if event.data.enum_name == "ReceivedPayment":
+        #             return event.get_amount().amount
         return amount
 
     def get_currency_code(self):
         currency = self.transaction.get_currency_code()
-        if currency is None and self.get_code_type() in (CodeType.MINT, ):
-            for event in self.events:
-                if event.data.enum_name == "ReceivedPayment":
-                    return event.get_amount().currency
+        # if currency is None and self.get_code_type() in (CodeType.TESTNET_MINT, ):
+        #     for event in self.events:
+        #         if event.data.enum_name == "ReceivedPayment":
+        #             return event.get_amount().currency
         return currency
 
     def get_data(self):
@@ -657,7 +717,7 @@ class TransactionView(Struct):
         tx["amount"] = self.get_amount()
         tx["currency_code"] = self.get_currency_code()
         tx["sequence_number"] = self.get_sequence_number()
-        tx["major_status"] = self.get_vm_status()
+        tx["major_status"] = str(self.get_vm_status())
         tx["version"] = self.get_version()
         tx["success"] = self.is_successful()
         tx["expiration_time"] = self.get_expiration_time()

@@ -1,8 +1,9 @@
 from violas_client.extypes.view import TransactionView as ExchangeTransactionView
 from violas_client.banktypes.view import TransactionView as BankTransactionView
+from violas_client.oracle_client.view import TransactionView as OracleTransactionView
 from violas_client.lbrtypes.bytecode import CodeType as LibraCodeType
 
-class TransactionView(ExchangeTransactionView, BankTransactionView):
+class TransactionView(ExchangeTransactionView, BankTransactionView, OracleTransactionView):
 
     @classmethod
     def new(cls, tx):

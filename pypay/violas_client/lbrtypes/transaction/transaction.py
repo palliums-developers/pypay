@@ -1,4 +1,4 @@
-from violas_client.canoser import Uint64, Struct, RustEnum
+from violas_client.canoser import Uint64, Uint8, Struct, RustEnum
 from violas_client.move_core_types.account_address import AccountAddress
 from violas_client.lbrtypes.transaction.change_set import ChangeSet
 from violas_client.lbrtypes.transaction.script import Script
@@ -31,7 +31,8 @@ class RawTransaction(Struct):
         ("max_gas_amount", Uint64),
         ("gas_unit_price", Uint64),
         ("gas_currency_code", str),
-        ("expiration_time", Uint64),
+        ("expiration_timestamp_secs", Uint64),
+        ("chain_id", Uint8)
     ]
 
     def get_sender(self):
@@ -53,6 +54,7 @@ class RawTransaction(Struct):
         shazer = gen_hasher(b"RawTransaction")
         shazer.update(self.serialize())
         return shazer.digest()
+
 
 class SignedTransaction(Struct):
     _fields = [

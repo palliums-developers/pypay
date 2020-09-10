@@ -41,7 +41,7 @@ class JsonRpcBatch():
         self.add_request("submit", [tx.hex()])
 
     def add_get_account_state_request(self, address: Union[str, bytes]):
-        self.add_request("get_account_state", [Address.normalize_to_bytes(address).hex()])
+        self.add_request("get_account", [Address.normalize_to_bytes(address).hex()])
 
     def add_get_metadata_request(self):
         self.add_request("get_metadata", [None])
@@ -122,7 +122,7 @@ class JsonRpcResponse(RustEnum):
         if method == "submit":
             ensure(value == None, f"received unexpected payload for submit: {value}")
             return JsonRpcResponse("SubmissionResponse")
-        if method == "get_account_state":
+        if method == "get_account":
             if value is None:
                 account_view = None
             else:

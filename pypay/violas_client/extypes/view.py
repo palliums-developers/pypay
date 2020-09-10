@@ -2,19 +2,20 @@ from violas_client.json_rpc.views import TransactionView as LibraTransactionView
 from violas_client.json_rpc.views import UserTransaction as LibraUserTransaction
 from violas_client.extypes.bytecode import get_code_type, CodeType
 from violas_client.lbrtypes.bytecode import CodeType as LibraCodeType
-from violas_client.extypes.exdep_resource import MintEvent, BurnEvent, SwapEvent
+from violas_client.extypes.exdep_resource import Event
 
 WITH_EVENT_TYPES = [CodeType.ADD_LIQUIDITY, CodeType.REMOVE_LIQUIDITY, CodeType.SWAP]
 
 def get_swap_event(code_type, data):
     if isinstance(data, str):
         data = bytes.fromhex(data)
-    if code_type == CodeType.SWAP:
-        return SwapEvent.deserialize(data)
-    if code_type == CodeType.ADD_LIQUIDITY:
-        return MintEvent.deserialize(data)
-    if code_type == CodeType.REMOVE_LIQUIDITY:
-        return BurnEvent.deserialize(data)
+    return Event.deserialize(data).get_event()
+    # if code_type == CodeType.SWAP:
+    #     return SwapEvent.deserialize(data)
+    # if code_type == CodeType.ADD_LIQUIDITY:
+    #     return MintEvent.deserialize(data)
+    # if code_type == CodeType.REMOVE_LIQUIDITY:
+    #     return BurnEvent.deserialize(data)
 
 class TransactionView(LibraTransactionView):
     @classmethod
@@ -25,7 +26,7 @@ class TransactionView(LibraTransactionView):
         if tx.get_code_type() in WITH_EVENT_TYPES:
             for event in ret.events:
                 data = event.get_data()
-                if len(data):
+                if data is not None and len(data):
                     event = get_swap_event(tx.get_code_type(), data)
                     ret.swap_event = event
                     break

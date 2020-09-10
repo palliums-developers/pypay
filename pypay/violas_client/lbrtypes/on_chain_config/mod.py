@@ -15,7 +15,7 @@ class ConfigID(Struct):
         return access_path_for_config(AccountAddress.from_hex(self.adddress), self.config_name)
 
 def config_address() -> AccountAddress:
-    return AccountAddress.from_hex("0xF1A95")
+    return AccountAddress.from_hex("0xA550C18")
 
 
 class OnChainConfigPayload(Struct):

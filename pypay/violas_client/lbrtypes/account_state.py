@@ -7,7 +7,6 @@ from violas_client.lbrtypes.on_chain_config.validator_set import ValidatorSet
 from violas_client.lbrtypes.block_metadata import LibraBlockResource
 from violas_client.lbrtypes.access_path import AccessPath
 
-
 class AccountState(Struct):
     _fields = [
         ("ordered_map", {bytes: bytes})

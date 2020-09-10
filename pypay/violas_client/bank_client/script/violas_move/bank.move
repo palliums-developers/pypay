@@ -1,6 +1,6 @@
-address 0x7257c2417e4d1038e1817c8f283ace2e {
+address 0x1 {
 
-module ViolasBank {
+module ViolasBank2 {
     use 0x1::Libra;
     use 0x1::LibraAccount;
     //use 0x1::Transaction;
@@ -12,6 +12,8 @@ module ViolasBank {
     use 0x1::LibraBlock;
     use 0x1::Signer;
     //use 0x1::LBR;
+    use 0x1::FixedPoint32;
+    use 0x1::Oracle;
     
     resource struct LibraToken<Token> {
 	coin: Libra::Libra<Token>,
@@ -70,6 +72,7 @@ module ViolasBank {
     resource struct TokenInfoStore {
 	supervisor: address,
 	tokens: vector<TokenInfo>,
+	withdraw_capability: LibraAccount::WithdrawCapability,
     }
     
     struct ViolasEvent {
@@ -148,6 +151,7 @@ module ViolasBank {
 	borrower: address,
 	amount: u64,
 	collateral_tokenidx: u64,
+	collateral_amount: u64,
 	data: vector<u8>,	    
     }
 
@@ -157,6 +161,15 @@ module ViolasBank {
 	factor: u64,
     }
 
+    struct EventUpdateRateModel {
+	currency_code: vector<u8>,
+	tokenidx: u64,
+	base_rate: u64,
+	rate_multiplier: u64,
+	rate_jump_multiplier: u64,
+	rate_kink: u64,
+    }
+    
     struct EventEnterBank {
 	currency_code: vector<u8>,
 	tokenidx: u64,
@@ -198,8 +211,8 @@ module ViolasBank {
     ///////////////////////////////////////////////////////////////////////////////////
     
     fun contract_address() : address {
-	0x7257c2417e4d1038e1817c8f283ace2e
-	// 0x0000000000000000000000000a550c18
+	0x00000000000000000000000042414e4b
+	// 0x8257c2417e4d1038e1817c8f283ace2e
     }
     
     fun require_published(sender: address) {
@@ -258,26 +271,40 @@ module ViolasBank {
 
     ///////////////////////////////////////////////////////////////////////////////////
 
-    // public fun print_balance<CoinType>(account: address) acquires LibraToken, Tokens {
-    // 	let libratoken = borrow_global<LibraToken<CoinType>>(contract_address());
-    // 	Debug::print(&x"01010101");
-    // 	Debug::print(&balance_of(libratoken.index, account));
-    // 	Debug::print(&balance_of(libratoken.index+1, account));
-    // }
+    public fun print_balance<CoinType>(account: address) acquires LibraToken, Tokens {
+    	let libratoken = borrow_global<LibraToken<CoinType>>(contract_address());
+	let tokens = borrow_global<Tokens>(account);
+	let borrowinfo = Vector::borrow(& tokens.borrows, libratoken.index);
+	let principal = borrowinfo.principal;
+	let interest_index = borrowinfo.interest_index;
+    	Debug::print(&x"01010101");
+    	Debug::print(&balance_of_index(libratoken.index, account));
+    	Debug::print(&balance_of_index(libratoken.index+1, account));
+    	Debug::print(&principal);
+    	Debug::print(&interest_index);
+    }
+
+    public fun balance<CoinType>(account: &signer) : u64 acquires LibraToken, Tokens {
+    	let libratoken = borrow_global<LibraToken<CoinType>>(contract_address());
+	let sender = Signer::address_of(account);
+	balance_of_index(libratoken.index, sender)
+    }
     
-    public fun balance_of(tokenidx: u64, account: address) : u64 acquires Tokens {
+    public fun balance_of_index(tokenidx: u64, account: address) : u64 acquires Tokens {
 	let tokens = borrow_global<Tokens>(account);
 	if(tokenidx < Vector::length(&tokens.ts)) {
 	    let t = Vector::borrow(& tokens.ts, tokenidx);
 	    t.value
 	} else { 0 }
     }
-    
-    // public fun balance(tokenidx: u64) : u64 acquires Tokens {
-    // 	balance_of(tokenidx, Transaction::sender())
-    // }
 
-    fun borrow_balance_of(tokenidx: u64, account: address) : u64 acquires Tokens, TokenInfoStore {
+    public fun borrow_balance<CoinType>(account: &signer) : u64 acquires LibraToken, Tokens, TokenInfoStore {
+    	let libratoken = borrow_global<LibraToken<CoinType>>(contract_address());
+	let sender = Signer::address_of(account);
+	borrow_balance_of_index(libratoken.index, sender)
+    }
+    
+    public fun borrow_balance_of_index(tokenidx: u64, account: address) : u64 acquires Tokens, TokenInfoStore {
 	// recentBorrowBalance = borrower.borrowBalance * market.borrowIndex / borrower.borrowIndex
 	let tokens = borrow_global<Tokens>(account);
 	let borrowinfo = Vector::borrow(& tokens.borrows, tokenidx);
@@ -289,10 +316,6 @@ module ViolasBank {
 	mantissa_div(mantissa_mul(borrowinfo.principal, ti.borrow_index), borrowinfo.interest_index)
     }
 
-    // fun borrow_balance(tokenidx: u64) : u64 acquires Tokens, TokenInfoStore {
-    // 	borrow_balance_of(tokenidx, Transaction::sender())
-    // }
-    
     public fun token_count() : u64 acquires TokenInfoStore {
 	let tokeninfos = borrow_global<TokenInfoStore>(contract_address());
 	Vector::length(&tokeninfos.tokens)
@@ -361,6 +384,11 @@ module ViolasBank {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////
+
+    public fun is_published(account: &signer) : bool {
+	let sender = Signer::address_of(account);
+	exists<Tokens>(sender)
+    }
     
     public fun publish(account: &signer, userdata: vector<u8>) acquires Tokens, TokenInfoStore, UserInfo {
 	let sender = Signer::address_of(account);
@@ -376,7 +404,8 @@ module ViolasBank {
 	});
 
 	if(sender == contract_address()) {
-	    move_to(account, TokenInfoStore{ supervisor: contract_address(),  tokens: Vector::empty() });
+	    let withdraw_capability = LibraAccount::extract_withdraw_capability(account);
+	    move_to(account, TokenInfoStore{ supervisor: contract_address(),  tokens: Vector::empty(), withdraw_capability: withdraw_capability });
 	};
 	
 	extend_user_tokens(sender);
@@ -611,9 +640,9 @@ module ViolasBank {
 	loop {
 	    if(i == len) break;
 
-	    let balance = balance_of(i+1, account);
+	    let balance = balance_of_index(i+1, account);
 	    let exchange_rate = exchange_rate(i);
-	    let borrow_balance = borrow_balance_of(i, account);
+	    let borrow_balance = borrow_balance_of_index(i, account);
 	    
 	    let tokeninfos = borrow_global<TokenInfoStore>(contract_address());
 	    let ti = Vector::borrow(& tokeninfos.tokens, i);
@@ -638,7 +667,15 @@ module ViolasBank {
     }
     
     ///////////////////////////////////////////////////////////////////////////////////
-
+    public fun update_price_from_oracle<CoinType>() acquires TokenInfoStore, LibraToken {
+	let (value, _) = Oracle::get_exchange_rate<CoinType>();
+	let libratoken = borrow_global<LibraToken<CoinType>>(contract_address());
+	let tokeninfos = borrow_global_mut<TokenInfoStore>(contract_address());
+	let ti = Vector::borrow_mut(&mut tokeninfos.tokens, libratoken.index);
+	ti.price = FixedPoint32::get_raw_value(value);
+    	Debug::print(&x"02020202");
+	Debug::print(&ti.price);
+    }
 
     public fun update_price<CoinType>(account: &signer, price: u64) acquires TokenInfoStore, UserInfo, LibraToken {
 	let libratoken = borrow_global<LibraToken<CoinType>>(contract_address());
@@ -665,6 +702,7 @@ module ViolasBank {
     }
 
     public fun lock<CoinType>(account: &signer, amount: u64, data: vector<u8>) acquires Tokens, TokenInfoStore, UserInfo, LibraToken {
+	update_price_from_oracle<CoinType>();
 	let libratoken = borrow_global<LibraToken<CoinType>>(contract_address());
 	lock_index(account, Libra::currency_code<CoinType>(), libratoken.index, amount, data);
     }
@@ -695,6 +733,7 @@ module ViolasBank {
     }
 
     public fun redeem<CoinType>(account: &signer, amount: u64, data: vector<u8>) acquires Tokens, TokenInfoStore, UserInfo, LibraToken {
+	update_price_from_oracle<CoinType>();
 	let libratoken = borrow_global<LibraToken<CoinType>>(contract_address());
 	redeem_index(account, Libra::currency_code<CoinType>(), libratoken.index, amount, data);
     }
@@ -716,7 +755,7 @@ module ViolasBank {
 
 	let token_amount = mantissa_div(amount, er);
 	if(amount == 0) {
-	    token_amount = balance_of(tokenidx+1, sender);
+	    token_amount = balance_of_index(tokenidx+1, sender);
 	    amount = mantissa_mul(token_amount, er);
 	};
 
@@ -743,6 +782,7 @@ module ViolasBank {
     }
 
     public fun borrow<CoinType>(account: &signer, amount: u64, data: vector<u8>) acquires Tokens, TokenInfoStore, UserInfo, LibraToken {
+	update_price_from_oracle<CoinType>();
 	let libratoken = borrow_global<LibraToken<CoinType>>(contract_address());
 	borrow_index(account, Libra::currency_code<CoinType>(), libratoken.index, amount, data);
     }
@@ -760,7 +800,7 @@ module ViolasBank {
 	let (sum_collateral, sum_borrow) = account_liquidity(sender, tokenidx, 0, amount);
 	assert(sum_collateral >= sum_borrow, 118);
 
-	let balance = borrow_balance_of(tokenidx, sender);
+	let balance = borrow_balance_of_index(tokenidx, sender);
 
 	let tokens = borrow_global_mut<Tokens>(sender);
 	let borrowinfo = Vector::borrow_mut(&mut tokens.borrows, tokenidx);
@@ -785,7 +825,7 @@ module ViolasBank {
     }
 
     fun repay_borrow_for(sender: address, tokenidx: u64, borrower: address, amount: u64) :u64 acquires Tokens, TokenInfoStore {
-	let balance = borrow_balance_of(tokenidx, borrower);
+	let balance = borrow_balance_of_index(tokenidx, borrower);
 	assert(amount <= balance, 119);
 	if(amount == 0) { amount = balance; };
 
@@ -803,8 +843,10 @@ module ViolasBank {
     }
 
     public fun repay_borrow<CoinType>(account: &signer, amount: u64, data: vector<u8>) acquires Tokens, TokenInfoStore, UserInfo, LibraToken {
+	update_price_from_oracle<CoinType>();
 	let libratoken = borrow_global<LibraToken<CoinType>>(contract_address());
 	repay_borrow_index(account, Libra::currency_code<CoinType>(), libratoken.index, amount, data);
+	print_balance<CoinType>(Signer::address_of(account));
     }
     
     public fun repay_borrow_index(account: &signer, currency_code: vector<u8>, tokenidx: u64, amount: u64, data: vector<u8>) acquires Tokens, TokenInfoStore, UserInfo {
@@ -829,6 +871,8 @@ module ViolasBank {
     }
 
     public fun liquidate_borrow<CoinType1, CoinType2>(account: &signer, borrower: address, amount: u64, data: vector<u8>) acquires Tokens, TokenInfoStore, UserInfo, LibraToken {
+	update_price_from_oracle<CoinType1>();
+	update_price_from_oracle<CoinType2>();
 	let libratoken1 = borrow_global<LibraToken<CoinType1>>(contract_address());
 	let libratoken2 = borrow_global<LibraToken<CoinType2>>(contract_address());
 	liquidate_borrow_index(account, Libra::currency_code<CoinType1>(), Libra::currency_code<CoinType2>(), libratoken1.index, borrower, amount, libratoken2.index, data);
@@ -850,7 +894,7 @@ module ViolasBank {
 	let (sum_collateral, sum_borrow) = account_liquidity(borrower, 99999, 0, 0);
 	assert(sum_collateral < sum_borrow, 120);
 
-	let borrowed = borrow_balance_of(tokenidx, borrower);
+	let borrowed = borrow_balance_of_index(tokenidx, borrower);
 	assert(amount <= borrowed, 121);
 
 	if(amount == 0) { amount = borrowed; };
@@ -878,6 +922,7 @@ module ViolasBank {
 	    borrower: borrower,
 	    amount: amount,
 	    collateral_tokenidx: collateral_tokenidx,
+	    collateral_amount: value,
 	    data: data,	    
 	};
 
@@ -908,14 +953,50 @@ module ViolasBank {
 	emit_events(account, 12, LCS::to_bytes(&input), Vector::empty());
     }
 
+    public fun update_rate_model<CoinType>(account: &signer, base_rate: u64, rate_multiplier: u64, rate_jump_multiplier: u64, rate_kink: u64) acquires TokenInfoStore, UserInfo, LibraToken {
+	let libratoken = borrow_global<LibraToken<CoinType>>(contract_address());
+	update_rate_model_index(account, Libra::currency_code<CoinType>(), libratoken.index, base_rate, rate_multiplier, rate_jump_multiplier, rate_kink);
+    }
+
+    public fun update_rate_model_index(account: &signer, currency_code: vector<u8>, tokenidx: u64, base_rate: u64, rate_multiplier: u64, rate_jump_multiplier: u64, rate_kink: u64) acquires TokenInfoStore, UserInfo {
+	let sender = Signer::address_of(account);
+	require_published(sender);
+	require_first_tokenidx(tokenidx);
+	require_supervisor(sender);
+	
+	let tokeninfos = borrow_global_mut<TokenInfoStore>(contract_address());
+	let ti = Vector::borrow_mut(&mut tokeninfos.tokens, tokenidx);
+	ti.base_rate = base_rate;
+	ti.rate_multiplier = rate_multiplier;
+	ti.rate_jump_multiplier = rate_jump_multiplier;
+	ti.rate_kink = rate_kink;
+	
+	let input = EventUpdateRateModel {
+	    currency_code: currency_code,
+	    tokenidx: tokenidx,
+	    base_rate: base_rate,
+	    rate_multiplier: rate_multiplier,
+	    rate_jump_multiplier: rate_jump_multiplier,
+	    rate_kink: rate_kink,
+	};
+	
+	emit_events(account, 15, LCS::to_bytes(&input), Vector::empty());
+    }
+    
     public fun enter_bank<CoinType>(account: &signer, amount: u64) acquires LibraToken, TokenInfoStore, Tokens, UserInfo {
 	let sender = Signer::address_of(account);
-	let payer_withdrawal_cap = LibraAccount::extract_withdraw_capability(account);
-	let to_deposit = LibraAccount::withdraw_from<CoinType>(&payer_withdrawal_cap, amount);
-	LibraAccount::restore_withdraw_capability(payer_withdrawal_cap);
+
+	// let payer_withdrawal_cap = LibraAccount::extract_withdraw_capability(account);
+	// let to_deposit = LibraAccount::withdraw_from<CoinType>(&payer_withdrawal_cap, amount);
+	// LibraAccount::restore_withdraw_capability(payer_withdrawal_cap);
 	
 	let libratoken = borrow_global_mut<LibraToken<CoinType>>(contract_address());
-	Libra::deposit(&mut libratoken.coin, to_deposit);
+	// Libra::deposit(&mut libratoken.coin, to_deposit);
+
+	let withdraw_capability = LibraAccount::extract_withdraw_capability(account);
+	LibraAccount::pay_from<CoinType>(&withdraw_capability, contract_address(), amount, Vector::empty(), Vector::empty());
+	LibraAccount::restore_withdraw_capability(withdraw_capability);
+	
 	bank_mint(libratoken.index, sender, amount);
 
 	let input = EventEnterBank {
@@ -929,9 +1010,14 @@ module ViolasBank {
 
     public fun exit_bank<CoinType>(account: &signer, amount: u64) acquires LibraToken, TokenInfoStore, Tokens, UserInfo {
 	let sender = Signer::address_of(account);
+
 	let libratoken = borrow_global_mut<LibraToken<CoinType>>(contract_address());
-	let to_deposit = Libra::withdraw(&mut libratoken.coin, amount);
-	LibraAccount::deposit_to(account, to_deposit);
+	
+	// let to_deposit = Libra::withdraw(&mut libratoken.coin, amount);
+	// LibraAccount::deposit_to(account, to_deposit);
+
+	let tokeninfos = borrow_global<TokenInfoStore>(contract_address());
+	LibraAccount::pay_from<CoinType>(&tokeninfos.withdraw_capability, sender, amount, Vector::empty(), Vector::empty());
 	
 	let t = withdraw_from(libratoken.index, sender, amount);
 	bank_burn(t);

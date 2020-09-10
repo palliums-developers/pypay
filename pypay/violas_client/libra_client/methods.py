@@ -52,7 +52,7 @@ class JsonRpcClient():
         try:
             data = json.dumps(request)
             result = self.http.request("POST", self.url, body=data, timeout=JSON_RPC_TIMEOUT, preload_content=False)
-            result.release_conn()
+            # result.release_conn()
             return result
         except Exception as e:
             print(e)
@@ -90,7 +90,7 @@ class LibraClient():
             state_proof = get_response_from_batch(1, responses)
             self.process_state_proof_response(state_proof)
         response = get_response_from_batch(0, responses)
-        ensure(isinstance(response, JsonRpcResponse), f"Failed to get account state for account address {account} with error: {response}")
+        ensure(isinstance(response, JsonRpcResponse), f"Failed to get account state for account address {account.hex()} with error: {response}")
         account_view = AccountView.from_response(response)
         return account_view
 

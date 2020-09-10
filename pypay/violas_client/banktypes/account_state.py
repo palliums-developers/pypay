@@ -6,6 +6,7 @@ from violas_client.move_core_types.language_storage import TypeTag, StructTag
 from violas_client.banktypes.account_resources import TokensResource, UserInfoResource, TokenInfoStoreResource, LibraTokenResource
 from violas_client.error import get_exception
 from violas_client.lbrtypes.rustlib import ensure
+from .utils import new_mantissa, mantissa_div, mantissa_mul, safe_sub
 
 class AccountState(LibraAccountState):
 
@@ -61,12 +62,12 @@ class AccountState(LibraAccountState):
     @get_exception
     def get_lock_amount(self, index, exchange_rate):
         resource = self.get_tokens_resource()
-        return self.mantissa_mul(resource.ts[index+1].value, exchange_rate)
+        return mantissa_mul(resource.ts[index+1].value, exchange_rate)
 
     @get_exception
     def get_borrow_amount(self, index, interest_index):
         borrow_info = self.get_tokens_resource().borrows[index]
-        return borrow_info.principal, self.mantissa_div(self.mantissa_mul(borrow_info.principal, interest_index), borrow_info.interest_index)
+        return borrow_info.principal, mantissa_div(mantissa_mul(borrow_info.principal, interest_index), borrow_info.interest_index)
 
     @get_exception
     def get_borrow_rate(self, currency_code):
@@ -122,29 +123,6 @@ class AccountState(LibraAccountState):
             TokenInfoStoreResource.resource_path_for(module_address=self.get_bank_module_address()))
         assert(resource is not None)
 
-    @staticmethod
-    def new_mantissa(a, b):
-        c = a << 64
-        d = b << 32
-        return int(c / d)
-
-    @staticmethod
-    def mantissa_div(a, b):
-        c = a << 32
-        d = c / b
-        return int(d)
-
-    @staticmethod
-    def mantissa_mul(a, b):
-        c = a * b
-        return int(c >> 32)
-
-    @staticmethod
-    def safe_sub(a, b):
-        if a < b:
-            return 0
-        return a - b
-
     def _exchange_rate(self, index):
         self.require_bank_account()
         t = self.get_tokens_resource().ts[index]
@@ -153,8 +131,8 @@ class AccountState(LibraAccountState):
         ti1 = token_infos.tokens[index + 1]
 
         if ti1.total_supply == 0:
-            return self.new_mantissa(1, 100)
-        return self.new_mantissa(t.value + ti.total_borrows - ti.total_reserves, ti1.total_supply)
+            return new_mantissa(1, 100)
+        return new_mantissa(t.value + ti.total_borrows - ti.total_reserves, ti1.total_supply)
 
     def _utilization_rate(self, index):
         self.require_bank_account()
@@ -164,23 +142,23 @@ class AccountState(LibraAccountState):
         if ti.total_borrows == 0:
             util = 0
         else:
-            util = self.new_mantissa(ti.total_borrows, ti.total_borrows + self.safe_sub(t.value, ti.total_reserves))
+            util = new_mantissa(ti.total_borrows, ti.total_borrows + safe_sub(t.value, ti.total_reserves))
         return util
     
     def _borrow_rate(self, index):
         util = self._utilization_rate(index)
         ti = self.get_token_info_store_resource().tokens[index]
         if util <= ti.rate_kink:
-            return self.mantissa_mul(ti.rate_multiplier, util) + ti.base_rate
-        normalrate = self.mantissa_mul(ti.rate_multiplier, ti.rate_kink) + ti.base_rate
+            return mantissa_mul(ti.rate_multiplier, util) + ti.base_rate
+        normalrate = mantissa_mul(ti.rate_multiplier, ti.rate_kink) + ti.base_rate
         excessutil = util - ti.rate_kink
-        return self.mantissa_mul(ti.rate_jump_multiplier, excessutil) + normalrate
+        return mantissa_mul(ti.rate_jump_multiplier, excessutil) + normalrate
 
     def _lock_rate(self, index):
         util = self._utilization_rate(index)
         borrow_rate = self._borrow_rate(index)
         ti = self.get_token_info_store_resource().tokens[index]
-        return self.mantissa_mul(util, self.mantissa_mul(borrow_rate, (self.new_mantissa(100, 100) - self.new_mantissa(1, 20))))
+        return mantissa_mul(util, mantissa_mul(borrow_rate, (new_mantissa(100, 100) - new_mantissa(1, 20))))
         # return util*borrow_rate*(0.95)/2**32
 
     def _accrue_interest(self, index):
@@ -188,20 +166,20 @@ class AccountState(LibraAccountState):
         token_infos = self.get_token_info_store_resource()
         ti = token_infos.tokens[index]
         minute = int(time.time() / 60)
-        cnt = self.safe_sub(minute, ti.last_minute)
+        cnt = safe_sub(minute, ti.last_minute)
         borrowrate = borrowrate*cnt
         ti.last_minute = minute
 
-        interest_accumulated = self.mantissa_mul(ti.total_borrows, borrowrate)
+        interest_accumulated = mantissa_mul(ti.total_borrows, borrowrate)
         ti.total_borrows = ti.total_borrows + interest_accumulated
-        reserve_factor = self.new_mantissa(1, 20)
-        ti.total_reserves = ti.total_reserves + self.mantissa_mul(interest_accumulated, reserve_factor)
-        ti.borrow_index = ti.borrow_index + self.mantissa_mul(ti.borrow_index, borrowrate)
+        reserve_factor = new_mantissa(1, 20)
+        ti.total_reserves = ti.total_reserves + mantissa_mul(interest_accumulated, reserve_factor)
+        ti.borrow_index = ti.borrow_index + mantissa_mul(ti.borrow_index, borrowrate)
 
     def _bank_token_2_base(self, amount, exchange_rate, collateral_factor, price):
-        value = self.mantissa_mul(amount, exchange_rate)
-        value = self.mantissa_mul(value, collateral_factor)
-        value = self.mantissa_mul(value, price)
+        value = mantissa_mul(amount, exchange_rate)
+        value = mantissa_mul(value, collateral_factor)
+        value = mantissa_mul(value, price)
         return value
     
     def _balance_of(self, index):
@@ -214,7 +192,7 @@ class AccountState(LibraAccountState):
         tokens = self.get_tokens_resource()
         borrow_info = tokens.borrors[index]
         ti = token_infos.tokens[index]
-        return self.mantissa_div(self.mantissa_mul(borrow_info.principal, ti.borrow_index), borrow_info.interest_index)
+        return mantissa_div(mantissa_mul(borrow_info.principal, ti.borrow_index), borrow_info.interest_index)
     
 
     def __str__(self):

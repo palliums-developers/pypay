@@ -268,7 +268,9 @@ class Client(LibraClient, Base):
     
     def quote(self, amountA, reserveA, reserveB):
         assert reserveA > 0 and reserveB > 0
-        amountB = amountA * reserveB // reserveA
+        amountB = int(amountA * reserveB / reserveA)
+        if amountA * reserveB % reserveA != 0:
+            amountB += 1
         return amountB
 
     def get_output_amount_without_fee(self, amount_in, reserve_in, reserve_out):
@@ -289,16 +291,16 @@ class Client(LibraClient, Base):
 
     def get_output_amount(self, amount_in, reserve_in, reserve_out):
         assert reserve_in > 0 and reserve_out > 0
-        amount_inWithFee = amount_in * 997
+        amount_inWithFee = amount_in * 9997
         numerator = amount_inWithFee * reserve_out
-        denominator = reserve_in * 1000 + amount_inWithFee
+        denominator = reserve_in * 10000 + amount_inWithFee
         amount_out = numerator // denominator
         return amount_out
 
     def get_input_amount(self, amount_out, reserve_in, reserve_out):
         assert reserve_in > 0 and reserve_out > 0
-        numerator = reserve_in * amount_out * 1000
-        denominator = (reserve_out - amount_out) * 997
+        numerator = reserve_in * amount_out * 10000
+        denominator = (reserve_out - amount_out) * 9997
         amount_in = numerator // denominator + 1
         return amount_in
 
@@ -377,7 +379,6 @@ class Client(LibraClient, Base):
             path.append(index_out)
         if len(path) > 3:
             return
-
         start_path = path[:]
         for i in range(0, len(pairs)):
             pair = pairs[i]
@@ -394,8 +395,6 @@ class Client(LibraClient, Base):
             if reserve_in == 0 or reserve_out == 0:
                 continue
             amount_in = self.get_input_amount(amount_out, reserve_in, reserve_out)
-            if amount_in <= 0:
-                continue
             if index_in in pair:
                 path.insert(0, index_in)
                 best_trades.append((path[:], amount_in))

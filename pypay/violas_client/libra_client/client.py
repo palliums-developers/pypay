@@ -12,17 +12,16 @@ from violas_client.libra_client.account import Account
 from violas_client.lbrtypes.transaction import TransactionPayload, SignedTransaction
 from violas_client.lbrtypes.transaction.script import Script
 from violas_client.lbrtypes.rustlib import ensure
-from violas_client.lbrtypes.access_path import AccessPath
 from violas_client.error import LibraError, StatusCode, ServerCode
 from violas_client.lbrtypes.bytecode import CodeType
 from violas_client.lbrtypes.transaction.transaction_argument import TransactionArgument
-from violas_client.lbrtypes.account_config import ACCOUNT_SENT_EVENT_PATH, ACCOUNT_RECEIVED_EVENT_PATH, association_address, treasury_compliance_account_address
+from violas_client.lbrtypes.account_config import  association_address, treasury_compliance_account_address, transaction_fee_address, testnet_dd_account_address
 from violas_client.lbrtypes.transaction.helper import create_user_txn
 from violas_client.lbrtypes.account_state import AccountState
 from violas_client.lbrtypes.account_config import config_address
 from violas_client.lbrtypes.account_config import LBR_NAME
 from violas_client.lbrtypes.event import EventKey
-
+from violas_client.lbrtypes import NamedChain
 
 import os
 from pathlib import Path
@@ -39,24 +38,24 @@ NETWORKS = {
     'libra_testnet':{
         'url': "https://client.testnet.libra.org",
         'faucet_server': "http://faucet.testnet.libra.org",
+        'chain_id': NamedChain.TESTNET
     },
     'violas_testnet':{
         "url": "http://51.140.241.96:50001",
-        "faucet_file": f"{pre_path}/mint_test.key"
-    },
-    'violas_testnet_out':{
-        "url": "http://52.151.2.66:50001",
-        "faucet_file": f"{pre_path}/mint_external.key"
-    },
-    'tmp_testnet': {
-        "url": "http://47.93.114.230:37339",
-        "faucet_file": f"{pre_path}/mint_tmp.key"
-    },
+        "faucet_file": f"{pre_path}/mint_test.key",
+        'chain_id': NamedChain.TESTING
+},
 
     'bj_testnet': {
         "url": "http://47.93.114.230:50001",
-        "faucet_file": f"{pre_path}/mint_bj.key"
-    }
+        "faucet_file": f"{pre_path}/mint_bj.key",
+        'chain_id': NamedChain.TESTING
+},
+    'tmp_testnet': {
+        "url": "http://47.93.114.230:37339",
+        "faucet_file": f"{pre_path}/mint_tmp.key",
+        'chain_id': NamedChain.TESTING
+}
 }
 
 class Client():
@@ -74,30 +73,38 @@ class Client():
         chain = NETWORKS[network]
         ensure("url" in chain, "The specified chain has no url")
         url = chain.get("url")
+        self.chain_id = chain.get("chain_id", NamedChain.TESTING).value
         self.client = LibraClient.new(url, waypoint)
         faucet_account_file = chain.get("faucet_file")
         if faucet_account_file is None:
-            self.faucet_account = None
+            self.treasury_compliance_account = None
         else:
-            self.faucet_account = Account.load_faucet_account_file(faucet_account_file)
-            self.associate_account = Account.load_associate_account_file(faucet_account_file)
-            self.transaction_fee_account = Account.load_transaction_fee_account_file(faucet_account_file)
+            private_key = Account.get_key_from_file(faucet_account_file)
+            self.treasury_compliance_account = Account(private_key, treasury_compliance_account_address())
+            self.associate_account = Account(private_key, association_address())
+            self.transaction_fee_account = Account(private_key, transaction_fee_address())
+            self.testnet_dd_account = Account(private_key, testnet_dd_account_address())
+
         faucet_server = chain.get("faucet_server")
         self.faucet_server = faucet_server
 
     @classmethod
-    def new(cls, url, faucet_file:Optional[str]=None, faucet_server:Optional[str]=None, waypoint:Optional[Waypoint]=None):
+    def new(cls, url, chain_id=NamedChain.TESTING, faucet_file:Optional[str]=None, faucet_server:Optional[str]=None, waypoint:Optional[Waypoint]=None):
         ret = cls.__new__(cls)
         ret.client = LibraClient.new(url, waypoint)
         faucet_account_file = faucet_file
         if faucet_account_file is None:
-            ret.faucet_account = None
+            ret.treasury_compliance_account = None
         else:
-            ret.faucet_account = Account.load_faucet_account_file(faucet_account_file)
-            ret.associate_account = Account.load_associate_account_file(faucet_account_file)
+            private_key = Account.get_key_from_file(faucet_account_file)
+            ret.treasury_compliance_account = Account(private_key, treasury_compliance_account_address())
+            ret.associate_account = Account(private_key, association_address())
+            ret.transaction_fee_account = Account(private_key, transaction_fee_address())
+            ret.testnet_dd_account = Account(private_key, testnet_dd_account_address())
 
         faucet_server = faucet_server
         ret.faucet_server = faucet_server
+        ret.chain_id = chain_id.value
         return ret
 
     def get_balance(self, account_address: Union[bytes, str], currency_code=None, currency_module_address=None)-> Optional[int]:
@@ -177,21 +184,32 @@ class Client():
                                    currency_module_address=currency_module_address)
         return self.submit_script(sender_account, script, is_blocking, max_gas_amount=max_gas_amount, gas_unit_price=gas_unit_price, txn_expiration=txn_expiration, gas_currency_code=gas_currency_code)
 
-    def mint_coin(self, receiver_address, micro_coins, auth_key_prefix=None, is_blocking=True, currency_module_address=None,
+    def mint_coin(self, receiver_address, micro_coins, auth_key_prefix=None, human_name="", data="", add_all_currencies=False, is_blocking=True, currency_module_address=None,
                   currency_code=None,
                   max_gas_amount=MAX_GAS_AMOUNT, gas_unit_price=GAS_UNIT_PRICE, txn_expiration=TXN_EXPIRATION, gas_currency_code=None):
         from violas_client.lbrtypes.account_config import LBR_NAME
         if currency_code is None:
             currency_code = LBR_NAME
-        if self.faucet_account:
+        if self.get_account_state(receiver_address) is None and hasattr(self, "associate_account"):
             args = []
+            args.append(TransactionArgument.to_U64(0))
             args.append(TransactionArgument.to_address(receiver_address))
             args.append(TransactionArgument.to_U8Vector(auth_key_prefix))
-            args.append(TransactionArgument.to_U64(micro_coins))
+            args.append(TransactionArgument.to_U8Vector(human_name, hex=False))
+            args.append(TransactionArgument.to_bool(add_all_currencies))
             ty_args = self.get_type_args(currency_code, currency_module_address)
-            script = Script.gen_script(CodeType.MINT, *args, ty_args=ty_args, currency_module_address=currency_module_address)
+            script = Script.gen_script(CodeType.CREATE_PARENT_VASP_ACCOUNT, *args, ty_args=ty_args, currency_module_address=currency_module_address)
+            self.submit_script(self.associate_account, script, is_blocking, gas_currency_code, max_gas_amount, gas_unit_price, txn_expiration)
+        if hasattr(self, "testnet_dd_account"):
+            args = []
+            args.append(TransactionArgument.to_address(receiver_address))
+            args.append(TransactionArgument.to_U64(micro_coins))
+            args.append(TransactionArgument.to_U8Vector(data, hex=False))
+            args.append(TransactionArgument.to_U8Vector(""))
 
-            return self.submit_script(self.faucet_account, script, is_blocking, gas_currency_code, max_gas_amount, gas_unit_price,
+            ty_args = self.get_type_args(currency_code, currency_module_address)
+            script = Script.gen_script(CodeType.PEER_TO_PEER_WITH_METADATA, *args, ty_args=ty_args, currency_module_address=currency_module_address)
+            return self.submit_script(self.testnet_dd_account, script, is_blocking, gas_currency_code, max_gas_amount, gas_unit_price,
                                       txn_expiration)
         else:
             return self.mint_coin_with_faucet_service(receiver_address, auth_key_prefix, micro_coins, currency_code, is_blocking)
@@ -215,7 +233,7 @@ class Client():
 
         ty_args = []
         script = Script.gen_script(CodeType.MODIFY_PUBLISHING_OPTION, *args, ty_args=ty_args)
-        return self.submit_script(self.faucet_account, script, is_blocking, self.get_gas_currency_code(None, gas_currency_code), max_gas_amount, gas_unit_price, txn_expiration)
+        return self.submit_script(self.treasury_compliance_account, script, is_blocking, self.get_gas_currency_code(None, gas_currency_code), max_gas_amount, gas_unit_price, txn_expiration)
 
     def preburn(self, sender_account, amount, currency_code=None, gas_currency_code=None, **kwargs):
         args = []
@@ -231,7 +249,7 @@ class Client():
 
         ty_args = self.get_type_args(currency_code)
         script = Script.gen_script(CodeType.BURN, *args, ty_args=ty_args)
-        return self.submit_script(self.faucet_account, script, gas_currency_code=self.get_gas_currency_code(currency_code, gas_currency_code), **kwargs)
+        return self.submit_script(self.treasury_compliance_account, script, gas_currency_code=self.get_gas_currency_code(currency_code, gas_currency_code), **kwargs)
 
     def cancel_burn(self, preburn_address, currency_code=None, gas_currency_code=None, **kwargs):
         args = []
@@ -239,7 +257,7 @@ class Client():
 
         ty_args = self.get_type_args(currency_code)
         script = Script.gen_script(CodeType.CANCEL_BURN, *args, ty_args=ty_args)
-        return self.submit_script(self.faucet_account, script, gas_currency_code=self.get_gas_currency_code(currency_code, gas_currency_code), **kwargs)
+        return self.submit_script(self.treasury_compliance_account, script, gas_currency_code=self.get_gas_currency_code(currency_code, gas_currency_code), **kwargs)
 
     def create_designated_dealer(self, new_account_address, auth_key_prefix, currency_code=None, gas_currency_code=None, **kwargs):
         args = []
@@ -263,10 +281,11 @@ class Client():
 
     '''...........................................Called internal.....................................'''
     def require_faucet_account(self):
-        ensure(self.faucet_account is not None, "facucet_account is not set")
+        ensure(self.treasury_compliance_account is not None, "facucet_account is not set")
 
     def mint_coin_with_faucet_service(self, receiver, auth_key_prefix, micro_coins: int, currency_code, is_blocking=True):
         receiver = Address.normalize_to_bytes(receiver)
+        ensure(auth_key_prefix is not None, "Require auth_key_prefix")
         auth_key_prefix = Address.normalize_to_bytes(auth_key_prefix)
         ensure(self.faucet_server is not None, "Require faucet server")
         params = {
@@ -274,11 +293,18 @@ class Client():
             "auth_key": (auth_key_prefix+receiver).hex(),
             "currency_code": currency_code
         }
+        try_time = 3
         while True:
             try:
                 response = requests.post(self.faucet_server, params=params)
-                break
-            except LibraError:
+                if response.status_code == requests.codes.ok:
+                    break
+                if response.status_code == 429:
+                    raise Exception(response.text)
+            except Exception as e:
+                try_time -= 1
+                if try_time < 0:
+                    raise e
                 import time
                 time.sleep(1)
         body = response.text
@@ -286,8 +312,8 @@ class Client():
         ensure(status == requests.codes.ok, f"Failed to query remote faucet server[status={status}]: {body}")
         sequence_number = int(body)
         if is_blocking:
-            self.wait_for_transaction(treasury_compliance_account_address(), sequence_number - 1)
-        return sequence_number
+            self.wait_for_transaction(testnet_dd_account_address(), sequence_number - 1)
+        return sequence_number-1
 
     def get_metadata(self):
         return self.client.get_metadata()
@@ -342,14 +368,14 @@ class Client():
     def submit_script(self, sender_account, script, is_blocking=True, gas_currency_code=None, max_gas_amount=MAX_GAS_AMOUNT, gas_unit_price=GAS_UNIT_PRICE, txn_expiration=TXN_EXPIRATION):
         gas_currency_code = self.get_gas_currency_code(gas_currency_code=gas_currency_code)
         sequence_number = self.get_sequence_number(sender_account.address)
-        signed_txn = create_user_txn(TransactionPayload("Script",script), sender_account, sequence_number, max_gas_amount, gas_unit_price, gas_currency_code, txn_expiration)
+        signed_txn = create_user_txn(TransactionPayload("Script",script), sender_account, sequence_number, max_gas_amount, gas_unit_price, gas_currency_code, txn_expiration, chain_id=self.chain_id)
         self.submit_signed_transaction(signed_txn, is_blocking)
         return sequence_number
 
     def submit_module(self, sender_account, module,  is_blocking=True, gas_currency_code=None, max_gas_amount=MAX_GAS_AMOUNT, gas_unit_price=GAS_UNIT_PRICE, txn_expiration=TXN_EXPIRATION):
         gas_currency_code = self.get_gas_currency_code(gas_currency_code=gas_currency_code)
         sequence_number = self.get_sequence_number(sender_account.address)
-        signed_txn = create_user_txn(TransactionPayload("Module", module), sender_account, sequence_number, max_gas_amount, gas_unit_price, gas_currency_code, txn_expiration)
+        signed_txn = create_user_txn(TransactionPayload("Module", module), sender_account, sequence_number, max_gas_amount, gas_unit_price, gas_currency_code, txn_expiration, chain_id=self.chain_id)
         self.submit_signed_transaction(signed_txn, is_blocking)
         return sequence_number
 

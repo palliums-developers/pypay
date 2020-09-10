@@ -1,4 +1,4 @@
-from violas_client.canoser import Struct, Uint64, Uint8
+from violas_client.canoser import Struct, Uint64, Uint8, RustEnum
 from violas_client.lbrtypes.account_config import WithdrawCapabilityResource
 from violas_client.lbrtypes.account_config import MoveResource
 
@@ -43,4 +43,17 @@ class SwapEvent(Struct):
         ("output_amount", Uint64),
         ("data", bytes)
     ]
+
+class Event(Struct):
+    _fields = [
+        ("etype", Uint64),
+        ("data", bytes)
+    ]
+    def get_event(self):
+        if self.etype == 1:
+            return MintEvent.deserialize(self.data)
+        if self.etype == 2:
+            return BurnEvent.deserialize(self.data)
+        if self.etype == 3:
+            return SwapEvent.deserialize(self.data)
 

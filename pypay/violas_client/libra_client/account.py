@@ -43,6 +43,15 @@ class Account:
         return cls(private_key, transaction_fee_address())
 
     @classmethod
+    def get_key_from_file(cls, file):
+        with open(file, 'rb') as f:
+            data = f.read()
+            assert len(data) == 33
+            assert 32 == data[0]
+            private_key = data[1:33]
+            return private_key
+
+    @classmethod
     def load_faucet_account_file(cls, faucet_account_file):
         with open(faucet_account_file, 'rb') as f:
             data = f.read()

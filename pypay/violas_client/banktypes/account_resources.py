@@ -2,9 +2,10 @@ from violas_client.canoser import Struct, Uint64
 from violas_client.lbrtypes.event import EventHandle
 from violas_client.move_core_types.account_address import AccountAddress
 from violas_client.move_core_types.move_resource import MoveResource
+from violas_client.lbrtypes.account_config.resources import WithdrawCapabilityResource
 
 class LibraTokenResource(Struct, MoveResource):
-    MODULE_NAME = "ViolasBank"
+    MODULE_NAME = "ViolasBank2"
     STRUCT_NAME = "LibraToken"
 
     _fields = [
@@ -44,7 +45,7 @@ class BorrowInfoResource(Struct):
         return self.interest_index
 
 class TokensResource(Struct, MoveResource):
-    MODULE_NAME = "ViolasBank"
+    MODULE_NAME = "ViolasBank2"
     STRUCT_NAME = "Tokens"
 
     _fields = [
@@ -63,7 +64,7 @@ class OrderResource(Struct):
     ]
 
 class UserInfoResource(Struct, MoveResource):
-    MODULE_NAME = "ViolasBank"
+    MODULE_NAME = "ViolasBank2"
     STRUCT_NAME = "UserInfo"
 
     _fields = [
@@ -96,13 +97,32 @@ class TokenInfoResource(Struct):
     ]
 
 class TokenInfoStoreResource(Struct, MoveResource):
-    MODULE_NAME = "ViolasBank"
+    MODULE_NAME = "ViolasBank2"
     STRUCT_NAME = "TokenInfoStore"
 
     _fields = [
         ("supervisor", AccountAddress),
-        ("tokens", [TokenInfoResource])
+        ("tokens", [TokenInfoResource]),
+        ("withdraw_capability", WithdrawCapabilityResource)
     ]
+
+    def to_format(self):
+        if hasattr(self, "format"):
+            return
+        self.format = { token.currency_code: token for token in self.tokens}
+
+    def get_price(self, currency_code):
+        self.to_format()
+        token = self.format.get(currency_code)
+        if token is not None:
+            return token.price
+
+    def get_collateral_factor(self, currency_code):
+        self.to_format()
+        token = self.format.get(currency_code)
+        if token is not None:
+            return token.collateral_factor
+
 
 class EventPublish(Struct):
     _fields = [

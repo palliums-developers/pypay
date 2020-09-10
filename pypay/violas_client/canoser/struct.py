@@ -25,8 +25,6 @@ class TypedProperty:
         else:
             raise TypeError('{} has no check_value method'.format(datatype))
 
-
-
 class Struct(Base):
     _fields = []
     _initialized = False
@@ -76,7 +74,6 @@ class Struct(Base):
             prop = getattr(ret, name)
             mtype = type_mapping(atype)
             assert mtype == prop.expected_type
-
             value = mtype.decode(cursor)
             prop.__set__(ret, value)
         return ret
@@ -91,7 +88,7 @@ class Struct(Base):
             assert mtype == prop.expected_type
             v = mtype.from_value(value.get(name))
             prop.__set__(ret, v)
-        if len(value) != len(ret.__dict__):
+        if len(value) > len(ret.__dict__):
             if not (value.get("type") is not None and len(value) == len(ret.__dict__)+1):
                 raise TypeError(f"Type mismatched {len(value)} != {len(ret.__dict__)}\n"
                                 f"source:{value},\n "
