@@ -49,7 +49,7 @@ class Violas(QObject):
 
     @pyqtSlot(dict)
     def requestHistory(self, dt):
-        r = requests.get('https://api.violas.io/1.0/violas/transaction', params=dt)
+        r = requests.get('https://api4.violas.io/1.0/violas/transaction', params=dt)
         print(r.url)
         if r.status_code == 200:
             self.historyChanged.emit(r.json())
@@ -76,3 +76,30 @@ class Violas(QObject):
         r = requests.get('https://api.exchangeratesapi.io/latest?base=USD')
         rates = r.json()['rates']
         self.exchangeRatesChanged.emit(rates)
+
+    # bank account info
+
+    bankAccountInfoChanged = pyqtSignal(dict)
+
+    @pyqtSlot(dict)
+    def request_bank_account_info(self, dt):
+        r = requests.get('https://api4.violas.io/1.0/violas/bank/account/info', params=dt)
+        print(r.url)
+        if r.status_code == 200:
+            self.bankAccountInfoChanged.emit(r.json())
+        else:
+            print("request error")
+
+
+    # bank product deposit
+
+    bankProductDepositChanged = pyqtSignal(dict)
+
+    @pyqtSlot()
+    def request_bank_product_deposit(self):
+        r = requests.get('https://api4.violas.io/1.0/violas/bank/product/deposit')
+        print(r.url)
+        if r.status_code == 200:
+            self.bankProductDepositChanged.emit(r.json())
+        else:
+            print("request error")

@@ -107,6 +107,8 @@ class PayController(QObject):
     requestVLSAddCurOfAccount = pyqtSignal(str, bool)
     requestExchangeRates = pyqtSignal()
     requestTotalBalances = pyqtSignal()
+    requestBankAccountInfo = pyqtSignal(dict)
+    requestBankProductDeposit = pyqtSignal()
 
     # 钱包
     @pyqtSlot()
@@ -145,8 +147,8 @@ class PayController(QObject):
         self._bit.moveToThread(self._bitThread)
         self._bitThread.start()
 
-        #self._client = Client("violas_testnet")
-        self._client = Client("violas_testnet_out")
+        self._client = Client("violas_testnet")
+        #self._client = Client("violas_testnet_out")
         self._libraClient = LibraClient("libra_testnet")
         if isFirstCreateWallet or self._isImportWallet:
             # 默认币种列表: BTC, LBR, VLS
@@ -184,6 +186,10 @@ class PayController(QObject):
         self.requestVLSAddCurOfAccount.connect(self._vls.requestAddCurOfAccount)
         self.requestExchangeRates.connect(self._vls.requestExchangeRates)
         self._vls.exchangeRatesChanged.connect(self.updateExchangeRates)
+        self._vls.bankAccountInfoChanged.connect(self.update_bank_account_info) # bank account info
+        self.requestBankAccountInfo.connect(self._vls.request_bank_account_info)
+        self._vls.bankProductDepositChanged.connect(self.update_bank_product_deposit) # bank product deposit
+        self.requestBankProductDeposit.connect(self._vls.request_bank_product_deposit)
         self._vls.moveToThread(self._vlsThread)
         self._vlsThread.start()
 
@@ -195,7 +201,8 @@ class PayController(QObject):
 
         self.requestTotalBalances.connect(self.updateTotalBalance)
         self._timer.timeout.connect(self._timeUpdate)
-        self._timer.start(5000)
+        self._timer.start(10000)
+        self._timeUpdate()
 
         self.requestExchangeRates.emit()
 
@@ -537,6 +544,8 @@ class PayController(QObject):
         self.requestViolasBalances.emit()
         self.requestTotalBalances.emit()
 
+        self.requestBankAccountInfo.emit({'address':self._addr})
+
         self.saveToFile()
 
     # 交易历史
@@ -707,3 +716,57 @@ class PayController(QObject):
     @pyqtProperty(QObject, constant=True)
     def borrowModel(self):
         return self._borrowModel
+
+    # 更新银行账户信息
+    @pyqtSlot(dict)
+    def update_bank_account_info(self, info):
+        data = info['data']
+        self._deposit = data['amount']
+        self.depositChanged.emit()
+        self._borrow = data['borrow']
+        self.borrowChanged.emit()
+        self._income = data['total']
+        self.incomeChanged.emit()
+        self._lastdayincome = data['yesterday']
+        self.lastdayincomeChanged.emit()
+
+    # 更新存款产品列表
+    @pyqtSlot(dict)
+    def update_bank_product_deposit(self, info):
+        data = dt['data']
+        for d in data:
+            depositEntry = DepositEntry(d)
+            self._depositModel.append(depositEntry)
+
+    # 请求存款产品列表
+    @pyqtSlot()
+    def request_bank_product_deposit(self):
+        self._depositModel.clear()
+        self.requestBankProductDeposit.emit()
+
+    # 获取存款订单信息
+    # /1.0/violas/bank/deposit/orders
+
+    #获取存款订单列表
+    # /1.0/violas/bank/deposit/order/list
+
+    # 获取借贷产品列表
+    # /1.0/violas/bank/product/borrow
+
+    # 获取借贷产品信息
+    /1.0/violas/bank/borrow/info
+
+    # 获取借贷订单信息
+    # /1.0/violas/bank/borrow/orders
+
+    # 获取借贷订单列表
+    # /1.0/violas/bank/borrow/order/list
+
+    # 获取借贷订单详情
+    # /1.0/violas/bank/borrow/order/detail
+
+    # 存款提取
+    # /1.0/violas/bank/deposit/withdrawal
+
+    # 借贷还款
+    # /1.0/violas/bank/borrow/repayment
