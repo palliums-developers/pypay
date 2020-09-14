@@ -205,6 +205,7 @@ class PayController(QObject):
         self._timeUpdate()
 
         self.requestExchangeRates.emit()
+        self.request_bank_product_deposit()
 
         # TODO https://api .violas.io//1.0/market/exchange/crosschain/address/info
 
@@ -732,8 +733,17 @@ class PayController(QObject):
 
     # 更新存款产品列表
     @pyqtSlot(dict)
-    def update_bank_product_deposit(self, info):
-        data = dt['data']
+    def update_bank_product_deposit(self, dt):
+        print(dt)
+        # data = dt['data']
+
+        # for test
+        dt1 = {'desc':"hello", 'id':'1', 'logo':'', 'name':'name', 'rate':0.1, 'rate_desc':'年利率', 'token_module':'BTC'}
+        dt2 = {'desc':"hello2", 'id':'2', 'logo':'', 'name':'name2', 'rate':0.2, 'rate_desc':'年利率', 'token_module':'BTC'}
+        data = []
+        data.append(dt1)
+        data.append(dt2)
+
         for d in data:
             depositEntry = DepositEntry(d)
             self._depositModel.append(depositEntry)
@@ -741,6 +751,7 @@ class PayController(QObject):
     # 请求存款产品列表
     @pyqtSlot()
     def request_bank_product_deposit(self):
+        print("request_bank_product_deposit")
         self._depositModel.clear()
         self.requestBankProductDeposit.emit()
 
@@ -754,7 +765,7 @@ class PayController(QObject):
     # /1.0/violas/bank/product/borrow
 
     # 获取借贷产品信息
-    /1.0/violas/bank/borrow/info
+    # /1.0/violas/bank/borrow/info
 
     # 获取借贷订单信息
     # /1.0/violas/bank/borrow/orders

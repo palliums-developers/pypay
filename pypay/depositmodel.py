@@ -8,24 +8,24 @@ class DepositEntry (QObject):
     def __init__(self, dict = None, parent = None):
         QObject.__init__(self, parent)
         if dict is not None:
-            self.desc = dict['desc']
-            self.id = dict['id']
-            self.logo = dict['logo']
-            self.name = dict['name']
-            self.rate = dict['rate']
-            self.rate_desc = dict['rate_desc']
-            self.token_module = dict['token_module']
+            self._desc = dict['desc']
+            self._id = dict['id']
+            self._logo = dict['logo']
+            self._name = dict['name']
+            self._rate = dict['rate']
+            self._rate_desc = dict['rate_desc']
+            self._token_module = dict['token_module']
 
     # desc
     descChanged = pyqtSignal()
 
     @pyqtProperty(str, notify=descChanged)
     def desc(self):
-        return self.desc
+        return self._desc
 
     @desc.setter
     def desc(self, desc):
-        self.desc = desc
+        self._desc = desc
         self.descChanged.emit()
 
     # id
@@ -33,11 +33,11 @@ class DepositEntry (QObject):
 
     @pyqtProperty(str, notify=idChanged)
     def id(self):
-        return self.id
+        return self._id
 
     @id.setter
     def id(self, id):
-        self.id = id
+        self._id = id
         self.idChanged.emit()
 
     # logo
@@ -45,23 +45,23 @@ class DepositEntry (QObject):
 
     @pyqtProperty(str, notify=logoChanged)
     def logo(self):
-        return self.logo
+        return self._logo
 
     @logo.setter
     def logo(self, logo):
-        self.logo = logo
+        self._logo = logo
         self.logoChanged.emit()
 
-    # namePrice
+    # name
     nameChanged = pyqtSignal()
 
     @pyqtProperty(str, notify=nameChanged)
     def name(self):
-        return self.name
+        return self._name
 
     @name.setter
     def name(self, name):
-        self.name = name
+        self._name = name
         self.nameChanged.emit()
 
     # rate
@@ -69,11 +69,11 @@ class DepositEntry (QObject):
 
     @pyqtProperty(float, notify=rateChanged)
     def rate(self):
-        return self.rate
+        return self._rate
 
     @rate.setter
     def rate(self, rate):
-        self.rate = rate
+        self._rate = rate
         self.rateChanged.emit()
 
     # rate_desc
@@ -81,11 +81,11 @@ class DepositEntry (QObject):
 
     @pyqtProperty(str, notify=rate_descChanged)
     def rate_desc(self):
-        return self.rate_desc
+        return self._rate_desc
 
     @rate_desc.setter
     def rate_desc(self, rate_desc):
-        self.rate_desc = rate_desc
+        self._rate_desc = rate_desc
         self.rate_descChanged.emit()
 
     # token_module
@@ -93,11 +93,11 @@ class DepositEntry (QObject):
 
     @pyqtProperty(str, notify=token_moduleChanged)
     def token_module(self):
-        return self.token_module
+        return self._token_module
 
     @token_module.setter
     def token_module(self, token_module):
-        self.token_module = token_module
+        self._token_module = token_module
         self.token_module.emit()
 
 

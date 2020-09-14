@@ -168,7 +168,7 @@ Page {
         radius: 20
 
         Text {
-            id: tokenText
+            id: depositTextTab
             anchors.top: parent.top
             anchors.topMargin: 34
             anchors.left: whiteRec.left
@@ -181,8 +181,8 @@ Page {
 
         // Bank list
         ListView {
-            id: walletListView
-            anchors.top: tokenText.bottom
+            id: bankListView
+            anchors.top: depositTextTab.bottom
             anchors.topMargin: 22
             anchors.left: parent.left
             anchors.leftMargin: 20
@@ -197,23 +197,12 @@ Page {
                 property var entry: modelData
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: Entry.isShow ? 60 : -12
-                visible: entry.isShow
+                height: 60
                 color: "#EBEBF1"
                 radius: 14
                 MyImage {
                     id: itemImage
-                    source: {
-                        if (entry.chain == "bitcoin") {
-                            return "../icons/bitcoin.svg"
-                        } else if (entry.chain == "violas") {
-                            return "../icons/violas.svg"
-                        } else if (entry.chain == "libra") {
-                            return "../icons/libra.svg"
-                        } else {
-                            return ""
-                        }
-                    }
+                    source: entry.logo
                     radius: 14
                     width: 41
                     anchors.left: parent.left
@@ -221,12 +210,21 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Text {
+                    id: nameText
                     text: entry.name
                     anchors.left: itemImage.right
                     anchors.leftMargin: 15
                     anchors.verticalCenter: parent.verticalCenter
                     color: "#333333"
                     font.pointSize: 16
+                }
+                Text {
+                    text: entry.desc
+                    anchors.left: nameText.right
+                    anchors.leftMargin: 45
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: "#999999"
+                    font.pointSize: 12
                 }
                 Column {
                     anchors.right: parent.right
@@ -235,15 +233,15 @@ Page {
                     Text {
                         id: rateText
                         text: appSettings.eyeIsOpen ? entry.rate: "******"
-                        color: "#333333"
-                        font.pointSize: 16
+                        color: "#13B788"
+                        font.pointSize: 18
                         anchors.right: parent.right
                     }
                     Text {
-                        text: qsTr("年化收益率")
-                        color: "#ADADAD"
-                        font.pointSize: 12
-                        anchors.right: amountText.right
+                        text: entry.rate_desc
+                        color: "#999999"
+                        font.pointSize: 10
+                        anchors.right: rateText.right
                     }
                 }
                 MouseArea {
