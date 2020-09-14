@@ -12,6 +12,7 @@ from violas_client import Wallet, Client
 from libra_client import Client as LibraClient
 from .tokenmodel import TokenEntry, TokenModel
 from .depositmodel import DepositEntry, DepositModel
+from .depositinfo import DepositInfo
 from .borrowmodel import BorrowEntry, BorrowModel
 from .tokentypemodel import TokenTypeModel
 from .bittransactionmodel import BitTransactionEntry, BitTransactionModel
@@ -66,6 +67,7 @@ class PayController(QObject):
         self._lastdayincome = 0
         self._depositModel = DepositModel()
         self._borrowModel = BorrowModel()
+        self._deposit_info = DepositInfo()  # 存款
         self.datadirChanged.emit()
         try:
             self._datadir.mkdir(parents = True)
@@ -109,6 +111,7 @@ class PayController(QObject):
     requestTotalBalances = pyqtSignal()
     requestBankAccountInfo = pyqtSignal(dict)
     requestBankProductDeposit = pyqtSignal()
+    signal_request_deposit_info = pyqtSignal()
 
     # 钱包
     @pyqtSlot()
@@ -190,6 +193,8 @@ class PayController(QObject):
         self.requestBankAccountInfo.connect(self._vls.request_bank_account_info)
         self._vls.bankProductDepositChanged.connect(self.update_bank_product_deposit) # bank product deposit
         self.requestBankProductDeposit.connect(self._vls.request_bank_product_deposit)
+        self._vls.bank_deposit_infoChanged.connect(self.update_bank_deposit_info) # bank deposit info
+        self.signal_request_deposit_info.connect(self._vls.request_bank_deposit_info)
         self._vls.moveToThread(self._vlsThread)
         self._vlsThread.start()
 
@@ -737,7 +742,7 @@ class PayController(QObject):
         print(dt)
         # data = dt['data']
 
-        # for test
+        # TEST
         dt1 = {'desc':"hello", 'id':'1', 'logo':'', 'name':'name', 'rate':0.1, 'rate_desc':'年利率', 'token_module':'BTC'}
         dt2 = {'desc':"hello2", 'id':'2', 'logo':'', 'name':'name2', 'rate':0.2, 'rate_desc':'年利率', 'token_module':'BTC'}
         data = []
@@ -754,6 +759,17 @@ class PayController(QObject):
         print("request_bank_product_deposit")
         self._depositModel.clear()
         self.requestBankProductDeposit.emit()
+
+    # 获取存款产品信息
+    @pyqtSlot(str)
+    def request_bank_deposit_info(self, id):
+        self._deposit_info.clear()
+        self.signal_request_deposit_info.emit()
+
+    @pyqtSlot(dict)
+    def update_bank_deposit_info(self, dt):
+        data = dt['data']
+        self._deposit_info = DepositInfo(data)
 
     # 获取存款订单信息
     # /1.0/violas/bank/deposit/orders

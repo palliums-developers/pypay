@@ -103,3 +103,15 @@ class Violas(QObject):
             self.bankProductDepositChanged.emit(r.json())
         else:
             print("request error")
+
+    # bank deposit info
+    bank_deposit_infoChanged = pyqtSignal(dict)
+
+    @pyqtSlot()
+    def request_bank_deposit_info(self):
+        r = requests.get('https://api4.violas.io/1.0/violas/bank/deposit/info')
+        print(r.url)
+        if r.status_code == 200:
+            self.bank_deposit_infoChanged.emit(r.json())
+        else:
+            print("request error")

@@ -9,4 +9,6 @@ from .bittransactionmodel import BitTransactionEntry, BitTransactionModel
 from .addrbookmodel import AddrBookEntry, AddrBookModel
 from .historymodel import HistoryEntry, HistoryModel
 from .depositmodel import DepositEntry, DepositModel
+from .intormodel import IntorEntry, IntorModel
+from .questionmodel import QuestionEntry, QuestionModel
 from .borrowmodel import BorrowEntry, BorrowModel
