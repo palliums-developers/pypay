@@ -10,14 +10,14 @@ _min_python_version_tuple = tuple(map(int, (MIN_PYTHON_VERSION.split("."))))
 if sys.version_info[:3] < _min_python_version_tuple:
     sys.exit("Error: PyPay requires Python version >= %s..." % MIN_PYTHON_VERSION)
 
-def check_imports():
-    # pure-python dependencies need to be imported here for pyinstaller
-    try:
-        import qrcode
-    except ImportError as e:
-        sys.exit(f"Error: {str(e)}. Try 'sudo python3 -m pip install <module-name>'")
+#def check_imports():
+#    # pure-python dependencies need to be imported here for pyinstaller
+#    try:
+#        import qrcode
+#    except ImportError as e:
+#        sys.exit(f"Error: {str(e)}. Try 'sudo python3 -m pip install <module-name>'")
 
-check_imports()
+#check_imports()
 
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PyQt5.QtGui import QGuiApplication, QIcon

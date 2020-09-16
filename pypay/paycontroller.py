@@ -740,14 +740,14 @@ class PayController(QObject):
     @pyqtSlot(dict)
     def update_bank_product_deposit(self, dt):
         print(dt)
-        # data = dt['data']
+        data = dt['data']
 
-        # TEST
-        dt1 = {'desc':"hello", 'id':'1', 'logo':'', 'name':'name', 'rate':0.1, 'rate_desc':'年利率', 'token_module':'BTC'}
-        dt2 = {'desc':"hello2", 'id':'2', 'logo':'', 'name':'name2', 'rate':0.2, 'rate_desc':'年利率', 'token_module':'BTC'}
-        data = []
-        data.append(dt1)
-        data.append(dt2)
+        ## TEST
+        #dt1 = {'desc':"hello", 'id':'1', 'logo':'', 'name':'name', 'rate':0.1, 'rate_desc':'年利率', 'token_module':'BTC'}
+        #dt2 = {'desc':"hello2", 'id':'2', 'logo':'', 'name':'name2', 'rate':0.2, 'rate_desc':'年利率', 'token_module':'BTC'}
+        #data = []
+        #data.append(dt1)
+        #data.append(dt2)
 
         for d in data:
             depositEntry = DepositEntry(d)
