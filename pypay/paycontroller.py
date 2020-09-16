@@ -13,6 +13,7 @@ from libra_client import Client as LibraClient
 from .tokenmodel import TokenEntry, TokenModel
 from .depositmodel import DepositEntry, DepositModel
 from .depositinfo import DepositInfo
+from .borrowinfo import BorrowInfo
 from .borrowmodel import BorrowEntry, BorrowModel
 from .tokentypemodel import TokenTypeModel
 from .bittransactionmodel import BitTransactionEntry, BitTransactionModel
@@ -68,6 +69,7 @@ class PayController(QObject):
         self._depositModel = DepositModel()
         self._borrowModel = BorrowModel()
         self._deposit_info = DepositInfo()  # 存款
+        self._borrow_info = BorrowInfo()
         self.datadirChanged.emit()
         try:
             self._datadir.mkdir(parents = True)
@@ -112,6 +114,8 @@ class PayController(QObject):
     requestBankAccountInfo = pyqtSignal(dict)
     requestBankProductDeposit = pyqtSignal()
     signal_request_deposit_info = pyqtSignal()
+    requested_get_bank_product_borrow = pyqtSignal()
+    requested_get_bank_borrow_info = pyqtSignal()
 
     # 钱包
     @pyqtSlot()
@@ -195,6 +199,10 @@ class PayController(QObject):
         self.requestBankProductDeposit.connect(self._vls.request_bank_product_deposit)
         self._vls.bank_deposit_infoChanged.connect(self.update_bank_deposit_info) # bank deposit info
         self.signal_request_deposit_info.connect(self._vls.request_bank_deposit_info)
+        self._vls.get_bank_product_borrow_result.connect(self.get_bank_product_borrow_result) # bank product borrow
+        self.requested_get_bank_product_borrow.connect(self._vls.get_bank_product_borrow)
+        self._vls.get_bank_borrow_info_result.connect(self.get_bank_borrow_info_result) # bank borrow info
+        self.requested_get_borrow_info.connect(self._vls.get_bank_borrow_info)
         self._vls.moveToThread(self._vlsThread)
         self._vlsThread.start()
 
@@ -778,10 +786,29 @@ class PayController(QObject):
     # /1.0/violas/bank/deposit/order/list
 
     # 获取借贷产品列表
-    # /1.0/violas/bank/product/borrow
+    @pyqtSlot()
+    def get_bank_product_borrow(self):
+        self._borrowModel.clear()
+        self.requested_get_bank_product_borrow.emit()
+
+    @pyqtSlot(dict)
+    def get_bank_product_borrow_result(self, dt):
+        data = dt['data']
+        for d in data:
+            borrowEntry = BorrowEntry(d)
+            self._borrowModel.append(borrowEntry)
 
     # 获取借贷产品信息
     # /1.0/violas/bank/borrow/info
+    @pyqtSlot()
+    def get_bank_borrow_info(self):
+        self._borrow_info.clear()
+        self.requested_get_bank_borrow_info.emit()
+
+    @pyqtSlot(dict)
+    def get_bank_borrow_info_result(self, dt):
+        data = dt['data']
+        self._borrow_info = BorrowInfo(data)
 
     # 获取借贷订单信息
     # /1.0/violas/bank/borrow/orders

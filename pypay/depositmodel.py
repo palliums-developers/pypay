@@ -124,9 +124,9 @@ class DepositModel (QAbstractListModel):
             return d
         return None
 
-    def append(self, depositEntry):
+    def append(self, entry):
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
-        self._data.append(depositEntry)
+        self._data.append(entry)
         self.endInsertRows()
 
     def clear(self):

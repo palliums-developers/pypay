@@ -115,3 +115,26 @@ class Violas(QObject):
             self.bank_deposit_infoChanged.emit(r.json())
         else:
             print("request error")
+
+
+    get_bank_product_borrow_result = pyqtSignal(dict)
+
+    @pyqtSlot()
+    def get_bank_product_borrow(self):
+        r = requests.get('https://api4.violas.io/1.0/violas/bank/product/borrow')
+        print(r.url)
+        if r.status_code == 200:
+            self.get_bank_product_borrow_result.emit(r.json())
+        else:
+            print("request error")
+
+    get_bank_borrow_info_result = pyqtSignal(dict)
+
+    @pyqtSlot()
+    def get_bank_borrow_info(self):
+        r = requests.get('https://api4.violas.io/1.0/violas/bank/borrow/info')
+        print(r.url)
+        if r.status_code == 200:
+            self.get_bank_borrow_info_result.emit(r.json())
+        else:
+            print("request error")
