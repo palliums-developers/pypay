@@ -22,7 +22,11 @@ if sys.version_info[:3] < _min_python_version_tuple:
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PyQt5.QtGui import QGuiApplication, QIcon
 from PyQt5.QtCore import QUrl, Qt
-from pypay import PayController, TokenEntry, TokenModel, DepositEntry, DepositModel, BorrowEntry, BorrowModel
+from pypay import PayController, TokenEntry 
+from pypay import TokenModel 
+from pypay import DepositEntry, DepositModel
+from pypay import BorrowEntry, BorrowModel
+from pypay import BorrowOrderEntry, BorrowOrderModel
 from pypay import HistoryEntry, HistoryModel
 from pypay import BitTransactionEntry, BitTransactionModel
 from pypay import AddrBookEntry, AddrBookModel
@@ -46,6 +50,8 @@ if __name__ == '__main__':
     qmlRegisterType(DepositModel, "PyPay", 1, 0, "DepositModel")
     qmlRegisterType(BorrowEntry, "PyPay", 1, 0, "BorrowEntry")
     qmlRegisterType(BorrowModel, "PyPay", 1, 0, "BorrowModel")
+    qmlRegisterType(BorrowOrderEntry, "PyPay", 1, 0, "BorrowOrderEntry")
+    qmlRegisterType(BorrowOrderModel, "PyPay", 1, 0, "BorrowOrderModel")
 
     payController = PayController()
 

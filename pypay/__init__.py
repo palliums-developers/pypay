@@ -12,3 +12,4 @@ from .depositmodel import DepositEntry, DepositModel
 from .intormodel import IntorEntry, IntorModel
 from .questionmodel import QuestionEntry, QuestionModel
 from .borrowmodel import BorrowEntry, BorrowModel
+from .borrowordermodel import BorrowOrderEntry, BorrowOrderModel

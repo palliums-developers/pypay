@@ -15,6 +15,7 @@ from .depositmodel import DepositEntry, DepositModel
 from .depositinfo import DepositInfo
 from .borrowinfo import BorrowInfo
 from .borrowmodel import BorrowEntry, BorrowModel
+form .borrowordermodel import BorrowOrderEntry, BorrowOrderModel
 from .tokentypemodel import TokenTypeModel
 from .bittransactionmodel import BitTransactionEntry, BitTransactionModel
 from .bit import Bit
@@ -70,6 +71,7 @@ class PayController(QObject):
         self._borrowModel = BorrowModel()
         self._deposit_info = DepositInfo()  # 存款
         self._borrow_info = BorrowInfo()
+        self._borrow_order_model = BorrowOrderModel()
         self.datadirChanged.emit()
         try:
             self._datadir.mkdir(parents = True)
@@ -116,6 +118,7 @@ class PayController(QObject):
     signal_request_deposit_info = pyqtSignal()
     requested_get_bank_product_borrow = pyqtSignal()
     requested_get_bank_borrow_info = pyqtSignal()
+    requested_get_bank_borrow_orders = pyqtSignal(dict)
 
     # 钱包
     @pyqtSlot()
@@ -202,7 +205,9 @@ class PayController(QObject):
         self._vls.get_bank_product_borrow_result.connect(self.get_bank_product_borrow_result) # bank product borrow
         self.requested_get_bank_product_borrow.connect(self._vls.get_bank_product_borrow)
         self._vls.get_bank_borrow_info_result.connect(self.get_bank_borrow_info_result) # bank borrow info
-        self.requested_get_borrow_info.connect(self._vls.get_bank_borrow_info)
+        self.requested_get_bank_borrow_info.connect(self._vls.get_bank_borrow_info)
+        self._vls.get_bank_borrow_orders_result.connect(self.get_bank_borrow_orders_result) # bank borrow orders
+        self.requested_get_borrow_orders.connect(self._vls.get_bank_borrow_orders)
         self._vls.moveToThread(self._vlsThread)
         self._vlsThread.start()
 
@@ -799,7 +804,6 @@ class PayController(QObject):
             self._borrowModel.append(borrowEntry)
 
     # 获取借贷产品信息
-    # /1.0/violas/bank/borrow/info
     @pyqtSlot()
     def get_bank_borrow_info(self):
         self._borrow_info.clear()
@@ -811,13 +815,31 @@ class PayController(QObject):
         self._borrow_info = BorrowInfo(data)
 
     # 获取借贷订单信息
-    # /1.0/violas/bank/borrow/orders
+    @pyqtSlot(str, int, int)
+    def get_bank_borrow_orders(self, address, offset, limit):
+        self._borrow_orders_model.clear()
+        self.requested_get_bank_borrow_orders.emit({'address':address, 'offset':offset, 'limit':limit})
+
+    @pyqtSlot(dict)
+    def get_bank_borrow_orders_result(self, dt):
+        data = dt['data']
+        for d in data:
+            borrow_order_entry = BorrowOrderEntry(d)
+            self._borrow_order_model.append(borrow_order_entry)
 
     # 获取借贷订单列表
     # /1.0/violas/bank/borrow/order/list
+    @pyqtSlot(str, str, int, int, int)
+    def get_bank_borrow_order_list(self, address, currency, status, offset, limit):
+        self._borrow_order_list_model.clear()
+        self.requested_get_bank_borrow_order_list.emit({'address':address, 'currency':currency, 'status':status, 'offset':offset, 'limit':limit})
 
     # 获取借贷订单详情
     # /1.0/violas/bank/borrow/order/detail
+    @pyqtSlot(str, str, int, int, int)
+    def get_bank_borrow_order_detail(self, address, id, q, offset, limit):
+        self._borrow_order_detail.clear()
+        self.requested_get_bank_borrow_order_detail.emit({'address':address, 'id':id, 'q':q, 'offset':offset, 'limit':limit})
 
     # 存款提取
     # /1.0/violas/bank/deposit/withdrawal

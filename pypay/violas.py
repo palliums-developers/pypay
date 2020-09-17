@@ -138,3 +138,14 @@ class Violas(QObject):
             self.get_bank_borrow_info_result.emit(r.json())
         else:
             print("request error")
+
+    get_bank_borrow_orders_result = pyqtSignal(dict)
+
+    @pyqtSlot(dict)
+    def get_bank_borrow_orders(self, dt):
+        r = requests.get('https://api4.violas.io/1.0/violas/bank/borrow/orders', params=dt)
+        print(r.url)
+        if r.status_code == 200:
+            self.get_bank_borrow_orders_result.emit(r.json())
+        else:
+            print("request error")
