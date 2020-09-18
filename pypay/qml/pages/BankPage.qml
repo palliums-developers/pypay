@@ -212,7 +212,6 @@ Page {
             clip: true
             ScrollIndicator.vertical: ScrollIndicator { }
             delegate: Rectangle {
-                property var entry: modelData
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: 60
@@ -220,7 +219,7 @@ Page {
                 radius: 14
                 MyImage {
                     id: itemImage
-                    source: modelData.logo
+                    source: logo
                     radius: 14
                     width: 41
                     anchors.left: parent.left
@@ -229,7 +228,7 @@ Page {
                 }
                 Text {
                     id: nameText
-                    text: entry.name
+                    text: name
                     anchors.left: itemImage.right
                     anchors.leftMargin: 15
                     anchors.verticalCenter: parent.verticalCenter
@@ -237,7 +236,7 @@ Page {
                     font.pointSize: 16
                 }
                 Text {
-                    text: entry.desc
+                    text: desc
                     anchors.left: nameText.right
                     anchors.leftMargin: 45
                     anchors.verticalCenter: parent.verticalCenter
@@ -250,13 +249,13 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         id: rateText
-                        text: appSettings.eyeIsOpen ? entry.rate: "******"
+                        text: appSettings.eyeIsOpen ? rate: "******"
                         color: "#13B788"
                         font.pointSize: 18
                         anchors.right: parent.right
                     }
                     Text {
-                        text: entry.rate_desc
+                        text: rate_desc
                         color: "#999999"
                         font.pointSize: 10
                         anchors.right: rateText.right
