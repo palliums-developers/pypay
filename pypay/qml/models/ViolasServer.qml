@@ -9,7 +9,6 @@ Item {
         print('request: ' + verb + ' ' + baseURL + partURL)
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
-            print('xhr: on ready state change: ' + xhr.readyState)
             if(xhr.readyState === XMLHttpRequest.DONE) {
                 if(cb) {
                     var res = JSON.parse(xhr.responseText.toString())

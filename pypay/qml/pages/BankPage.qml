@@ -1,5 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import "../controls"
 import "../models"
@@ -11,6 +12,10 @@ Page {
     leftPadding: 134
     rightPadding: 134
     topPadding: 77
+
+    ViolasServer {
+        id: violasServer
+    }
 
     Rectangle {
         id: bankRec
@@ -170,21 +175,17 @@ Page {
         border.width: 1
         radius: 20
 
-        Text {
-            id: depositTextTab
-            anchors.top: parent.top
-            anchors.topMargin: 34
-            anchors.left: whiteRec.left
-            anchors.leftMargin: 29
-            text: qsTr("存款市场")
-            color: "#7D71AA"
-        }
-
         Component.onCompleted: {
             violasServer.request('GET', '/1.0/violas/bank/product/deposit', null, function(resp) {
                     var entries = resp.data;
                     for (var i=0; i<entries.length; i++) {
                         depositModel.append(entries[i])
+                    }
+                });
+            violasServer.request('GET', '/1.0/violas/bank/product/borrow', null, function(resp) {
+                    var entries = resp.data;
+                    for (var i=0; i<entries.length; i++) {
+                        borrowModel.append(entries[i])
                     }
                 });
         }
@@ -193,84 +194,186 @@ Page {
             id: depositModel
         }
 
+        ListModel {
+            id: borrowModel
+        }
 
-        // TODO 借款市场
+        TabBar {
+            id: tabBar
+            anchors.top: parent.top
+            anchors.topMargin: 34
+            anchors.left: whiteRec.left
+            anchors.leftMargin: 29
+            width: 160
 
-        // Bank list
-        ListView {
-            id: bankListView
-            anchors.top: depositTextTab.bottom
+            TabButton {
+                text: qsTr("存款市场")
+                width: 80
+                contentItem: Text {
+                    text: parent.text
+                    color: tabBar.currentIndex == 0 ? "#333333" : "#999999"
+                    font.pointSize: tabBar.currentIndex == 0 ? 16 : 12
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+                background: Rectangle {
+                    color: "#FFFFFF"
+                }
+            }
+
+            TabButton {
+                text: qsTr("借款市场")
+                width: 80
+                contentItem: Text {
+                    text: parent.text
+                    color: tabBar.currentIndex == 1 ? "#333333" : "#999999"
+                    font.pointSize: tabBar.currentIndex == 1 ? 16 : 12
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+                background: Rectangle {
+                    color: "#FFFFFF"
+                }
+            }
+        }
+
+        StackLayout {
+            anchors.top: tabBar.bottom
             anchors.topMargin: 22
             anchors.left: parent.left
             anchors.leftMargin: 20
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.bottom: parent.bottom
-            //model: payController.depositModel
-            model: depositModel
-            spacing: 12
-            clip: true
-            ScrollIndicator.vertical: ScrollIndicator { }
-            delegate: Rectangle {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: 60
-                color: "#EBEBF1"
-                radius: 14
-                MyImage {
-                    id: itemImage
-                    source: logo
-                    radius: 14
-                    width: 41
+            currentIndex: tabBar.currentIndex
+
+            ListView {
+                id: depositProductView
+                model: depositModel
+                spacing: 12
+                clip: true
+                ScrollIndicator.vertical: ScrollIndicator { }
+                delegate: Rectangle {
                     anchors.left: parent.left
-                    anchors.leftMargin: 8
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-                Text {
-                    id: nameText
-                    text: name
-                    anchors.left: itemImage.right
-                    anchors.leftMargin: 15
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: "#333333"
-                    font.pointSize: 16
-                }
-                Text {
-                    text: desc
-                    anchors.left: nameText.right
-                    anchors.leftMargin: 45
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: "#999999"
-                    font.pointSize: 12
-                }
-                Column {
                     anchors.right: parent.right
-                    anchors.rightMargin: 15
-                    anchors.verticalCenter: parent.verticalCenter
-                    Text {
-                        id: rateText
-                        text: appSettings.eyeIsOpen ? rate: "******"
-                        color: "#13B788"
-                        font.pointSize: 18
-                        anchors.right: parent.right
+                    height: 60
+                    color: "#EBEBF1"
+                    radius: 14
+                    MyImage {
+                        id: itemImage
+                        source: logo
+                        radius: 14
+                        width: 41
+                        anchors.left: parent.left
+                        anchors.leftMargin: 8
+                        anchors.verticalCenter: parent.verticalCenter
                     }
                     Text {
-                        text: rate_desc
+                        id: nameText
+                        text: name
+                        anchors.left: itemImage.right
+                        anchors.leftMargin: 15
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: "#333333"
+                        font.pointSize: 16
+                    }
+                    Text {
+                        text: desc
+                        anchors.left: nameText.right
+                        anchors.leftMargin: 45
+                        anchors.verticalCenter: parent.verticalCenter
                         color: "#999999"
-                        font.pointSize: 10
-                        anchors.right: rateText.right
+                        font.pointSize: 12
+                    }
+                    Column {
+                        anchors.right: parent.right
+                        anchors.rightMargin: 15
+                        anchors.verticalCenter: parent.verticalCenter
+                        Text {
+                            id: rateText
+                            text: appSettings.eyeIsOpen ? rate: "******"
+                            color: "#13B788"
+                            font.pointSize: 18
+                            anchors.right: parent.right
+                        }
+                        Text {
+                            text: rate_desc
+                            color: "#999999"
+                            font.pointSize: 10
+                            anchors.right: rateText.right
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                        }
                     }
                 }
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
+            }
+
+            ListView {
+                id: borrowProductView
+                model: borrowModel
+                spacing: 12
+                clip: true
+                ScrollIndicator.vertical: ScrollIndicator { }
+                delegate: Rectangle {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: 60
+                    color: "#EBEBF1"
+                    radius: 14
+                    MyImage {
+                        id: itemImage
+                        source: logo
+                        radius: 14
+                        width: 41
+                        anchors.left: parent.left
+                        anchors.leftMargin: 8
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    Text {
+                        id: nameText
+                        text: name
+                        anchors.left: itemImage.right
+                        anchors.leftMargin: 15
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: "#333333"
+                        font.pointSize: 16
+                    }
+                    Text {
+                        text: desc
+                        anchors.left: nameText.right
+                        anchors.leftMargin: 45
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: "#999999"
+                        font.pointSize: 12
+                    }
+                    Column {
+                        anchors.right: parent.right
+                        anchors.rightMargin: 15
+                        anchors.verticalCenter: parent.verticalCenter
+                        Text {
+                            id: rateText
+                            text: appSettings.eyeIsOpen ? rate: "******"
+                            color: "#13B788"
+                            font.pointSize: 18
+                            anchors.right: parent.right
+                        }
+                        Text {
+                            text: rate_desc
+                            color: "#999999"
+                            font.pointSize: 10
+                            anchors.right: rateText.right
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                        }
                     }
                 }
             }
         }
-    }
-
-    ViolasServer {
-        id: violasServer
     }
 }
