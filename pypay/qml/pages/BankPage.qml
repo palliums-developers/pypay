@@ -1,6 +1,9 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+
 import "../controls"
+import "../models"
+
 import PyPay 1.0
 
 Page {
@@ -9,7 +12,7 @@ Page {
     rightPadding: 134
     topPadding: 77
 
-    Rectangle {       
+    Rectangle {
         id: bankRec
         anchors.left: parent.left
         anchors.right: parent.right
@@ -177,6 +180,20 @@ Page {
             color: "#7D71AA"
         }
 
+        Component.onCompleted: {
+            violasServer.request('GET', '/1.0/violas/bank/product/deposit', null, function(resp) {
+                    var entries = resp.data;
+                    for (var i=0; i<entries.length; i++) {
+                        depositModel.append(entries[i])
+                    }
+                });
+        }
+
+        ListModel {
+            id: depositModel
+        }
+
+
         // TODO 借款市场
 
         // Bank list
@@ -189,7 +206,8 @@ Page {
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.bottom: parent.bottom
-            model: payController.depositModel
+            //model: payController.depositModel
+            model: depositModel
             spacing: 12
             clip: true
             ScrollIndicator.vertical: ScrollIndicator { }
@@ -202,7 +220,7 @@ Page {
                 radius: 14
                 MyImage {
                     id: itemImage
-                    source: entry.logo
+                    source: modelData.logo
                     radius: 14
                     width: 41
                     anchors.left: parent.left
@@ -251,5 +269,9 @@ Page {
                 }
             }
         }
+    }
+
+    ViolasServer {
+        id: violasServer
     }
 }

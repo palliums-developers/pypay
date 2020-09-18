@@ -15,7 +15,7 @@ from .depositmodel import DepositEntry, DepositModel
 from .depositinfo import DepositInfo
 from .borrowinfo import BorrowInfo
 from .borrowmodel import BorrowEntry, BorrowModel
-form .borrowordermodel import BorrowOrderEntry, BorrowOrderModel
+from .borrowordermodel import BorrowOrderEntry, BorrowOrderModel
 from .tokentypemodel import TokenTypeModel
 from .bittransactionmodel import BitTransactionEntry, BitTransactionModel
 from .bit import Bit
@@ -207,7 +207,7 @@ class PayController(QObject):
         self._vls.get_bank_borrow_info_result.connect(self.get_bank_borrow_info_result) # bank borrow info
         self.requested_get_bank_borrow_info.connect(self._vls.get_bank_borrow_info)
         self._vls.get_bank_borrow_orders_result.connect(self.get_bank_borrow_orders_result) # bank borrow orders
-        self.requested_get_borrow_orders.connect(self._vls.get_bank_borrow_orders)
+        #self.requested_get_borrow_orders.connect(self._vls.get_bank_borrow_orders)
         self._vls.moveToThread(self._vlsThread)
         self._vlsThread.start()
 

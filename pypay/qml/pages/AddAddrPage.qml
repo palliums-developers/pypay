@@ -1,8 +1,10 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
+
 import "../controls"
-import "../model"
+import "../models"
+
 import PyPay 1.0
 
 Control {
