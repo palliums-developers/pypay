@@ -9,9 +9,12 @@ import PyPay 1.0
 
 Page {
     id: root
-    leftPadding: 134
-    rightPadding: 134
-    topPadding: 77
+    background: Rectangle {
+        color: "#F7F7F9"
+    }
+
+    signal showDepositPage
+    signal showBorrowPage
 
     ViolasServer {
         id: violasServer
@@ -20,8 +23,11 @@ Page {
     Rectangle {
         id: bankRec
         anchors.left: parent.left
+        anchors.leftMargin: 134
         anchors.right: parent.right
+        anchors.rightMargin: 134
         anchors.top: parent.top
+        anchors.topMargin: 77
         height: 226
         color: "#501BA2"
         radius: 24
@@ -169,8 +175,8 @@ Page {
         anchors.top: bankRec.bottom
         anchors.topMargin: -65
         anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.left: bankRec.left
+        anchors.right: bankRec.right
         border.color: "lightsteelblue"
         border.width: 1
         radius: 20
@@ -306,6 +312,7 @@ Page {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
+                            showDepositPage()
                         }
                     }
                 }
@@ -370,6 +377,7 @@ Page {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
+                            showBorrowPage()
                         }
                     }
                 }

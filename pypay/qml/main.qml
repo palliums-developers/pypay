@@ -359,6 +359,32 @@ ApplicationWindow {
             Component {
                 id: bankPage
                 BankPage {
+                    onShowDepositPage: {
+                        bankStack.push(depositPage)
+                    }
+                    onShowBorrowPage: {
+                        bankStack.push(borrowPage)
+                    }
+                }
+            }
+
+            // Deposit page
+            Component {
+                id: depositPage
+                DepositPage {
+                    onBackArrowClicked: {
+                        bankStack.pop()
+                    }
+                }
+            }
+
+            // Borrow page
+            Component {
+                id: borrowPage
+                BorrowPage {
+                    onBackArrowClicked: {
+                        bankStack.pop()
+                    }
                 }
             }
 
