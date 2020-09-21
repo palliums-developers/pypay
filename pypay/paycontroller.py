@@ -219,11 +219,11 @@ class PayController(QObject):
 
         self.requestTotalBalances.connect(self.updateTotalBalance)
         self._timer.timeout.connect(self._timeUpdate)
-        self._timer.start(10000)
-        self._timeUpdate()
+        #self._timer.start(10000)
+        #self._timeUpdate()
 
-        self.requestExchangeRates.emit()
-        self.request_bank_product_deposit()
+        #self.requestExchangeRates.emit()
+        #self.request_bank_product_deposit()
 
         # TODO https://api .violas.io//1.0/market/exchange/crosschain/address/info
 

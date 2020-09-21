@@ -1,6 +1,9 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+
 import "../controls"
+import "../models"
+
 import PyPay 1.0
 
 Page {
@@ -8,12 +11,59 @@ Page {
     leftPadding: 125
     rightPadding: 138
     topPadding: 69
+
+    property var rates: new Object()
+
     signal backupMnemonicClicked
     signal sendClicked
     signal receiveClicked
     signal exchangeClicked
 
-    Image {       
+    function getRate(token) {
+        if (token.includes('VLS')) {
+            return rates[token.substr(3)]
+        } else {
+            return 0
+        }
+    }
+
+    //function getTotalBalance() {
+    //}
+
+    function getTokenBalance() {
+        if (payController.addr) {
+            violasServer.request('GET', '/1.0/violas/balance?addr='+payController.addr, null, function(resp) {
+                    if (resp.code == 2000) {
+                        tokenModel.clear()
+                        var entries = resp.data.balances;
+                        for (var i=0; i<entries.length; i++) {
+                            tokenModel.append(entries[i])
+                        }
+                    }
+                });
+        }
+    }
+
+    Timer {
+        interval: 2000
+        running: true
+        repeat: true
+        onTriggered: {
+            getTokenBalance()
+        }
+    }
+
+    ViolasServer {
+        id: violasServer
+    }
+
+    Component.onCompleted: {
+        violasServer.requestRate('GET', 'https://api.exchangeratesapi.io/latest?base=USD', null, function(resp) {
+                rates = resp.rates;
+            });
+    }
+
+    Image {
         id: walletImage
         anchors.left: parent.left
         anchors.right: parent.right
@@ -23,7 +73,7 @@ Page {
 
         Text {
             id: totalText
-            text: qsTr("总资产")
+            text: qsTr("Total balance")
             anchors.top: parent.top
             anchors.topMargin: 42
             anchors.left: parent.left
@@ -59,7 +109,7 @@ Page {
         // Send
         MyButton2 {
             icon.source: "../icons/send.svg"
-            text: qsTr("转账")
+            text: qsTr("Send")
             anchors.right: receiveBtn.left
             anchors.rightMargin: 30
             anchors.verticalCenter: amountText.verticalCenter
@@ -77,7 +127,7 @@ Page {
         MyButton2 {
             id: receiveBtn
             icon.source: "../icons/receive.svg"
-            text: qsTr("收款")
+            text: qsTr("Receive")
             anchors.right: exchangeBtn.left
             anchors.rightMargin: 30
             anchors.verticalCenter: amountText.verticalCenter
@@ -90,11 +140,11 @@ Page {
                 }
             }
         }
-        // 映射
+        // Mapping
         MyButton2 {
             id: exchangeBtn
-            icon.source: "../icons/exchange.svg"
-            text: qsTr("映射")
+            icon.source: "../icons/mapping.svg"
+            text: qsTr("Mapping")
             anchors.right: parent.right
             anchors.rightMargin: 60
             anchors.verticalCenter: amountText.verticalCenter
@@ -126,7 +176,7 @@ Page {
             anchors.topMargin: 34
             anchors.left: whiteRec.left
             anchors.leftMargin: 29
-            text: qsTr("资产")
+            text: qsTr("Token")
             color: "#7D71AA"
         }
         ImageButton {
@@ -162,7 +212,11 @@ Page {
             visible: !appSettings.walletIsCreate
         }
 
-        // Coins list
+        ListModel {
+            id: tokenModel
+        }
+
+        // Token list
         ListView {
             id: walletListView
             anchors.top: tokenText.bottom
@@ -172,30 +226,19 @@ Page {
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.bottom: parent.bottom
-            model: payController.tokenModel
+            model: tokenModel
+            visible: tokenModel.count
             spacing: 12
             clip: true
             ScrollIndicator.vertical: ScrollIndicator { }
             delegate: Rectangle {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: tokenEntry.isShow ? 60 : -12
-                visible: tokenEntry.isShow
+                width: walletListView.width
+                height: 60
                 color: "#EBEBF1"
                 radius: 14
                 MyImage {
                     id: itemImage
-                    source: {
-                        if (tokenEntry.chain == "bitcoin") {
-                            return "../icons/bitcoin.svg"
-                        } else if (tokenEntry.chain == "violas") {
-                            return "../icons/violas.svg"
-                        } else if (tokenEntry.chain == "libra") {
-                            return "../icons/libra.svg"
-                        } else {
-                            return ""
-                        }
-                    }
+                    source: show_icon
                     radius: 14
                     width: 41
                     anchors.left: parent.left
@@ -203,7 +246,7 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Text {
-                    text: tokenEntry.name
+                    text: show_name
                     anchors.left: itemImage.right
                     anchors.leftMargin: 15
                     anchors.verticalCenter: parent.verticalCenter
@@ -216,13 +259,13 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         id: amountText
-                        text: appSettings.eyeIsOpen ? tokenEntry.amount : "******"
+                        text: appSettings.eyeIsOpen ? (balance / 1000000).toFixed(6) : "******"
                         color: "#333333"
                         font.pointSize: 16
                         anchors.right: parent.right
                     }
                     Text {
-                        text: appSettings.eyeIsOpen ? "≈$" + tokenEntry.totalPrice : "******"
+                        text: appSettings.eyeIsOpen ? "≈$" + getRate(show_name) * (balance / 1000000) : "******"
                         color: "#ADADAD"
                         font.pointSize: 12
                         anchors.right: amountText.right
@@ -246,7 +289,7 @@ Page {
         }
     }
 
-    // 安全提醒
+    // Security Tip
     Rectangle {
         anchors.left: walletImage.left
         anchors.leftMargin: 1
@@ -272,7 +315,7 @@ Page {
                     fillMode: Image.PreserveAspectFit
                 }
                 Text {
-                    text: qsTr("安全提醒")
+                    text: qsTr("Security Tip")
                     font.pointSize: 20
                     color: "#FFFFFF"
                     anchors.verticalCenter: warningIcon.verticalCenter
@@ -296,7 +339,7 @@ Page {
             spacing: 5
             Text {
                 id: tipText1
-                text: qsTr("您的身份助记词未备份，请务必备份助记词")
+                text: qsTr("Your mnemonic is not banckup, please backup")
                 font.pointSize: 14
                 color: "#3D3949"
                 width: tipRow1.width - spacing - row1Rec.width - 8
@@ -323,7 +366,7 @@ Page {
             spacing: 5
             Text {
                 id: tipText2
-                text: qsTr("助记词可用于恢复身份下钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失")
+                text: qsTr("Mnemonic can restore wallet tokens")
                 font.pointSize: 14
                 color: "#3D3949"
                 width: tipRow2.width - spacing - row2Rec.width - 8
@@ -332,13 +375,13 @@ Page {
             }
         }
         
-        // 备份助记词按钮
+        // Backup button
         MyButton3 {
             id: backupBtn
             anchors.top: tipRow2.bottom
             anchors.topMargin: 46
             anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("立即备份")
+            text: qsTr("Backup Now")
             width: 200
             height: 40
             onClicked: {
