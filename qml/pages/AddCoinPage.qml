@@ -10,15 +10,53 @@ import PyPay 1.0
 Control {
     padding: 8
 
+    property var published: []
+
     signal goBack
 
     ViolasServer {
         id: violasServer
     }
 
-    //Component.onCompleted: {
-    //    violasServer.
-    //}
+    Timer {
+        interval: 5000
+        running: true
+        repeat: true
+        onTriggered: {
+            getTokenPublished()
+        }
+    }
+
+    function getTokenPublished() {
+        violasServer.request('GET', '/1.0/violas/currency/published?addr='+payController.addr, null, function(resp) {
+            if (resp.code == 2000) {
+                published = resp.data.published
+                console.log(published)
+            }
+        });
+    }
+
+    Component.onCompleted: {
+        getTokenPublished()
+
+        violasServer.request('GET', '/1.0/violas/currency', null, function(resp) {
+            if (resp.code == 2000) {
+                var entries = resp.data.currencies;
+                for (var i=0; i<entries.length; i++) {
+                    tokenModel.append(entries[i])
+                }
+            }
+        });
+
+        //violasServer.request('GET', '/1.0/libra/currency', null, function(resp) {
+        //    if (resp.code == 2000) {
+        //        var entries = resp.data.currencies;
+        //        for (var i=0; i<entries.length; i++) {
+        //            tokenModel.append(entries[i])
+        //        }
+        //    }
+        //});
+    }
 
     contentItem: Item {
         Image {
@@ -44,6 +82,10 @@ Control {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
+        ListModel {
+            id: tokenModel
+        }
+
         ListView {
             id: listView
             anchors.top: titleText.bottom
@@ -53,7 +95,7 @@ Control {
             anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.bottom: parent.bottom
-            model: payController.tokenModel
+            model: tokenModel
             spacing: 12
             clip: true
             ScrollIndicator.vertical: ScrollIndicator { }
@@ -64,17 +106,7 @@ Control {
                 radius: 14
                 MyImage {
                     id: itemImage
-                    source: {
-                        if (tokenEntry.chain == "bitcoin") {
-                            return "../icons/bitcoin.svg"
-                        } else if (tokenEntry.chain == "violas") {
-                            return "../icons/violas.svg"
-                        } else if (tokenEntry.chain == "libra") {
-                            return "../icons/libra.svg"
-                        } else {
-                            return ""
-                        }
-                    }
+                    source: show_icon
                     radius: 20
                     width: 41
                     anchors.left: parent.left
@@ -82,7 +114,7 @@ Control {
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Text {
-                    text: tokenEntry.name
+                    text: show_name
                     anchors.left: itemImage.right
                     anchors.leftMargin: 15
                     anchors.verticalCenter: parent.verticalCenter
@@ -90,14 +122,12 @@ Control {
                     font.pointSize: 16
                 }
                 MySwitch {
-                    visible: !tokenEntry.isDefault
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     checkable: true
-                    checked: tokenEntry.isShow
+                    checked: published.includes(show_name)
                     onClicked: {
-                        tokenEntry.isShow = !tokenEntry.isShow
-                        payController.updateTokenShow(tokenEntry.chain, tokenEntry.name, tokenEntry.isShow)
+                        //payController.updateTokenShow(tokenEntry.chain, tokenEntry.name, tokenEntry.isShow)
                     }
                 }
             }

@@ -45,6 +45,7 @@ class PayController(QObject):
         self._mnemonicConfirm = ''
         self._isConfirming = False
         self._addr = ''
+        self._libra_addr = ''
         self._tokenModel = TokenModel()
         self._tokenModelData = []
         self._currentTokenEntry = TokenEntry({'chain':'violas', 'name':'LBR', 'amount':0.0000, 'totalPrice':0.00, 'addr':'', 'isDefault':False, 'isShow':False, 'isAddCur':False})
@@ -135,8 +136,11 @@ class PayController(QObject):
         else:
             self._wallet = Wallet.new()
             account = self._wallet.new_account()
+            account1 = self._wallet.new_account()
         self._addr = self._wallet.accounts[0].address_hex
         self.addrChanged.emit()
+        self._libra_addr = self._wallet.accounts[1].address_hex
+        self.libra_addr_changed.emit()
         self._mnemonic = self._wallet.mnemonic
         self.mnemonicChanged.emit()
 
@@ -284,6 +288,12 @@ class PayController(QObject):
     @pyqtProperty(str, notify=addrChanged)
     def addr(self):
         return self._addr
+
+    # libra地址
+    libra_addr_changed = pyqtSignal()
+    @pyqtProperty(str, notify=libra_addr_changed)
+    def libra_addr(self):
+        return self._libra_addr
 
     # btc地址
     btcAddrChanged = pyqtSignal()

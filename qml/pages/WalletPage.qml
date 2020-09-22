@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import "../controls"
-import "../models"
+import "ViolasServer.js" as violasServer
 
 import PyPay 1.0
 
@@ -12,7 +12,8 @@ Page {
     rightPadding: 138
     topPadding: 69
 
-    property var rates: new Object()
+    property var rates: {}
+    property var balances: []
 
     signal backupMnemonicClicked
     signal sendClicked
@@ -32,16 +33,38 @@ Page {
 
     function getTokenBalance() {
         if (payController.addr) {
-            violasServer.request('GET', '/1.0/violas/balance?addr='+payController.addr, null, function(resp) {
-                    if (resp.code == 2000) {
-                        tokenModel.clear()
-                        var entries = resp.data.balances;
-                        for (var i=0; i<entries.length; i++) {
-                            tokenModel.append(entries[i])
-                        }
-                    }
-                });
+        //    violasServer.request('GET', '/1.0/violas/balance?addr='+payController.addr, null, function(resp) {
+        //            if (resp.code == 2000) {
+        //                var entries = resp.data.balances;
+        //                for (var i=0; i<entries.length; i++) {
+        //                    var index  = balances.indexOf(entries[i])
+        //                    if (balances.includes(entries[i].name) {
+        //                        
+        //                    } else {
+        //                        balances.push(entries[i])
+        //                        tokenModel.append(entries[i])
+        //                    }
+        //                }
+        //            }
+        //        });
+
+        //    violasServer.request('GET', '/1.0/libra/balance?addr='+payController.libra_addr, null, function(resp) {
+        //            if (resp.code == 2000) {
+        //                var entries = resp.data.balances;
+        //                for (var i=0; i<entries.length; i++) {
+        //                    tokenModel.append(entries[i])
+        //                }
+        //            }
+        //        });
+
+            var msg = {'action':'getBalances', 'model':tokenModel, 'libraAddr': payController.libra_addr, 'violasAddr': payController.addr};
+            worker.sendMessage(msg);
         }
+    }
+
+    WorkerScript {
+        id: worker
+        source: "../models/DataLoader.mjs"
     }
 
     Timer {
@@ -53,11 +76,9 @@ Page {
         }
     }
 
-    ViolasServer {
-        id: violasServer
-    }
-
     Component.onCompleted: {
+        getTokenBalance()
+
         violasServer.requestRate('GET', 'https://api.exchangeratesapi.io/latest?base=USD', null, function(resp) {
                 rates = resp.rates;
             });
@@ -265,7 +286,8 @@ Page {
                         anchors.right: parent.right
                     }
                     Text {
-                        text: appSettings.eyeIsOpen ? "≈$" + getRate(show_name) * (balance / 1000000) : "******"
+                        //text: appSettings.eyeIsOpen ? "≈$" + getRate(show_name) * (balance / 1000000) : "******"
+                        text: appSettings.eyeIsOpen ? "≈$" + getRate('USD') * (balance / 1000000) : "******"
                         color: "#ADADAD"
                         font.pointSize: 12
                         anchors.right: amountText.right
