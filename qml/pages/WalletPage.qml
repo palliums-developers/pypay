@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import "../controls"
-import "ViolasServer.js" as violasServer
+import "../models/ViolasServer.js" as Server
 
 import PyPay 1.0
 
@@ -33,30 +33,6 @@ Page {
 
     function getTokenBalance() {
         if (payController.addr) {
-        //    violasServer.request('GET', '/1.0/violas/balance?addr='+payController.addr, null, function(resp) {
-        //            if (resp.code == 2000) {
-        //                var entries = resp.data.balances;
-        //                for (var i=0; i<entries.length; i++) {
-        //                    var index  = balances.indexOf(entries[i])
-        //                    if (balances.includes(entries[i].name) {
-        //                        
-        //                    } else {
-        //                        balances.push(entries[i])
-        //                        tokenModel.append(entries[i])
-        //                    }
-        //                }
-        //            }
-        //        });
-
-        //    violasServer.request('GET', '/1.0/libra/balance?addr='+payController.libra_addr, null, function(resp) {
-        //            if (resp.code == 2000) {
-        //                var entries = resp.data.balances;
-        //                for (var i=0; i<entries.length; i++) {
-        //                    tokenModel.append(entries[i])
-        //                }
-        //            }
-        //        });
-
             var msg = {'action':'getBalances', 'model':tokenModel, 'libraAddr': payController.libra_addr, 'violasAddr': payController.addr};
             worker.sendMessage(msg);
         }
@@ -71,15 +47,14 @@ Page {
         interval: 2000
         running: true
         repeat: true
+        triggeredOnStart: true
         onTriggered: {
             getTokenBalance()
         }
     }
 
     Component.onCompleted: {
-        getTokenBalance()
-
-        violasServer.requestRate('GET', 'https://api.exchangeratesapi.io/latest?base=USD', null, function(resp) {
+        Server.requestRate('GET', 'https://api.exchangeratesapi.io/latest?base=USD', null, function(resp) {
                 rates = resp.rates;
             });
     }

@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import "../controls"
-import "../models"
+import "../models/ViolasServer.js" as Server
 
 import PyPay 1.0
 
@@ -15,10 +15,6 @@ Page {
 
     signal showDepositPage
     signal showBorrowPage
-
-    ViolasServer {
-        id: violasServer
-    }
 
     Rectangle {
         id: bankRec
@@ -182,13 +178,13 @@ Page {
         radius: 20
 
         Component.onCompleted: {
-            violasServer.request('GET', '/1.0/violas/bank/product/deposit', null, function(resp) {
+            Server.request('GET', '/1.0/violas/bank/product/deposit', null, function(resp) {
                     var entries = resp.data;
                     for (var i=0; i<entries.length; i++) {
                         depositModel.append(entries[i])
                     }
                 });
-            violasServer.request('GET', '/1.0/violas/bank/product/borrow', null, function(resp) {
+            Server.request('GET', '/1.0/violas/bank/product/borrow', null, function(resp) {
                     var entries = resp.data;
                     for (var i=0; i<entries.length; i++) {
                         borrowModel.append(entries[i])

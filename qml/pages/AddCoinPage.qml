@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import "../controls"
-import "../models"
+import "../models/ViolasServer.js" as Server
 
 import PyPay 1.0
 
@@ -13,10 +13,6 @@ Control {
     property var published: []
 
     signal goBack
-
-    ViolasServer {
-        id: violasServer
-    }
 
     Timer {
         interval: 5000
@@ -28,7 +24,7 @@ Control {
     }
 
     function getTokenPublished() {
-        violasServer.request('GET', '/1.0/violas/currency/published?addr='+payController.addr, null, function(resp) {
+        Server.request('GET', '/1.0/violas/currency/published?addr='+payController.addr, null, function(resp) {
             if (resp.code == 2000) {
                 published = resp.data.published
                 console.log(published)
@@ -39,7 +35,7 @@ Control {
     Component.onCompleted: {
         getTokenPublished()
 
-        violasServer.request('GET', '/1.0/violas/currency', null, function(resp) {
+        Server.request('GET', '/1.0/violas/currency', null, function(resp) {
             if (resp.code == 2000) {
                 var entries = resp.data.currencies;
                 for (var i=0; i<entries.length; i++) {
@@ -48,7 +44,7 @@ Control {
             }
         });
 
-        //violasServer.request('GET', '/1.0/libra/currency', null, function(resp) {
+        //Server.request('GET', '/1.0/libra/currency', null, function(resp) {
         //    if (resp.code == 2000) {
         //        var entries = resp.data.currencies;
         //        for (var i=0; i<entries.length; i++) {

@@ -1,4 +1,4 @@
-var string violasURL: "https://api4.violas.io"
+var violasURL = "https://api4.violas.io"
 
 function request(verb, partURL, obj, cb, async=true) {
     //print('request: ' + verb + ' ' + violasURL + partURL)
