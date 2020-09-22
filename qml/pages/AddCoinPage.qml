@@ -1,13 +1,24 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
 import "../controls"
+import "../models"
+
 import PyPay 1.0
 
 Control {
     padding: 8
 
     signal goBack
+
+    ViolasServer {
+        id: violasServer
+    }
+
+    //Component.onCompleted: {
+    //    violasServer.
+    //}
 
     contentItem: Item {
         Image {
@@ -25,7 +36,7 @@ Control {
         }
         Text {
             id: titleText
-            text: qsTr("添加币种")
+            text: qsTr("Add Token")
             color: "#333333"
             font.pointSize: 16
             font.weight: Font.Medium

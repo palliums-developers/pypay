@@ -1,15 +1,13 @@
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
+from pypay.paycontroller import PayController
+from pypay.tokenmodel import TokenEntry, TokenModel
+from pypay.tokentypemodel import TokenTypeModel
+from pypay.bittransactionmodel import BitTransactionEntry, BitTransactionModel
+from pypay.addrbookmodel import AddrBookEntry, AddrBookModel
+from pypay.historymodel import HistoryEntry, HistoryModel
+from pypay.depositmodel import DepositEntry, DepositModel
+from pypay.intormodel import IntorEntry, IntorModel
+from pypay.questionmodel import QuestionEntry, QuestionModel
+from pypay.borrowmodel import BorrowEntry, BorrowModel
+from pypay.borrowordermodel import BorrowOrderEntry, BorrowOrderModel
 
-from .paycontroller import PayController
-from .tokenmodel import TokenEntry, TokenModel
-from .tokentypemodel import TokenTypeModel
-from .bittransactionmodel import BitTransactionEntry, BitTransactionModel
-from .addrbookmodel import AddrBookEntry, AddrBookModel
-from .historymodel import HistoryEntry, HistoryModel
-from .depositmodel import DepositEntry, DepositModel
-from .intormodel import IntorEntry, IntorModel
-from .questionmodel import QuestionEntry, QuestionModel
-from .borrowmodel import BorrowEntry, BorrowModel
-from .borrowordermodel import BorrowOrderEntry, BorrowOrderModel
+__version__ = '0.0.1'

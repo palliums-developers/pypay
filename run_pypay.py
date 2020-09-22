@@ -1,42 +1,34 @@
-#!/usr/bin/env python3
-# -*- mode: python -*-
-#
 import sys
 import os
-
-MIN_PYTHON_VERSION = "3.6.1"  # FIXME duplicated from setup.py
-_min_python_version_tuple = tuple(map(int, (MIN_PYTHON_VERSION.split("."))))
-
-if sys.version_info[:3] < _min_python_version_tuple:
-    sys.exit("Error: PyPay requires Python version >= %s..." % MIN_PYTHON_VERSION)
-
-#def check_imports():
-#    # pure-python dependencies need to be imported here for pyinstaller
-#    try:
-#        import qrcode
-#    except ImportError as e:
-#        sys.exit(f"Error: {str(e)}. Try 'sudo python3 -m pip install <module-name>'")
-
-#check_imports()
 
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PyQt5.QtGui import QGuiApplication, QIcon
 from PyQt5.QtCore import QUrl, Qt
-from pypay import PayController, TokenEntry 
-from pypay import TokenModel 
-from pypay import DepositEntry, DepositModel
-from pypay import BorrowEntry, BorrowModel
-from pypay import BorrowOrderEntry, BorrowOrderModel
-from pypay import HistoryEntry, HistoryModel
-from pypay import BitTransactionEntry, BitTransactionModel
-from pypay import AddrBookEntry, AddrBookModel
+
+from pypay.paycontroller import PayController
+from pypay.tokenmodel import TokenEntry, TokenModel
+from pypay.depositmodel import DepositEntry, DepositModel
+from pypay.borrowmodel import BorrowEntry, BorrowModel
+from pypay.borrowordermodel import BorrowOrderEntry, BorrowOrderModel
+from pypay.historymodel import HistoryEntry, HistoryModel
+from pypay.bittransactionmodel import BitTransactionEntry, BitTransactionModel
+from pypay.addrbookmodel import AddrBookEntry, AddrBookModel
+
+application_path = (
+    os.path.dirname(sys.executable)
+    if getattr(sys, "frozen", False)
+    else os.path.dirname(os.path.abspath(__file__))
+)
 
 if __name__ == '__main__':
+    print("starting pypay ...")
+
     QGuiApplication.setAttribute(Qt.AA_EnableHighDpiScaling);
 
     app = QGuiApplication(sys.argv)
 
-    QGuiApplication.setWindowIcon(QIcon("pypay/qml/icons/pypay.png"));
+    file = os.path.join(application_path, "qml/icons/pypay.png")
+    QGuiApplication.setWindowIcon(QIcon(file));
 
     qmlRegisterType(TokenEntry, "PyPay", 1, 0, "TokenEntry")
     qmlRegisterType(TokenModel, "PyPay", 1, 0, "TokenModel")
@@ -57,8 +49,10 @@ if __name__ == '__main__':
 
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("payController", payController)
-    engine.load(QUrl.fromLocalFile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "pypay/qml/main.qml")))
+    file = os.path.join(application_path, "qml/main.qml")
+    engine.load(QUrl.fromLocalFile(file))
     if not engine.rootObjects():
+        print("not engine.rootObjects()")
         sys.exit(-1)
 
     try:

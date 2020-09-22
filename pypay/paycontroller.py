@@ -8,26 +8,29 @@ import qrcode.image
 import logging
 import pathlib
 import json
-from violas_client import Wallet, Client
-from libra_client import Client as LibraClient
-from .tokenmodel import TokenEntry, TokenModel
-from .depositmodel import DepositEntry, DepositModel
-from .depositinfo import DepositInfo
-from .borrowinfo import BorrowInfo
-from .borrowmodel import BorrowEntry, BorrowModel
-from .borrowordermodel import BorrowOrderEntry, BorrowOrderModel
-from .tokentypemodel import TokenTypeModel
-from .bittransactionmodel import BitTransactionEntry, BitTransactionModel
-from .bit import Bit
-from .libra import Libra
-from .violas import Violas
-from .addrbookmodel import AddrBookEntry, AddrBookModel
-from .historymodel import HistoryEntry, HistoryModel
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, pyqtProperty, QUrl, QThread, QTimer
-from PyQt5.QtGui import QClipboard, QGuiApplication, QDesktopServices
+
 from mnemonic import Mnemonic
 from bip32utils import BIP32Key
 from bit import PrivateKeyTestnet, wif_to_key
+
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, pyqtProperty, QUrl, QThread, QTimer
+from PyQt5.QtGui import QClipboard, QGuiApplication, QDesktopServices
+
+from violas_client import Wallet, Client
+from libra_client import Client as LibraClient
+from pypay.bitcoin import Bit
+from pypay.tokenmodel import TokenEntry, TokenModel
+from pypay.depositmodel import DepositEntry, DepositModel
+from pypay.depositinfo import DepositInfo
+from pypay.borrowinfo import BorrowInfo
+from pypay.borrowmodel import BorrowEntry, BorrowModel
+from pypay.borrowordermodel import BorrowOrderEntry, BorrowOrderModel
+from pypay.tokentypemodel import TokenTypeModel
+from pypay.bittransactionmodel import BitTransactionEntry, BitTransactionModel
+from pypay.libra import Libra
+from pypay.violas import Violas
+from pypay.addrbookmodel import AddrBookEntry, AddrBookModel
+from pypay.historymodel import HistoryEntry, HistoryModel
 
 
 # 支付控制器

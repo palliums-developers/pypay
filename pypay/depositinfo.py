@@ -1,12 +1,12 @@
 import sys
 
-from .intormodel import IntorEntry, IntorModel
-from .questionmodel import QuestionEntry, QuestionModel
-
 from PyQt5.QtCore import QAbstractListModel, Qt, QUrl, QByteArray, QObject, pyqtSignal, pyqtSlot, pyqtProperty, QModelIndex
 from PyQt5.QtQml import qmlRegisterType
 from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtQuick import QQuickView
+
+from pypay.intormodel import IntorEntry, IntorModel
+from pypay.questionmodel import QuestionEntry, QuestionModel
 
 class DepositInfo (QObject):
     def __init__(self, dict = None, parent = None):
