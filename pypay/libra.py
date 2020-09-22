@@ -13,8 +13,8 @@ class Libra(QObject):
     @pyqtSlot()
     def requestActiveAccount(self):
         try:
-            self._client.mint_coin(self._accounts[0].address, 500_000,
-                    auth_key_prefix=self._accounts[0].auth_key_prefix, currency_code="LBR")
+            self._client.mint_coin(self._accounts[1].address, 500_000,
+                    auth_key_prefix=self._accounts[1].auth_key_prefix, currency_code="LBR")
         except Exception as result:
             print(result)
 
@@ -37,7 +37,7 @@ class Libra(QObject):
     @pyqtSlot()
     def requestBalances(self):
         try:
-            balances = self._client.get_balances(self._accounts[0].address_hex)
+            balances = self._client.get_balances(self._accounts[1].address_hex)
             self.balancesChanged.emit(balances)
 
         except Exception as result:
@@ -61,7 +61,7 @@ class Libra(QObject):
     def requestAddCurOfAccount(self, cur, isShow):
         if isShow:
             try:
-                self._client.add_currency_to_account(self._accounts[0], cur)
+                self._client.add_currency_to_account(self._accounts[1], cur)
             except Exception as result:
                 print(result)
         else:
