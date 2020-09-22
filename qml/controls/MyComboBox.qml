@@ -3,7 +3,7 @@ import QtQuick.Controls 2.14
 
 ComboBox {
     id: control
-    model: [qsTr("简体中文"), qsTr("English")]
+    model: [qsTr("English"), qsTr("简体中文")]
     spacing: 2
 
     delegate: ItemDelegate {

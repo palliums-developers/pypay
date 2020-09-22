@@ -1,7 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Controls.Material 2.4
-import QtQuick.Window 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Window 2.15
 import Qt.labs.settings 1.0
 
 import "controls"
@@ -14,7 +13,7 @@ ApplicationWindow {
     minimumWidth: 960
     minimumHeight: 540
     visible: true
-    title: qsTr("桌面支付钱包")
+    title: qsTr("Desktop Pay Wallet")
 
     property bool userIsLogin: false
 
@@ -68,14 +67,14 @@ ApplicationWindow {
         property bool eyeIsOpen: false
         property bool walletIsCreate: false
         property bool mnemonicIsBackup: false
-        property string password: ""    // TODO
+        property string password: ""
     }
 
     Component.onCompleted: {
-        if (appSettings.walletIsCreate) {   // TODO load
+        if (appSettings.walletIsCreate) {
             payController.createWallet()
         }
-        console.log(payController.datadir)
+        //console.log(payController.datadir)
     }
 
     onClosing: {
@@ -118,7 +117,7 @@ ApplicationWindow {
                 anchors.topMargin: 140
                 height: 80
                 icon.source: "icons/walleticon.svg"
-                text: qsTr("钱包")
+                text: qsTr("Wallet")
                 selected: true
                 onClicked: {
                     showWalletPage()
@@ -132,7 +131,7 @@ ApplicationWindow {
                 anchors.topMargin: 10
                 height: 80
                 icon.source: "icons/marketicon.svg"
-                text: qsTr("市场")
+                text: qsTr("Market")
                 onClicked: {
                     showMarketPage()
                 }
@@ -145,7 +144,7 @@ ApplicationWindow {
                 anchors.topMargin: 10
                 height: 80
                 icon.source: "icons/bank.svg"
-                text: qsTr("数字银行")
+                text: qsTr("Bank")
                 onClicked: {
                     showBankPage()
                 }
@@ -166,7 +165,6 @@ ApplicationWindow {
                 anchors.right: parent.right
                 anchors.rightMargin: 43
                 anchors.verticalCenter: parent.verticalCenter
-                // 我的
                 ImageButton {
                     id: myButton
                     source: "./icons/me.svg"
@@ -213,7 +211,7 @@ ApplicationWindow {
                 // Import button
                 MyButton {
                     id: importBtn
-                    text: qsTr("导入")
+                    text: qsTr("Import")
                     anchors.verticalCenter: parent.verticalCenter
                     background.implicitWidth: 29
                     background.implicitHeight: 14
@@ -226,7 +224,7 @@ ApplicationWindow {
                 // Create button
                 MyButton {
                     id: createBtn
-                    text: qsTr("创建")
+                    text: qsTr("Create")
                     anchors.verticalCenter: parent.verticalCenter
                     background.implicitWidth: 29
                     background.implicitHeight: 14
@@ -236,16 +234,16 @@ ApplicationWindow {
                     }
                 }
 
-                // Download button
-                MyButton {
-                    id: downloadBtn
-                    text: qsTr("下载")
-                    anchors.verticalCenter: parent.verticalCenter
-                    background.implicitWidth: 29
-                    background.implicitHeight: 14
-                }
+                //// Download button
+                //MyButton {
+                //    id: downloadBtn
+                //    text: qsTr("下载")
+                //    anchors.verticalCenter: parent.verticalCenter
+                //    background.implicitWidth: 29
+                //    background.implicitHeight: 14
+                //}
 
-                // Transaction MyComboBox
+                // i18n MyComboBox
                 MyComboBox {
                     id: tsComboBox               
                     width: 150
@@ -292,7 +290,7 @@ ApplicationWindow {
                 }
             }
 
-            // 收款
+            // Receive
             Component {
                 id: receivePage
                 ReceivePage {
@@ -302,7 +300,7 @@ ApplicationWindow {
                 }
             }
 
-            // 转账
+            // Send
             Component {
                 id: sendPage
                 SendPage {
@@ -312,7 +310,7 @@ ApplicationWindow {
                 }
             }
 
-            // 映射
+            // Exchange
             Component {
                 id: exchangePage
                 ExchangePage {
@@ -322,7 +320,7 @@ ApplicationWindow {
                 }
             }
 
-            // 钱包管理
+            // Wallet manage
             Component {
                 id: walletManagePage
                 WalletManagePage {
@@ -488,7 +486,7 @@ ApplicationWindow {
             }
         }
 
-        // 币种详情
+        // Coin detail
         Popup {
             id: coinDetailPage
             x: parent.width - width
@@ -526,7 +524,7 @@ ApplicationWindow {
             }
         }
 
-        // 添加币种
+        // Add coin
         Popup {
             id: addCoinPage
             x: parent.width - width
@@ -545,7 +543,7 @@ ApplicationWindow {
             }
         }
 
-        // 地址薄
+        // Addr book
         Popup {
             id: addrBookPage
             x: parent.width - width
