@@ -6,10 +6,6 @@ Page {
     id: root
     signal backArrowClicked
 
-    function getBalance(chain, name) {
-        payController.getCurBalance(chain, name)
-    }
-
     background: Rectangle {
         color: "#F7F7F9"
     }
