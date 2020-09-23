@@ -13,6 +13,10 @@ Page {
         payController.getCurBalance(chain, name)
     }
 
+    background: Rectangle {
+        color: "#F7F7F9"
+    }
+
     Flickable {
         anchors.fill: parent
         contentHeight: 200000
@@ -36,7 +40,7 @@ Page {
 
         Text {
             id: titleText
-            text: qsTr("数字银行 > <b><b>存款</b></b>")
+            text: qsTr("Bank > <b><b>Deposit</b></b>")
             font.pointSize: 14
             color: "#5C5C5C"
             anchors.verticalCenter: backBtn.verticalCenter

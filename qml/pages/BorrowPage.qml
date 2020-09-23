@@ -4,13 +4,14 @@ import "../controls"
 
 Page {
     id: root
-    background: Rectangle {
-        color: "#F7F7F9"
-    }
     signal backArrowClicked
 
     function getBalance(chain, name) {
         payController.getCurBalance(chain, name)
+    }
+
+    background: Rectangle {
+        color: "#F7F7F9"
     }
 
     Flickable {
@@ -36,7 +37,7 @@ Page {
 
         Text {
             id: titleText
-            text: qsTr("数字银行 > <b>借款</b>")
+            text: qsTr("Bank > <b>Deposit</b>")
             font.pointSize: 14
             color: "#5C5C5C"
             anchors.verticalCenter: backBtn.verticalCenter

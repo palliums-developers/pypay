@@ -274,6 +274,7 @@ Page {
         anchors.bottom: parent.bottom
         anchors.left: bankRec.left
         anchors.right: bankRec.right
+        color: "#FFFFFF"
         border.color: "lightsteelblue"
         border.width: 1
         radius: 20

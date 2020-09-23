@@ -13,6 +13,10 @@ Page {
         payController.getCurBalance(chain, name)
     }
 
+    background: Rectangle {
+        color: "#F7F7F9"
+    }
+
     Flickable {
         anchors.fill: parent
         contentHeight: 200000
