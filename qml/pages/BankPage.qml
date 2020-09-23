@@ -9,12 +9,33 @@ import PyPay 1.0
 
 Page {
     id: root
-    background: Rectangle {
-        color: "#F7F7F9"
-    }
 
     signal showDepositPage
     signal showBorrowPage
+
+    property var bankAccountInfo: {}
+
+    Timer {
+        interval: 5000
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            getBankAccountInfo()
+        }
+    }
+
+    function getBankAccountInfo() {
+        if (payController.addr) {
+            Server.request('GET', '/1.0/violas/bank/account/info?address='+payController.addr, null, function(resp) {
+                    bankAccountInfo = resp.data;
+                });
+        }
+    }
+
+    background: Rectangle {
+        color: "#F7F7F9"
+    }
 
     Rectangle {
         id: bankRec
@@ -30,7 +51,7 @@ Page {
 
         Text {
             id: totalText
-            text: qsTr("存款总额($)")
+            text: qsTr("Deposit Balance ($)")
             anchors.top: parent.top
             anchors.topMargin: 16
             anchors.left: parent.left
@@ -60,24 +81,25 @@ Page {
             anchors.top: totalText.bottom
             anchors.topMargin: 16
             anchors.left: totalText.left
-            text: appSettings.eyeIsOpen ? qsTr("≈") + payController.deposit: "******"
+            text: appSettings.eyeIsOpen ? qsTr("≈") + bankAccountInfo.amount : "******"
             font.pointSize: 20
             color: "#FFFFFF"
             verticalAlignment: Text.AlignVCenter
         }
 
-        // 可借总额
+        // Borrow
         Image {
             id: borrowImage
             anchors.left: depositText.left
             anchors.top: depositText.bottom
             anchors.topMargin: 16
             source: "../icons/borrow.svg"
+            width: 10
             fillMode: Image.PreserveAspectFit
         }
         Text {
             id: borrowText
-            text: qsTr("可借总额 ($)    ")
+            text: qsTr("Borrow ($)\t\t")
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: borrowImage.right
@@ -86,7 +108,7 @@ Page {
             verticalAlignment: Text.AlignVCenter
         }
         Text {
-            text: appSettings.eyeIsOpen ? qsTr("≈") + payController.borrow: "******"
+            text: appSettings.eyeIsOpen ? qsTr("≈") + bankAccountInfo.borrow : "******"
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: borrowText.right
@@ -95,18 +117,19 @@ Page {
             verticalAlignment: Text.AlignVCenter
         }
 
-        // 累计收益
+        // Total
         Image {
             id: incomeImage
             anchors.left: depositText.left
             anchors.top: borrowImage.bottom
             anchors.topMargin: 16
-            source: "../icons/borrow.svg"
+            source: "../icons/income.png"
+            width: 10
             fillMode: Image.PreserveAspectFit
         }
         Text {
             id: incomeText
-            text: qsTr("累计收益 ($)    ")
+            text: qsTr("Total ($)\t\t")
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: incomeImage.right
@@ -116,7 +139,7 @@ Page {
         }
         Text {
             id: incomeDataText
-            text: appSettings.eyeIsOpen ? qsTr("≈") + payController.income: "******"
+            text: appSettings.eyeIsOpen ? qsTr("≈") + bankAccountInfo.total : "******"
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: incomeText.right
@@ -125,38 +148,47 @@ Page {
             verticalAlignment: Text.AlignVCenter
         }
 
-        // 昨日收益
-        Image {
-            id: lastdayincomeImage
+        // Yesterday
+        Rectangle {
+            id: yesBackgroundRec
+            color: "#FB8F0B"
+            width: yesRow.width + 16
+            height: yesRow.height
+            opacity: 0.1
             anchors.left: incomeDataText.right
             anchors.leftMargin: 50
             anchors.verticalCenter: incomeDataText.verticalCenter
-            source: "../icons/lastdayincome.svg"
-            fillMode: Image.PreserveAspectFit
         }
-        Text {
-            id: lastdayincomeText
-            text: qsTr("昨日收益: ")
-            anchors.left: lastdayincomeImage.right
-            anchors.leftMargin: 8
-            anchors.verticalCenter: lastdayincomeImage.verticalCenter
-            color: "#FFFFFF"
-            font.pointSize: 12
-            verticalAlignment: Text.AlignVCenter
+        Row {
+            id: yesRow
+            anchors.horizontalCenter: yesBackgroundRec.horizontalCenter
+            anchors.verticalCenter: yesBackgroundRec.verticalCenter
+            spacing: 8
+            Image {
+                id: lastdayincomeImage
+                source: "../icons/lastdayincome.svg"
+                width: 10
+                fillMode: Image.PreserveAspectFit
+                anchors.verticalCenter: lastdayincomeText.verticalCenter
+            }
+            Text {
+                id: lastdayincomeText
+                text: qsTr("Yesterday income ")
+                color: "#FB8F0B"
+                font.pointSize: 12
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            Text {
+                text: (appSettings.eyeIsOpen ? bankAccountInfo.yesterday : "******") + qsTr(" $")
+                color: "#FB8F0B"
+                font.pointSize: 12
+                verticalAlignment: Text.AlignVCenter
+            }
         }
 
-        Text {
-            text: appSettings.eyeIsOpen ? qsTr("≈") + payController.lastdayincome: "******"
-            color: "#FFFFFF"
-            font.pointSize: 12
-            anchors.left: lastdayincomeText.right
-            anchors.leftMargin: 8
-            anchors.verticalCenter: lastdayincomeText.verticalCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-
-        // 右上角的"..."
-        Image {
+        // "..."
+        ImageButton {
             anchors.right: parent.right
             anchors.rightMargin: 42
             anchors.top: parent.top
@@ -206,12 +238,13 @@ Page {
             anchors.topMargin: 34
             anchors.left: whiteRec.left
             anchors.leftMargin: 29
-            width: 160
+            width: 500
 
             TabButton {
-                text: qsTr("存款市场")
-                width: 80
+                text: qsTr("Deposit Marker")
+                width: depositBtnText.contentWidth + 16
                 contentItem: Text {
+                    id: depositBtnText
                     text: parent.text
                     color: tabBar.currentIndex == 0 ? "#333333" : "#999999"
                     font.pointSize: tabBar.currentIndex == 0 ? 16 : 12
@@ -224,9 +257,10 @@ Page {
             }
 
             TabButton {
-                text: qsTr("借款市场")
-                width: 80
+                text: qsTr("Borrow Marker")
+                width: borrowBtnText.contentWidth + 16
                 contentItem: Text {
+                    id: borrowBtnText
                     text: parent.text
                     color: tabBar.currentIndex == 1 ? "#333333" : "#999999"
                     font.pointSize: tabBar.currentIndex == 1 ? 16 : 12
