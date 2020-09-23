@@ -358,9 +358,13 @@ ApplicationWindow {
                 id: bankPage
                 BankPage {
                     onShowDepositPage: {
+                        depositPage.source = "pages/DepositPage.qml"
+                        depositPage.item.getDepositInfo(id)
                         bankStack.push(depositPage)
                     }
                     onShowBorrowPage: {
+                        borrowPage.source = "pages/BorrowPage.qml"
+                        borrowPage.item.getBorrowInfo(id)
                         bankStack.push(borrowPage)
                     }
                     onShowDepositOrderPage: {
@@ -373,22 +377,24 @@ ApplicationWindow {
             }
 
             // Deposit page
-            Component {
+            Loader {
                 id: depositPage
-                DepositPage {
-                    onBackArrowClicked: {
-                        bankStack.pop()
-                    }
+            }
+            Connections {
+                target: depositPage.item
+                function onBackArrowClicked() {
+                    bankStack.pop()
                 }
             }
 
             // Borrow page
-            Component {
+            Loader {
                 id: borrowPage
-                BorrowPage {
-                    onBackArrowClicked: {
-                        bankStack.pop()
-                    }
+            }
+            Connections {
+                target: borrowPage.item
+                function onBackArrowClicked() {
+                    bankStack.pop()
                 }
             }
 

@@ -6,6 +6,10 @@ Page {
     id: root
     signal backArrowClicked
 
+    function getDepositInfo(id) {
+        console.log(id)
+    }
+
     background: Rectangle {
         color: "#F7F7F9"
     }

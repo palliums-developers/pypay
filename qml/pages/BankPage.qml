@@ -10,8 +10,8 @@ import PyPay 1.0
 Page {
     id: root
 
-    signal showDepositPage
-    signal showBorrowPage
+    signal showDepositPage(string id)
+    signal showBorrowPage(string id)
     signal showDepositOrderPage
     signal showBorrowOrderPage
 
@@ -412,7 +412,7 @@ Page {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            showDepositPage()
+                            showDepositPage(id)
                         }
                     }
                 }
@@ -477,7 +477,7 @@ Page {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            showBorrowPage()
+                            showBorrowPage(id)
                         }
                     }
                 }
