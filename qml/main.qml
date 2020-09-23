@@ -363,6 +363,12 @@ ApplicationWindow {
                     onShowBorrowPage: {
                         bankStack.push(borrowPage)
                     }
+                    onShowDepositOrderPage: {
+                        bankStack.push(depositOrderPage)
+                    }
+                    onShowBorrowOrderPage: {
+                        bankStack.push(borrowOrderPage)
+                    }
                 }
             }
 
@@ -380,6 +386,24 @@ ApplicationWindow {
             Component {
                 id: borrowPage
                 BorrowPage {
+                    onBackArrowClicked: {
+                        bankStack.pop()
+                    }
+                }
+            }
+
+            Component {
+                id: depositOrderPage
+                DepositOrderPage {
+                    onBackArrowClicked: {
+                        bankStack.pop()
+                    }
+                }
+            }
+
+            Component {
+                id: borrowOrderPage
+                BorrowOrderPage {
                     onBackArrowClicked: {
                         bankStack.pop()
                     }

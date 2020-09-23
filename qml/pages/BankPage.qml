@@ -12,6 +12,8 @@ Page {
 
     signal showDepositPage
     signal showBorrowPage
+    signal showDepositOrderPage
+    signal showBorrowOrderPage
 
     property var bankAccountInfo: {}
 
@@ -81,7 +83,7 @@ Page {
             anchors.top: totalText.bottom
             anchors.topMargin: 16
             anchors.left: totalText.left
-            text: appSettings.eyeIsOpen ? qsTr("≈") + bankAccountInfo.amount : "******"
+            text: appSettings.eyeIsOpen ? qsTr("≈") + (bankAccountInfo != undefined ? bankAccountInfo.amount : 0) : "******"
             font.pointSize: 20
             color: "#FFFFFF"
             verticalAlignment: Text.AlignVCenter
@@ -108,7 +110,7 @@ Page {
             verticalAlignment: Text.AlignVCenter
         }
         Text {
-            text: appSettings.eyeIsOpen ? qsTr("≈") + bankAccountInfo.borrow : "******"
+            text: appSettings.eyeIsOpen ? qsTr("≈") + (bankAccountInfo != undefined ? bankAccountInfo.borrow : 0) : "******"
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: borrowText.right
@@ -139,7 +141,7 @@ Page {
         }
         Text {
             id: incomeDataText
-            text: appSettings.eyeIsOpen ? qsTr("≈") + bankAccountInfo.total : "******"
+            text: appSettings.eyeIsOpen ? qsTr("≈") + (bankAccountInfo != undefined ? bankAccountInfo.total : 0) : "******"
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: incomeText.right
@@ -180,7 +182,7 @@ Page {
             }
 
             Text {
-                text: (appSettings.eyeIsOpen ? bankAccountInfo.yesterday : "******") + qsTr(" $")
+                text: (appSettings.eyeIsOpen ? (bankAccountInfo != undefined ? bankAccountInfo.yesterday : 0) : "******") + qsTr(" $")
                 color: "#FB8F0B"
                 font.pointSize: 12
                 verticalAlignment: Text.AlignVCenter
@@ -189,12 +191,79 @@ Page {
 
         // "..."
         ImageButton {
+            id: moreBtn
             anchors.right: parent.right
             anchors.rightMargin: 42
             anchors.top: parent.top
             anchors.topMargin: 32
             fillMode: Image.PreserveAspectFit
             source: "../icons/more.svg"
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    bankPopupPage.open()
+                }
+            }
+        }
+        Menu {
+            id: bankPopupPage
+            x: moreBtn.x + moreBtn.width - width
+            y: moreBtn.y + moreBtn.height / 2 + 8
+            topPadding: 2
+            bottomPadding: 2
+            Action {
+                icon.width: 16
+                icon.height: 14
+                icon.source: "../icons/deposit_order.svg"
+                text: qsTr("Deposit Order")
+                onTriggered: {
+                    showDepositOrderPage()
+                }
+            }
+            Action {
+                icon.width: 16
+                icon.height: 14
+                icon.source: "../icons/borrow_order.svg"
+                text: qsTr("Borrow Order")
+                onTriggered: {
+                    showBorrowOrderPage()
+                }
+            }
+            delegate: MenuItem {
+                id: menuItem
+                implicitWidth: 180
+                implicitHeight: 40   
+                contentItem: Item {
+                    anchors.fill: parent
+                    Row {
+                        spacing: 8
+                        anchors.centerIn: parent
+                        Image {
+                            id: menuItemImage
+                            width: menuItem.icon.wdith
+                            fillMode: Image.PreserveAspectFit
+                            source: menuItem.icon.source
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Text {
+                            text: menuItem.text
+                            anchors.verticalCenter: parent.verticalCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                    }
+                }
+                background: Rectangle {
+                    implicitWidth: 180
+                    implicitHeight: 40
+                    color: menuItem.highlighted ? "#21be2b" : "transparent"
+                }
+            }
+            background: Rectangle {
+                implicitWidth: 180
+                implicitHeight: 40
+                color: "#FFFFFF"
+                radius: 6
+            }
         }
     }
 
