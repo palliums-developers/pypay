@@ -15,6 +15,8 @@ from violas_client.lbrtypes.account_config import association_address
 from violas_client.banktypes.utils import mantissa_div, mantissa_mul, new_mantissa
 
 class Client(LibraClient):
+    BANK_OWNER_ADDRESS = "00000000000000000000000042414E4B"
+    BANK_MODULE_ADDRESS = association_address()
 
     def bank_borrow(self, sender_account, amount,  currency_code, data=None, is_blocking=True, **kwargs):
         args = []
@@ -59,14 +61,14 @@ class Client(LibraClient):
         script = Script.gen_script(CodeType.REPAY_BORROW2, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
         return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
-    def bank_liquidate_borrow(self, sender_account, borrower, expired_currency, collateral_code, amount=0, data=None, is_blocking=True, **kwargs):
+    def bank_liquidate_borrow(self, sender_account, borrower, borrowed_currency, collateral_currency, amount=0, data=None, is_blocking=True, **kwargs):
         args = []
         args.append(TransactionArgument.to_address(borrower))
         args.append(TransactionArgument.to_U64(amount))
         args.append(TransactionArgument.to_U8Vector(data, hex=False))
 
-        ty_args = self.get_type_args(expired_currency)
-        ty_args.extend(self.get_type_args(collateral_code))
+        ty_args = self.get_type_args(borrowed_currency)
+        ty_args.extend(self.get_type_args(collateral_currency))
         script = Script.gen_script(CodeType.LIQUIDATE_BORROW, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
         return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
@@ -100,23 +102,26 @@ class Client(LibraClient):
         if tx:
             return TransactionView.new(tx)
 
-    # def bank_get_amount(self, account_address, currency_code):
-    #     index = self.bank_get_currency_index(currency_code)
-    #     state = self.get_account_state(account_address)
-    #     return state.get_bank_amount(index)
-    #
-    # def bank_get_amounts(self, account_address):
-    #     state = self.get_account_state(account_address)
-    #     tokens = state.get_tokens_resource()
-    #     result = {}
-    #     if tokens:
-    #         for token in tokens.ts:
-    #             if token.index % 2 == 0:
-    #                 currency_code = self.bank_get_currency_code(token.index)
-    #                 value = token.value
-    #                 result[currency_code] = value
-    #     return result
+    @LibraClient.return_when_error(0)
+    def bank_get_amount(self, account_address, currency_code):
+        index = self.bank_get_currency_index(currency_code)
+        state = self.get_account_state(account_address)
+        return state.get_bank_amount(index)
 
+    @LibraClient.return_when_error({})
+    def bank_get_amounts(self, account_address):
+        state = self.get_account_state(account_address)
+        tokens = state.get_tokens_resource()
+        result = {}
+        if tokens:
+            for token in tokens.ts:
+                if token.index % 2 == 0:
+                    currency_code = self.bank_get_currency_code(token.index)
+                    value = token.value
+                    result[currency_code] = value
+        return result
+
+    @LibraClient.return_when_error(0)
     def bank_get_lock_amount(self, account_address, currency_code):
         bank_owner_address = self.get_bank_owner_address()
         state = self.get_account_state(bank_owner_address)
@@ -125,6 +130,7 @@ class Client(LibraClient):
         state = self.get_account_state(account_address)
         return state.get_lock_amount(index, exchange_rate)
 
+    @LibraClient.return_when_error({})
     def bank_get_lock_amounts(self, account_address):
         bank_owner_address = self.get_bank_owner_address()
         owner_state = self.get_account_state(bank_owner_address)
@@ -141,6 +147,7 @@ class Client(LibraClient):
                     result[currency_code] = amount
         return result
 
+    @LibraClient.return_when_error(0)
     def bank_get_borrow_amount(self, account_address, currency_code):
         bank_owner_address = self.get_bank_owner_address()
         state = self.get_account_state(bank_owner_address)
@@ -149,6 +156,7 @@ class Client(LibraClient):
         state = self.get_account_state(account_address)
         return state.get_borrow_amount(index, interest_index)
 
+    @LibraClient.return_when_error({})
     def bank_get_borrow_amounts(self, account_address):
         bank_owner_address = self.get_bank_owner_address()
         owner_state = self.get_account_state(bank_owner_address)
@@ -164,6 +172,7 @@ class Client(LibraClient):
                     result[currency_code] = amount
         return result
 
+    @LibraClient.return_when_error(0)
     def bank_get_total_collateral_value(self, account_address):
         bank_owner_address = self.get_bank_owner_address()
         owner_state = self.get_account_state(bank_owner_address)
@@ -184,6 +193,7 @@ class Client(LibraClient):
             sum += mantissa_mul(mantissa_mul(amount, token_info_stores.get_price(currency)), token_info_stores.get_collateral_factor(currency))
         return sum
 
+    @LibraClient.return_when_error(0)
     def bank_get_total_borrow_value(self, account_address):
         bank_owner_address = self.get_bank_owner_address()
         owner_state = self.get_account_state(bank_owner_address)
@@ -203,7 +213,7 @@ class Client(LibraClient):
             sum += mantissa_mul(amount[1], token_info_stores.get_price(currency))
         return sum
 
-
+    @LibraClient.return_when_error(0)
     def bank_get_max_borrow_amount(self, account_address, currency_code):
         bank_owner_address = self.get_bank_owner_address()
         owner_state = self.get_account_state(bank_owner_address)
@@ -239,7 +249,23 @@ class Client(LibraClient):
         if sum <= 0:
             return 0
         return mantissa_div(sum, token_info_stores.get_price(currency_code))
-    
+
+    @LibraClient.return_when_error(0)
+    def bank_get_lock_amounts_to_currency(self, account_address, currency_code):
+        bank_owner_address = self.get_bank_owner_address()
+        owner_state = self.get_account_state(bank_owner_address)
+        token_info_resource = owner_state.get_token_info_store_resource()
+        lock_amounts = self.bank_get_lock_amounts(account_address)
+        borrow_amounts = self.bank_get_borrow_amounts(account_address)
+        sum = 0
+        for currency, amount in lock_amounts.items():
+            sum += token_info_resource.get_price(currency)*amount
+        for currency, amount in borrow_amounts.items():
+            sum -= token_info_resource.get_price(currency)*amount[1]
+
+        return int(sum / token_info_resource.get_price(currency_code))
+
+
     def bank_get_lock_rate(self, currency_code):
         bank_owner_address = self.get_bank_owner_address()
         state = self.get_account_state(bank_owner_address)
@@ -305,9 +331,7 @@ class Client(LibraClient):
             return address
         if hasattr(self, "bank_module_address"):
             return self.bank_module_address
-        if hasattr(self, "bank_owner_address"):
-            return self.bank_owner_address
-        return core_code_address()
+        return self.BANK_MODULE_ADDRESS
 
     def set_bank_owner_address(self, address):
         self.bank_owner_address = address
@@ -317,9 +341,7 @@ class Client(LibraClient):
             return address
         if hasattr(self, "bank_owner_address"):
             return self.bank_owner_address
-        if hasattr(self, "bank_module_address"):
-            return self.bank_module_address
-        return association_address()
+        return self.BANK_OWNER_ADDRESS
 
     def parse_currency_code(self, currency_code):
         if currency_code is None:

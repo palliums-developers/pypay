@@ -120,6 +120,10 @@ class Client():
             return { balance.currency: balance.amount for balance in state.balances}
         return {}
 
+    def has_register_currency(self, account_address, currency_code):
+        balances = self.get_balances(account_address)
+        return balances.get(currency_code) is not None
+
     def get_sequence_number(self, account_address: Union[bytes, str]) -> Optional[int]:
         account_state = self.get_account_blob(account_address)
         if account_state:
@@ -385,3 +389,13 @@ class Client():
         if currency_code:
             return currency_code
         return LBR_NAME
+
+    def return_when_error(value):
+        def get_exception(func):
+            def catch_execption_func(*args, **kwargs):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    return value
+            return catch_execption_func
+        return get_exception
