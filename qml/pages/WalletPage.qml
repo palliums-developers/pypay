@@ -28,9 +28,6 @@ Page {
         }
     }
 
-    //function getTotalBalance() {
-    //}
-
     function getTokenBalance() {
         if (payController.addr) {
             var msg = {'action':'getBalances', 'model':tokenModel, 'libraAddr': payController.libra_addr, 'violasAddr': payController.addr};
@@ -57,6 +54,10 @@ Page {
         Server.requestRate('GET', 'https://api.exchangeratesapi.io/latest?base=USD', null, function(resp) {
                 rates = resp.rates;
             });
+    }
+
+    background: Rectangle {
+        color: "#F7F7F9"
     }
 
     Image {

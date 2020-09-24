@@ -37,7 +37,7 @@ Page {
 
         Text {
             id: titleText
-            text: qsTr("Bank > <b>Deposit</b>")
+            text: qsTr("Bank > <b>Borrow</b>")
             font.pointSize: 14
             color: "#5C5C5C"
             anchors.verticalCenter: backBtn.verticalCenter
