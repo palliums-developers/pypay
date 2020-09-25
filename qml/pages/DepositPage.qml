@@ -16,7 +16,6 @@ Page {
 
     signal backArrowClicked
 
-
     function getDepositInfo(id) {
         if (payController.addr) {
             Server.request('GET', '/1.0/violas/bank/deposit/info?id='+ id + '&address=' + payController.addr,
@@ -92,7 +91,7 @@ Page {
             Rectangle {
                 id: conRec
                 width: parent.width
-                height: 170
+                height: 32 + storeText.contentHeight + 40 + conRow.height + 16 + conRow2.height + 32
                 color: "#FFFFFF"
                 Text {
                     id: storeText
@@ -121,7 +120,7 @@ Page {
                     anchors.verticalCenter: storeText.verticalCenter
                 }
                 Row {
-                    id: conRow2
+                    id: conRow
                     anchors.left: storeText.left
                     anchors.top: storeText.bottom
                     anchors.topMargin: 40
@@ -152,9 +151,10 @@ Page {
                 }
 
                 Row {
+                    id: conRow2
                     anchors.left: parent.left
                     anchors.leftMargin: 50
-                    anchors.top: conRow2.bottom
+                    anchors.top: conRow.bottom
                     anchors.topMargin: 16
                     spacing: 8
                     Image {
@@ -175,7 +175,7 @@ Page {
             Rectangle {
                 id: con2Rec
                 width: parent.width
-                height: 219
+                height: 32 + rateText.contentHeight + 20 + 1 + 20 + con2Column.height + 20 + 1 + 20 + payTypeText.contentHeight + 32
                 color: "#FFFFFF"
                 Text {
                     id: rateText
@@ -337,9 +337,3 @@ Page {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
