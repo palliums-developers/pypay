@@ -17,6 +17,7 @@ function request(verb, partURL, obj, cb, async=true) {
         }
     }
     xhr.open(verb, violasURL + partURL, async);
+    xhr.timeout = 2000
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('Accept', 'application/json');
     var data = obj?JSON.stringify(obj):''
