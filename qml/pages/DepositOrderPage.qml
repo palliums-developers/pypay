@@ -11,6 +11,33 @@ Page {
     id: root
     signal backArrowClicked
 
+    function getDepositOrder() {
+        if (payController.addr) {
+            Server.request('GET', '/1.0/violas/bank/deposit/orders?address='+payController.addr+'&offset='+0+'&limit='+10, null, 
+                function(resp) {
+                for (var i=0; i<resp.data;i++) {
+                    var d = resp.data[i]
+                    currentDepositModel.append({'currency':d.currency,
+                        'earnings':d.earnings,
+                        'orderId':d.id,
+                        'logo':d.logo,
+                        'principal':d.principal,
+                        'rate':d.rate,
+                        'status':d.status
+                        })                   
+                }
+            });
+        }
+    }
+
+    ListModel {
+        id: currentDepositModel
+    }
+
+    ListModel {
+        id: depositDetailModel
+    }
+
     background: Rectangle {
         color: "#F7F7F9"
     }
@@ -52,6 +79,10 @@ Page {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 24
         color: "#FFFFFF"
+
+        Component.onCompleted: {
+            getDepositOrder()
+        }
         
         TabBar {
             id: tabBar
@@ -168,9 +199,68 @@ Page {
                 }
                 headerPositioning: ListView.OverlayHeader
                 delegate: Rectangle {
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
+                    width: parent.width
+                    height: 50
+                    Text {
+                        id: tokenText
+                        anchors.left: parent.left
+                        anchors.leftMargin: 54
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: currency
+                    }
+                    Text {
+                        id: principalText
+                        anchors.left: tokenText.left
+                        anchors.leftMargin: 100 / (1070 - 54*2) * parent.width
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: principal.toFixed(2)
+                    }
+                    Text {
+                        id: incomeText
+                        anchors.left: principalText.left
+                        anchors.leftMargin: 206 / (1070 - 54*2) * parent.width
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: earnings.toFixed(2)
+                    }
+                    Text {
+                        id: rateText
+                        anchors.left: incomeText.left
+                        anchors.leftMargin: 192 / (1070 - 54*2) * parent.width
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: rate * 100 + "%"
+                        color: "#13B788"
+                    }
+                    Text {
+                        id: statusText
+                        anchors.left: rateText.left
+                        anchors.leftMargin: 150 / (1070 - 54*2) * parent.width
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: {
+                            if (status == 0) {
+                                return qsTr("Deposited")
+                            } else if (status == 1) {
+                                return qsTr("Extraction")
+                            } else if (status == -1) {
+                                return qsTr("Extraction failed")
+                            } else if (status == -2) {
+                                return qsTr("Deposition failed")
+                            } else {
+                                return qsTr("Unknown, ") + status
+                            }
+                        }
+                        color: "#13B788"
+                    }
+                    Text {
+                        id: operationText
+                        anchors.right: parent.right
+                        anchors.rightMargin: 54
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Extraction")
+                        color: "#7038FD"
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                            }
                         }
                     }
                 }
@@ -178,7 +268,7 @@ Page {
 
             ListView {
                 id: borrowDetailView
-                model: borrowDetailModel
+                model: depositDetailModel
                 spacing: 12
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
@@ -189,6 +279,21 @@ Page {
                         }
                     }
                 }
+            }
+        }
+        Column {
+            visible: tabBar.currentIndex == 0 ? currentDepositModel.count == 0 : depositDetailModel.count == 0
+            anchors.centerIn: parent
+            spacing: 8
+            Image {
+                source: "../icons/bank_no_data.svg"
+                width: 196
+                fillMode: Image.PreserveAspectFit
+            }
+            Text {
+                text: qsTr("No Data")
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "#BABABA"
             }
         }
     }
