@@ -272,11 +272,92 @@ Page {
                 spacing: 12
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
-                delegate: Rectangle {
-                    MouseArea {
+                header: Rectangle {
+                    width: parent.width
+                    Column {
                         anchors.fill: parent
-                        onClicked: {
+                        spacing: 8
+                        Rectangle {
+                            width: parent.width
+                            height: 30
+                            color: "blue"
                         }
+                        Rectangle {
+                            width: parent.width
+                            height: 50
+                            color: "red"
+                            Text {
+                                id: dateText
+                                anchors.left: parent.left
+                                anchors.leftMargin: 54
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Date")
+                            }
+                            Text {
+                                id: tokenText
+                                anchors.left: dateText.left
+                                anchors.leftMargin: 200 / (1070 - 54*2) * parent.width
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Token")
+                            }
+                            Text {
+                                id: amountText
+                                anchors.left: tokenText.left
+                                anchors.leftMargin: 250 / (1070 - 54*2) * parent.width
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Amount")
+                            }
+                            Text {
+                                id: statusText
+                                anchors.right: parent.right
+                                anchors.rightMargin: 54
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Status")
+                            }
+                            Rectangle {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 27
+                                anchors.right: parent.right
+                                anchors.rightMargin: 27
+                                anchors.bottom: parent.bottom
+                                height: 1
+                                color: "#DEDEDE"
+                                opacity: 0.5
+                            }
+                        }
+                    }
+                }
+                headerPositioning: ListView.OverlayHeader
+                delegate: Rectangle {
+                    width: parent.width
+                    height: 50
+                    Text {
+                        id: dateText
+                        anchors.left: parent.left
+                        anchors.leftMargin: 54
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Date")
+                    }
+                    Text {
+                        id: tokenText
+                        anchors.left: dateText.left
+                        anchors.leftMargin: 200 / (1070 - 54*2) * parent.width
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Token")
+                    }
+                    Text {
+                        id: amountText
+                        anchors.left: tokenText.left
+                        anchors.leftMargin: 250 / (1070 - 54*2) * parent.width
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Amount")
+                    }
+                    Text {
+                        id: statusText
+                        anchors.right: parent.right
+                        anchors.rightMargin: 54
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Status")
                     }
                 }
             }
