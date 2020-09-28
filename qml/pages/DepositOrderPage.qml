@@ -13,7 +13,7 @@ Page {
 
     function getDepositOrder() {
         if (payController.addr) {
-            Server.request('GET', '/1.0/violas/bank/deposit/orders?address='+payController.addr+'&offset='+0+'&limit='+10, null, 
+            Server.request('GET', '/1.0/violas/bank/deposit/orders?address='+payController.addr+'&offset='+0+'&limit='+100, null, 
                 function(resp) {
                 for (var i=0; i<resp.data;i++) {
                     var d = resp.data[i]
@@ -24,6 +24,20 @@ Page {
                         'principal':d.principal,
                         'rate':d.rate,
                         'status':d.status
+                        })                   
+                }
+            });
+            Server.request('GET', '/1.0/violas/bank/deposit/order/list?address='+payController.addr+'&offset='+0+'&limit='+100+'&start='+(new Date("2020-01-01 00:00:00").getTime())+'&end='+(new Date().getTime()), null, 
+                function(resp) {
+                for (var i=0; i<resp.data;i++) {
+                    var d = resp.data[i]
+                    depositDetailModel.append({'currency':d.currency,
+                        'date':d.date,
+                        'orderId':d.id,
+                        'logo':d.logo,
+                        'status':d.status,
+                        'value':d.value,
+                        'total_count':d.total_count,
                         })                   
                 }
             });
@@ -281,11 +295,12 @@ Page {
                             width: parent.width
                             height: 30
                             color: "blue"
+                            visible: false
                         }
                         Rectangle {
                             width: parent.width
                             height: 50
-                            color: "red"
+                            //color: "red"
                             Text {
                                 id: dateText
                                 anchors.left: parent.left
@@ -336,28 +351,28 @@ Page {
                         anchors.left: parent.left
                         anchors.leftMargin: 54
                         anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Date")
+                        text: date
                     }
                     Text {
                         id: tokenText
                         anchors.left: dateText.left
                         anchors.leftMargin: 200 / (1070 - 54*2) * parent.width
                         anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Token")
+                        text: currency
                     }
                     Text {
                         id: amountText
                         anchors.left: tokenText.left
                         anchors.leftMargin: 250 / (1070 - 54*2) * parent.width
                         anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Amount")
+                        text: value
                     }
                     Text {
                         id: statusText
                         anchors.right: parent.right
                         anchors.rightMargin: 54
                         anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Status")
+                        text: status
                     }
                 }
             }
