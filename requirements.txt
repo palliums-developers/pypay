@@ -1,4 +1,4 @@
-PyQt5==5.15.0           # via gui
+PyQt5==5.15.1           # via gui
 pyaes>=0.1a1
 ecdsa>=0.14
 qrcode
