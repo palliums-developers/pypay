@@ -3,7 +3,6 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import "../controls"
-import "../models/ViolasServer.js" as Server
 
 import PyPay 1.0
 
@@ -14,26 +13,6 @@ Page {
     signal showBorrowPage(string id)
     signal showDepositOrderPage
     signal showBorrowOrderPage
-
-    property var bankAccountInfo: {}
-
-    Timer {
-        interval: 5000
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            getBankAccountInfo()
-        }
-    }
-
-    function getBankAccountInfo() {
-        if (payController.addr) {
-            Server.request('GET', '/1.0/violas/bank/account/info?address='+payController.addr, null, function(resp) {
-                    bankAccountInfo = resp.data;
-                });
-        }
-    }
 
     background: Rectangle {
         color: "#F7F7F9"
@@ -83,7 +62,7 @@ Page {
             anchors.top: totalText.bottom
             anchors.topMargin: 16
             anchors.left: totalText.left
-            text: appSettings.eyeIsOpen ? qsTr("≈") + (bankAccountInfo != undefined ? bankAccountInfo.amount : 0) : "******"
+            text: appSettings.eyeIsOpen ? qsTr("≈") + server.bankAccountInfo.amount : "******"
             font.pointSize: 20
             color: "#FFFFFF"
             verticalAlignment: Text.AlignVCenter
@@ -110,7 +89,7 @@ Page {
             verticalAlignment: Text.AlignVCenter
         }
         Text {
-            text: appSettings.eyeIsOpen ? qsTr("≈") + (bankAccountInfo != undefined ? bankAccountInfo.borrow : 0) : "******"
+            text: appSettings.eyeIsOpen ? qsTr("≈") + server.bankAccountInfo.borrow : "******"
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: borrowText.right
@@ -141,7 +120,7 @@ Page {
         }
         Text {
             id: incomeDataText
-            text: appSettings.eyeIsOpen ? qsTr("≈") + (bankAccountInfo != undefined ? bankAccountInfo.total : 0) : "******"
+            text: appSettings.eyeIsOpen ? qsTr("≈") + server.bankAccountInfo.total : "******"
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: incomeText.right
@@ -182,7 +161,7 @@ Page {
             }
 
             Text {
-                text: (appSettings.eyeIsOpen ? (bankAccountInfo != undefined ? bankAccountInfo.yesterday : 0) : "******") + qsTr(" $")
+                text: (appSettings.eyeIsOpen ? server.bankAccountInfo.yesterday : "******") + qsTr(" $")
                 color: "#FB8F0B"
                 font.pointSize: 12
                 verticalAlignment: Text.AlignVCenter
@@ -280,26 +259,8 @@ Page {
         radius: 20
 
         Component.onCompleted: {
-            Server.request('GET', '/1.0/violas/bank/product/deposit', null, function(resp) {
-                    var entries = resp.data;
-                    for (var i=0; i<entries.length; i++) {
-                        depositModel.append(entries[i])
-                    }
-                });
-            Server.request('GET', '/1.0/violas/bank/product/borrow', null, function(resp) {
-                    var entries = resp.data;
-                    for (var i=0; i<entries.length; i++) {
-                        borrowModel.append(entries[i])
-                    }
-                });
-        }
-
-        ListModel {
-            id: depositModel
-        }
-
-        ListModel {
-            id: borrowModel
+            server.getDeposit()
+            server.getBorrow()
         }
 
         TabBar {
@@ -355,7 +316,7 @@ Page {
 
             ListView {
                 id: depositProductView
-                model: depositModel
+                model: server.depositModel
                 spacing: 12
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
@@ -420,7 +381,7 @@ Page {
 
             ListView {
                 id: borrowProductView
-                model: borrowModel
+                model: server.borrowModel
                 spacing: 12
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }

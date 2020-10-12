@@ -3,55 +3,17 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import "../controls"
-import "../models/ViolasServer.js" as Server
 
 import PyPay 1.0
 
 Control {
     padding: 8
 
-    property var published: []
-
     signal goBack
 
-    Timer {
-        interval: 5000
-        running: true
-        repeat: true
-        onTriggered: {
-            getTokenPublished()
-        }
-    }
-
-    function getTokenPublished() {
-        Server.request('GET', '/1.0/violas/currency/published?addr='+payController.addr, null, function(resp) {
-            if (resp.code == 2000) {
-                published = resp.data.published
-                //console.log(published)
-            }
-        });
-    }
-
     Component.onCompleted: {
-        getTokenPublished()
-
-        Server.request('GET', '/1.0/violas/currency', null, function(resp) {
-            if (resp.code == 2000) {
-                var entries = resp.data.currencies;
-                for (var i=0; i<entries.length; i++) {
-                    tokenModel.append(entries[i])
-                }
-            }
-        });
-
-        //Server.request('GET', '/1.0/libra/currency', null, function(resp) {
-        //    if (resp.code == 2000) {
-        //        var entries = resp.data.currencies;
-        //        for (var i=0; i<entries.length; i++) {
-        //            tokenModel.append(entries[i])
-        //        }
-        //    }
-        //});
+        server.getTokenPublished()
+        server.getViolasCurrency()
     }
 
     contentItem: Item {
@@ -78,10 +40,6 @@ Control {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        ListModel {
-            id: tokenModel
-        }
-
         ListView {
             id: listView
             anchors.top: titleText.bottom
@@ -91,7 +49,7 @@ Control {
             anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.bottom: parent.bottom
-            model: tokenModel
+            model: server.tokenModel
             spacing: 12
             clip: true
             ScrollIndicator.vertical: ScrollIndicator { }

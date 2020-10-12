@@ -4,6 +4,7 @@ import QtQuick.Window 2.15
 import Qt.labs.settings 1.0
 
 import "controls"
+import "models"
 import "pages"
 
 ApplicationWindow {
@@ -77,6 +78,13 @@ ApplicationWindow {
         //console.log(payController.datadir)
     }
 
+    Connections {
+        target: payController
+        function onAddr_changed() {
+            server.getBankAccountInfo(payController.addr)
+        }
+    }
+
     onClosing: {
         payController.shutdown()
         timer.running = false
@@ -91,6 +99,10 @@ ApplicationWindow {
         onTriggered: {
             walletPage.getTokenBalance()
         }
+    }
+
+    ViolasServer {
+        id: server
     }
     
     Rectangle {
@@ -373,8 +385,8 @@ ApplicationWindow {
                         bankStack.push(depositPage)
                     }
                     onShowBorrowPage: {
-                        borrowPage.source = "pages/BorrowPage.qml"
-                        borrowPage.item.getBorrowInfo(id)
+                        borrowPage.source = server.isBusy ? "pages/BusyPage.qml" : "pages/BorrowPage.qml"
+                        server.getBorrowInfo(id)
                         bankStack.push(borrowPage)
                     }
                     onShowDepositOrderPage: {
@@ -392,6 +404,7 @@ ApplicationWindow {
             }
             Connections {
                 target: depositPage.item
+                enabled: !server.isBusy
                 function onBackArrowClicked() {
                     bankStack.pop()
                 }
@@ -403,6 +416,7 @@ ApplicationWindow {
             }
             Connections {
                 target: borrowPage.item
+                enabled: !server.isBusy
                 function onBackArrowClicked() {
                     bankStack.pop()
                 }

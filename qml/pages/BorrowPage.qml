@@ -3,43 +3,17 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import "../controls"
-import "../models/ViolasServer.js" as Server
 
-//import PyPay 1.0
+import PyPay 1.0
 
 Page {
     id: root
 
-    property var bankBorrowInfo: ({})
     property int topMargin: 79      // top to borrowBtn
     property int bottomMargin: 49   // bottom to borrowBtn   
     property bool isSelected: false
 
     signal backArrowClicked
-
-    function getBorrowInfo(id) {
-        if (payController.addr) {
-            Server.request('GET', '/1.0/violas/bank/borrow/info?id='+ id + '&address=' + payController.addr,
-                null, function(resp) {
-                    bankBorrowInfo = resp.data;
-                    for (var i=0; i<resp.data.intor.length; i++) {
-                        intorModel.append({"title":resp.data.intor[i].title, "content":resp.data.intor[i].text})
-                    }
-                    for (var i=0; i<resp.data.question.length; i++) {
-                        questionModel.append({"title":resp.data.question[i].title, "content":resp.data.question[i].text})
-                    }
-                    console.log(JSON.stringify(bankBorrowInfo))
-                });
-        }
-    }
-
-    ListModel {
-        id: intorModel
-    }
-
-    ListModel {
-        id: questionModel
-    }
 
     background: Rectangle {
         color: "#F7F7F9"
@@ -255,7 +229,7 @@ Page {
             }
             Text {
                 id: checkText
-                text: qsTr("<font color="#999999">I read and agree</font><font color="#7038FD"><b>《Borrow agreement》</b></font>")
+                text: qsTr("<font color=#999999>I read and agree</font><font color=#7038FD><b>《Borrow agreement》</font></b>")
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {

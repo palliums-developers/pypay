@@ -3,54 +3,12 @@ import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.15
 
 import "../controls"
-import "../models/ViolasServer.js" as Server
 
 import PyPay 1.0
 
 Page {
     id: root
     signal backArrowClicked
-
-    function getDepositOrder() {
-        if (payController.addr) {
-            Server.request('GET', '/1.0/violas/bank/deposit/orders?address='+payController.addr+'&offset='+0+'&limit='+100, null, 
-                function(resp) {
-                for (var i=0; i<resp.data;i++) {
-                    var d = resp.data[i]
-                    currentDepositModel.append({'currency':d.currency,
-                        'earnings':d.earnings,
-                        'orderId':d.id,
-                        'logo':d.logo,
-                        'principal':d.principal,
-                        'rate':d.rate,
-                        'status':d.status
-                        })                   
-                }
-            });
-            Server.request('GET', '/1.0/violas/bank/deposit/order/list?address='+payController.addr+'&offset='+0+'&limit='+100+'&start='+(new Date("2020-01-01 00:00:00").getTime())+'&end='+(new Date().getTime()), null, 
-                function(resp) {
-                for (var i=0; i<resp.data;i++) {
-                    var d = resp.data[i]
-                    depositDetailModel.append({'currency':d.currency,
-                        'date':d.date,
-                        'orderId':d.id,
-                        'logo':d.logo,
-                        'status':d.status,
-                        'value':d.value,
-                        'total_count':d.total_count,
-                        })                   
-                }
-            });
-        }
-    }
-
-    ListModel {
-        id: currentDepositModel
-    }
-
-    ListModel {
-        id: depositDetailModel
-    }
 
     background: Rectangle {
         color: "#F7F7F9"
@@ -95,7 +53,7 @@ Page {
         color: "#FFFFFF"
 
         Component.onCompleted: {
-            getDepositOrder()
+            server.getDepositOrder()
         }
         
         TabBar {

@@ -2,7 +2,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import "../controls"
-import "../models/ViolasServer.js" as Server
 
 import PyPay 1.0
 
@@ -11,9 +10,6 @@ Page {
     leftPadding: 125
     rightPadding: 138
     topPadding: 69
-
-    property var rates: {}
-    property var balances: []
 
     signal backupMnemonicClicked
     signal sendClicked
@@ -41,9 +37,7 @@ Page {
     }
 
     Component.onCompleted: {
-        Server.requestRate('GET', 'https://api.exchangeratesapi.io/latest?base=USD', null, function(resp) {
-                rates = resp.rates;
-            });
+        server.getRate()
     }
 
     background: Rectangle {

@@ -3,42 +3,16 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import "../controls"
-import "../models/ViolasServer.js" as Server
 
-//import PyPay 1.0
+import PyPay 1.0
 
 Page {
     id: root
 
-    property var bankDepositInfo: ({})
     property int topMargin: 43
     property int bottomMargin: 49      
 
     signal backArrowClicked
-
-    function getDepositInfo(id) {
-        if (payController.addr) {
-            Server.request('GET', '/1.0/violas/bank/deposit/info?id='+ id + '&address=' + payController.addr,
-                null, function(resp) {
-                    bankDepositInfo = resp.data;
-                    for (var i=0; i<resp.data.intor.length; i++) {
-                        intorModel.append({"title":resp.data.intor[i].title, "content":resp.data.intor[i].text})
-                    }
-                    for (var i=0; i<resp.data.question.length; i++) {
-                        questionModel.append({"title":resp.data.question[i].title, "content":resp.data.question[i].text})
-                    }
-                    console.log(JSON.stringify(bankDepositInfo))
-                });
-        }
-    }
-
-    ListModel {
-        id: intorModel
-    }
-
-    ListModel {
-        id: questionModel
-    }
 
     background: Rectangle {
         color: "#F7F7F9"
@@ -110,11 +84,11 @@ Page {
                     anchors.right: tokenText.left
                     anchors.rightMargin: 8
                     anchors.verticalCenter: storeText.verticalCenter
-                    placeholderText: qsTr("minimum_amount: ") + (bankDepositInfo.minimum_amount / 1000000).toFixed(6) + ",  " + qsTr("minimum_step: ") + (bankDepositInfo.minimum_step / 1000000).toFixed(6)
+                    placeholderText: qsTr("minimum_amount: ") + (server.bankDepositInfo.minimum_amount / 1000000).toFixed(6) + ",  " + qsTr("minimum_step: ") + (server.bankDepositInfo.minimum_step / 1000000).toFixed(6)
                 }
                 Text {
                     id: tokenText
-                    text: bankDepositInfo.token_show_name
+                    text: server.bankDepositInfo.token_show_name
                     anchors.right: parent.right
                     anchors.rightMargin: 50
                     anchors.verticalCenter: storeText.verticalCenter
@@ -164,7 +138,7 @@ Page {
                         source: "../icons/limitbank.svg"
                     }
                     Text {
-                        text: qsTr("limit of day: ") + (bankDepositInfo.quota_limit / 1000000).toFixed(6)
+                        text: qsTr("limit of day: ") + (server.bankDepositInfo.quota_limit / 1000000).toFixed(6)
                         font.pointSize: 12
                         color: "#5C5C5C"
                         anchors.verticalCenter: limitImage.verticalCenter
@@ -189,7 +163,7 @@ Page {
                 }
                 Text {
                     id: rateText2
-                    text: bankDepositInfo.rate * 100 + "%"
+                    text: server.bankDepositInfo.rate * 100 + "%"
                     anchors.verticalCenter: rateText.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: 50
@@ -221,7 +195,7 @@ Page {
                 Text {
                     anchors.right: rateText2.right
                     anchors.verticalCenter: con2Column.verticalCenter
-                    text: bankDepositInfo.pledge_rate * 100 + "%"
+                    text: server.bankDepositInfo.pledge_rate * 100 + "%"
                 }
                 Rectangle {
                     id: con2Line2
