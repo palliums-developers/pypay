@@ -7,7 +7,7 @@ function request(verb, partURL, obj, cb, async=true) {
         if(xhr.readyState === XMLHttpRequest.DONE) {
             if(cb) {
                 try {
-                    print(xhr.responseText.toString())
+                    //print(xhr.responseText.toString())
                     var res = JSON.parse(xhr.responseText.toString())
                     cb(res);
                 } catch(err) {

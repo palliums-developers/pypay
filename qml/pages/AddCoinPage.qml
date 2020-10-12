@@ -27,7 +27,7 @@ Control {
         Server.request('GET', '/1.0/violas/currency/published?addr='+payController.addr, null, function(resp) {
             if (resp.code == 2000) {
                 published = resp.data.published
-                console.log(published)
+                //console.log(published)
             }
         });
     }
