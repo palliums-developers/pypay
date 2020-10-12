@@ -255,7 +255,7 @@ Page {
                 background: Rectangle {
                     implicitWidth: 180
                     implicitHeight: 40
-                    color: menuItem.highlighted ? "#21be2b" : "transparent"
+                    color: menuItem.highlighted ? "#F7F7F7" : "transparent"
                 }
             }
             background: Rectangle {
