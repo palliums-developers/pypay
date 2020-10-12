@@ -258,11 +258,6 @@ Page {
         border.width: 1
         radius: 20
 
-        Component.onCompleted: {
-            server.getDeposit()
-            server.getBorrow()
-        }
-
         TabBar {
             id: tabBar
             anchors.top: parent.top

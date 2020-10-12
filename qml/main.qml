@@ -74,6 +74,8 @@ ApplicationWindow {
     Component.onCompleted: {
         if (appSettings.walletIsCreate) {
             payController.createWallet()
+            server.getDeposit()
+            server.getBorrow()
         }
         //console.log(payController.datadir)
     }

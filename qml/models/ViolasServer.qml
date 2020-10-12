@@ -11,6 +11,9 @@ Item {
     property var bankDepositInfo: ({})
     property var bankBorrowInfo: ({})
 
+    property alias depositModel: depositModel
+    property alias borrowModel: borrowModel
+
     ListModel {
         id: tokenModel
     }
