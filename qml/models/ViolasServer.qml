@@ -190,23 +190,27 @@ Item {
         }
     }
 
-    function getDepositOrder() {
-        if (payController.addr) {
-            request('GET', '/1.0/violas/bank/deposit/orders?address='+payController.addr+'&offset='+0+'&limit='+100, null, 
-                function(resp) {
-                for (var i=0; i<resp.data;i++) {
-                    var d = resp.data[i]
-                    currentDepositModel.append({'currency':d.currency,
-                        'earnings':d.earnings,
-                        'orderId':d.id,
-                        'logo':d.logo,
-                        'principal':d.principal,
-                        'rate':d.rate,
-                        'status':d.status
-                        })                   
-                }
-            });
-        }
+    function getDepositOrder(addr, offset, limit, cb) {
+        request('GET', '/1.0/violas/bank/deposit/orders?address=' + addr + '&offset=' + offset + '&limit=' + limit, null, 
+            function(resp) {
+            for (var i=0; i<resp.data;i++) {
+                var d = resp.data[i]
+                currentDepositModel.append({'currency':d.currency,
+                    'earnings':d.earnings,
+                    'orderId':d.id,
+                    'logo':d.logo,
+                    'principal':d.principal,
+                    'rate':d.rate,
+                    'status':d.status
+                    })                   
+            }
+            if (cb) {
+                cb()
+            }
+        });
+    }
+
+    function getBorrowOrder(addr, offset, limit, cb) {
     }
 
     function getOrderList() {

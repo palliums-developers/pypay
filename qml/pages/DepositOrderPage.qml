@@ -51,10 +51,6 @@ Page {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 24
         color: "#FFFFFF"
-
-        Component.onCompleted: {
-            server.getDepositOrder()
-        }
         
         TabBar {
             id: tabBar
@@ -109,7 +105,7 @@ Page {
 
             ListView {
                 id: currentDepositView
-                model: currentDepositModel
+                model: server.currentDepositModel
                 spacing: 12
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
@@ -240,7 +236,7 @@ Page {
 
             ListView {
                 id: borrowDetailView
-                model: depositDetailModel
+                model: server.depositDetailModel
                 spacing: 12
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
@@ -336,7 +332,7 @@ Page {
             }
         }
         Column {
-            visible: tabBar.currentIndex == 0 ? currentDepositModel.count == 0 : depositDetailModel.count == 0
+            visible: tabBar.currentIndex == 0 ? server.currentDepositModel.count == 0 : server.depositDetailModel.count == 0
             anchors.centerIn: parent
             spacing: 8
             Image {

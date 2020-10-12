@@ -396,9 +396,17 @@ ApplicationWindow {
                         bankStack.push(borrowPage)
                     }
                     onShowDepositOrderPage: {
+                        depositOrderPage.source = "pages/BusyPage.qml"
+                        server.getDepositOrder(payController.addr, 0, 10, function() {
+                            depositOrderPage.source = "pages/DepositOrderPage.qml"
+                        })
                         bankStack.push(depositOrderPage)
                     }
                     onShowBorrowOrderPage: {
+                        borrowOrderPage.source = "pages/BusyPage.qml"
+                        server.getBorrowOrder(payController.addr, 0, 10, function() {
+                            borrowOrderPage.source = "pages/BorrowOrderPage.qml"
+                        })
                         bankStack.push(borrowOrderPage)
                     }
                 }
@@ -426,21 +434,23 @@ ApplicationWindow {
                 }
             }
 
-            Component {
+            Loader {
                 id: depositOrderPage
-                DepositOrderPage {
-                    onBackArrowClicked: {
-                        bankStack.pop()
-                    }
+            }
+            Connections {
+                target: depositOrderPage.item
+                function onBackArrowClicked() {
+                    bankStack.pop()
                 }
             }
 
-            Component {
+            Loader {
                 id: borrowOrderPage
-                BorrowOrderPage {
-                    onBackArrowClicked: {
-                        bankStack.pop()
-                    }
+            }
+            Connections {
+                target: borrowOrderPage.item
+                function onBackArrowClicked() {
+                    bankStack.pop()
                 }
             }
 
