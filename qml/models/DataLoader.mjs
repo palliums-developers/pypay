@@ -38,6 +38,7 @@ function request(verb, URL, obj, cb) {
         }
     }
     xhr.open(verb, URL, false);
+    xhr.timeout = 2000
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('Accept', 'application/json');
     var data = obj?JSON.stringify(obj):''

@@ -79,6 +79,18 @@ ApplicationWindow {
 
     onClosing: {
         payController.shutdown()
+        timer.running = false
+    }
+
+    Timer {
+        id: timer
+        interval: 5000
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            walletPage.getTokenBalance()
+        }
     }
     
     Rectangle {
@@ -270,23 +282,21 @@ ApplicationWindow {
             }
 
             // Wallet page
-            Component {
+            WalletPage {
                 id: walletPage
-                WalletPage {
-                    onBackupMnemonicClicked: {
-                        createStack.clear()
-                        createStack.push(backupMnemonic)
-                        showCreatePage(true)
-                    }
-                    onReceiveClicked: {
-                        walletStack.push(receivePage)
-                    }
-                    onSendClicked: {
-                        walletStack.push(sendPage)
-                    }
-                    onExchangeClicked: {
-                        walletStack.push(exchangePage)
-                    }
+                onBackupMnemonicClicked: {
+                    createStack.clear()
+                    createStack.push(backupMnemonic)
+                    showCreatePage(true)
+                }
+                onReceiveClicked: {
+                    walletStack.push(receivePage)
+                }
+                onSendClicked: {
+                    walletStack.push(sendPage)
+                }
+                onExchangeClicked: {
+                    walletStack.push(exchangePage)
                 }
             }
 

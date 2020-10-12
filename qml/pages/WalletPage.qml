@@ -40,16 +40,6 @@ Page {
         source: "../models/DataLoader.mjs"
     }
 
-    Timer {
-        interval: 5000
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            getTokenBalance()
-        }
-    }
-
     Component.onCompleted: {
         Server.requestRate('GET', 'https://api.exchangeratesapi.io/latest?base=USD', null, function(resp) {
                 rates = resp.rates;

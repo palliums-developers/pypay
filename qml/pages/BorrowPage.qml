@@ -13,6 +13,7 @@ Page {
     property var bankBorrowInfo: ({})
     property int topMargin: 79      // top to borrowBtn
     property int bottomMargin: 49   // bottom to borrowBtn   
+    property bool isSelected: false
 
     signal backArrowClicked
 
@@ -231,6 +232,35 @@ Page {
                     text: qsTr("Bank")
                     anchors.verticalCenter: con2Column2.verticalCenter
                     anchors.right: rateText2.right
+                }
+            }
+        }
+
+        Row {
+            anchors.top: contentColumn.bottom
+            anchors.topMargin: 40
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 5
+            Image {
+                anchors.verticalCenter: checkText.verticalCenter
+                width: 14
+                height: 14
+                source: root.isSelected ? "../icons/xuanze-2.svg" : "../icons/xuanze.svg"
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        root.isSelected = !root.isSelected
+                    }
+                }
+            }
+            Text {
+                id: checkText
+                text: qsTr("<font color="#999999">I read and agree</font><font color="#7038FD"><b>《Borrow agreement》</b></font>")
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        payController.openUrl("https://violas.io")
+                    }
                 }
             }
         }
