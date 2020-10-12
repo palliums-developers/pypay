@@ -193,6 +193,7 @@ Page {
                     anchors.verticalCenter: rateText.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: 50
+                    color: "#13B788"
                 }
                 Rectangle {
                     id: con2Line
