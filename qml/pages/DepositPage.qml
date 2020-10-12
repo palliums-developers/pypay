@@ -269,9 +269,11 @@ Page {
             spacing: 10
 
             Rectangle {
+                id: intorRec
                 width: parent.width
-                height: 32 + intorText.contentHeight + 32 + con3Column.height + 32
+                height: 32 + intorText.contentHeight + 32 + con3Column.height + (intorRec.isShowMore ? 32 : 0)
                 color: "#FFFFFF"
+                property bool isShowMore: false
                 Text {
                     id: intorText
                     text: qsTr("Intor")
@@ -283,6 +285,20 @@ Page {
                     anchors.top: parent.top
                     anchors.topMargin: 32
                 }
+                Image {
+                    anchors.right: parent.right
+                    anchors.rightMargin: 50
+                    anchors.verticalCenter: intorText.verticalCenter
+                    source: intorRec.isShowMore ? "../icons/arrow_down.svg" : "../icons/arrow_right.svg"
+                    width: 12
+                    fillMode: Image.PreserveAspectFit
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            intorRec.isShowMore = !intorRec.isShowMore
+                        }
+                    }
+                }
                 Column {
                     id: con3Column
                     anchors.left: intorText.left
@@ -290,7 +306,7 @@ Page {
                     anchors.topMargin: 32
                     spacing: 8
                     Repeater {
-                        model: intorModel
+                        model: intorRec.isShowMore ? intorModel : 0
                         Text {
                             text: title + "  "  + content
                         }
@@ -299,9 +315,11 @@ Page {
             }
 
             Rectangle {
+                id: questionRec
                 width: parent.width
-                height: 32 + questionText.contentHeight + 32 + con4Column.height + 32
+                height: 32 + questionText.contentHeight + 32 + con4Column.height + (questionRec.isShowMore ? 32 : 0)
                 color: "#FFFFFF"
+                property bool isShowMore: false
                 Text {
                     id: questionText
                     text: qsTr("Question")
@@ -313,6 +331,20 @@ Page {
                     anchors.top: parent.top
                     anchors.topMargin: 32
                 }
+                Image {
+                    anchors.right: parent.right
+                    anchors.rightMargin: 50
+                    anchors.verticalCenter: questionText.verticalCenter
+                    source: questionRec.isShowMore ? "../icons/arrow_down.svg" : "../icons/arrow_right.svg"
+                    width: 12
+                    fillMode: Image.PreserveAspectFit
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            questionRec.isShowMore = !questionRec.isShowMore
+                        }
+                    }
+                }
                 Column {
                     id: con4Column
                     anchors.left: questionText.left
@@ -320,7 +352,7 @@ Page {
                     anchors.topMargin: 32
                     spacing: 8
                     Repeater {
-                        model: questionModel
+                        model: questionRec.isShowMore ? questionModel : 0
                         Column {
                             spacing: 16
                             Text {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59 (86127) - https://sketch.com -->
+    <title>编组 16</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="桌面端-存款" transform="translate(-1151.000000, -772.000000)">
+            <g id="编组-4" transform="translate(498.000000, 741.000000)">
+                <g id="编组-16" transform="translate(659.000000, 37.000000) rotate(-270.000000) translate(-659.000000, -37.000000) translate(653.000000, 31.000000)">
+                    <rect id="矩形" x="0" y="0" width="12" height="12"></rect>
+                    <g id="路径-2" transform="translate(4.000000, 1.000000)" fill="#999999">
+                        <path d="M7.89506711,2 L6.90820869,2 C6.84110232,2 6.77794338,2.03417969 6.73846904,2.09023438 L3.00024933,6.44414063 L-0.737970377,2.09023438 C-0.777444714,2.03417969 -0.840603653,2 -0.907710026,2 L-1.89456845,2 C-1.98009618,2 -2.03009701,2.10117188 -1.98009618,2.17363281 L2.65945422,7.81953125 C2.82787806,8.06015625 3.1726206,8.06015625 3.33972863,7.81953125 L7.97927903,2.17363281 C8.03059567,2.10117188 7.98059484,2 7.89506711,2 Z" id="路径" transform="translate(3.000000, 5.000000) rotate(-90.000000) translate(-3.000000, -5.000000) "></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
