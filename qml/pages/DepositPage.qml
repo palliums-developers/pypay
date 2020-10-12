@@ -280,7 +280,7 @@ Page {
                     anchors.topMargin: 32
                     spacing: 8
                     Repeater {
-                        model: intorRec.isShowMore ? intorModel : 0
+                        model: intorRec.isShowMore ? server.intorModel : 0
                         Text {
                             text: title + "  "  + content
                         }
@@ -326,7 +326,7 @@ Page {
                     anchors.topMargin: 32
                     spacing: 8
                     Repeater {
-                        model: questionRec.isShowMore ? questionModel : 0
+                        model: questionRec.isShowMore ? server.questionModel : 0
                         Column {
                             spacing: 16
                             Text {

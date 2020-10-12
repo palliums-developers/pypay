@@ -11,8 +11,13 @@ Item {
     property var bankDepositInfo: ({})
     property var bankBorrowInfo: ({})
 
+    property alias tokenModel: tokenModel
     property alias depositModel: depositModel
     property alias borrowModel: borrowModel
+    property alias intorModel: intorModel
+    property alias questionModel: questionModel
+    property alias currentDepositModel: currentDepositModel
+    property alias depositDetailModel: depositDetailModel
 
     ListModel {
         id: tokenModel
@@ -149,23 +154,24 @@ Item {
             });
     }
 
-    function getDepositInfo(id) {
-        if (payController.addr) {
-            request('GET', '/1.0/violas/bank/deposit/info?id='+ id + '&address=' + payController.addr,
-                null, function(resp) {
-                    bankDepositInfo = resp.data;
-                    for (var i=0; i<resp.data.intor.length; i++) {
-                        intorModel.append({"title":resp.data.intor[i].title, "content":resp.data.intor[i].text})
-                    }
-                    for (var i=0; i<resp.data.question.length; i++) {
-                        questionModel.append({"title":resp.data.question[i].title, "content":resp.data.question[i].text})
-                    }
-                    console.log(JSON.stringify(bankDepositInfo))
-                });
-        }
+    function getDepositInfo(id, cb) {
+        request('GET', '/1.0/violas/bank/deposit/info?id='+ id + '&address=' + payController.addr,
+            null, function(resp) {
+                bankDepositInfo = resp.data;
+                for (var i=0; i<resp.data.intor.length; i++) {
+                    intorModel.append({"title":resp.data.intor[i].title, "content":resp.data.intor[i].text})
+                }
+                for (var i=0; i<resp.data.question.length; i++) {
+                    questionModel.append({"title":resp.data.question[i].title, "content":resp.data.question[i].text})
+                }
+                if (cb) {
+                    cb()
+                }
+                console.log(JSON.stringify(bankDepositInfo))
+            });
     }
 
-    function getBorrowInfo(id) {
+    function getBorrowInfo(id, cb) {
         if (payController.addr) {
             request('GET', '/1.0/violas/bank/borrow/info?id='+ id + '&address=' + payController.addr,
                 null, function(resp) {
@@ -175,6 +181,9 @@ Item {
                     }
                     for (var i=0; i<resp.data.question.length; i++) {
                         questionModel.append({"title":resp.data.question[i].title, "content":resp.data.question[i].text})
+                    }
+                    if (cb) {
+                        cb()
                     }
                     console.log(JSON.stringify(bankBorrowInfo))
                 });

@@ -54,7 +54,8 @@ Page {
         anchors.bottomMargin: 40
         anchors.horizontalCenter: parent.horizontalCenter
         width: 716
-        contentHeight: contentColumn.height + root.topMargin + borrowBtn.height + root.bottomMargin + contentColumn2.height
+        contentHeight: contentColumn.height + root.topMargin + 
+            borrowBtn.height + root.bottomMargin + contentColumn2.height
 
         Column {
             id: contentColumn
@@ -85,11 +86,15 @@ Page {
                     anchors.right: tokenText.left
                     anchors.rightMargin: 8
                     anchors.verticalCenter: borrowText.verticalCenter
-                    placeholderText: qsTr("minimum_amount: ") + (bankBorrowInfo.minimum_amount / 1000000).toFixed(6) + ",  " + qsTr("minimum_step: ") + (bankBorrowInfo.minimum_step / 1000000).toFixed(6)
+                    placeholderText: qsTr("minimum_amount: ") + 
+                        (server.bankBorrowInfo.minimum_amount / 1000000).toFixed(6) + 
+                        ",  " + 
+                        qsTr("minimum_step: ") + 
+                        (server.bankBorrowInfo.minimum_step / 1000000).toFixed(6)
                 }
                 Text {
                     id: tokenText
-                    text: bankBorrowInfo.token_show_name
+                    text: server.bankBorrowInfo.token_show_name
                     anchors.right: parent.right
                     anchors.rightMargin: 50
                     anchors.verticalCenter: borrowText.verticalCenter
@@ -143,7 +148,7 @@ Page {
                 }
                 Text {
                     id: rateText2
-                    text: bankBorrowInfo.rate * 100 + "%" + "/" + qsTr("Day")
+                    text: server.bankBorrowInfo.rate * 100 + "%" + "/" + qsTr("Day")
                     anchors.verticalCenter: rateText.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: 50
@@ -175,7 +180,7 @@ Page {
                 Text {
                     anchors.right: rateText2.right
                     anchors.verticalCenter: con2Column.verticalCenter
-                    text: bankBorrowInfo.pledge_rate * 100 + "%"
+                    text: server.bankBorrowInfo.pledge_rate * 100 + "%"
                 }
                 Rectangle {
                     id: con2Line2
@@ -295,7 +300,7 @@ Page {
                     anchors.topMargin: 32
                     spacing: 8
                     Repeater {
-                        model: intorRec.isShowMore ? intorModel : 0
+                        model: intorRec.isShowMore ? server.intorModel : 0
                         Text {
                             text: title + "  "  + content
                         }
@@ -341,7 +346,7 @@ Page {
                     anchors.topMargin: 32
                     spacing: 8
                     Repeater {
-                        model: questionRec.isShowMore ? questionModel : 0
+                        model: questionRec.isShowMore ? server.questionModel : 0
                         Column {
                             spacing: 16
                             Text {
