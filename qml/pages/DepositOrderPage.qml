@@ -105,6 +105,7 @@ Page {
         }
 
         StackLayout {
+            id: stackView
             anchors.top: tabBar.bottom
             anchors.topMargin: 55
             anchors.left: parent.left
@@ -342,6 +343,13 @@ Page {
                     }
                 }
             }
+        }
+
+        SwitchPage {
+            anchors.top: stackView.bottom
+            anchors.topMargin: 16
+            anchors.horizontalCenter: parent.horizontalCenter
+            pageCount: 5
         }
 
         Column {
