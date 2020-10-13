@@ -3,48 +3,61 @@ import QtQuick.Controls 2.15
 
 import "../controls"
 
-Row {
-    id: control
+Item {
+    id: root
     property int pageCount: 1
     property int pageIndex: 0
+    signal repComClicked(int index)
 
-    spacing: 4
-    RecButton {
-        width: 18
-        height: 24
-        isEnabled: pageIndex != 0
-        Text {
-            anchors.centerIn: parent
-            text: "<"
+    Component {
+        id: repCom
+        Row {
+            spacing: 4
+            Repeater {
+                id: rep
+                model: pageCount
+                RecButton {
+                    width: 24
+                    height: 24
+                    radius: 1
+                    isSelected: index == pageIndex
+                    Text {
+                        anchors.centerIn: parent
+                        text: index + 1
+                    }
+                    onClickedSignal: {
+                        pageIndex = index
+                        recLoader.sourceComponent = undefined
+                        sourceComponent = repCom
+                    }
+                }
+            }
         }
     }
-    Repeater {
-        id: rep
-        model: pageCount
+
+    Row {
+        spacing: 4
         RecButton {
-            width: 24
+            width: 18
             height: 24
-            radius: 1
-            isSelected: index == pageIndex
+            isEnabled: pageIndex != 0
             Text {
                 anchors.centerIn: parent
-                text: index + 1
-            }
-            onClickedSignal: {
-                rep.itemAt(pageIndex).isSelected = false
-                isSelected = true
-                pageIndex = index
-                console.log("pageIndex: ", pageIndex)
+                text: "<"
             }
         }
-    }
-    RecButton {
-        width: 18
-        height: 24
-        isEnabled: pageIndex != pageCount - 1
-        Text {
-            anchors.centerIn: parent
-            text: ">"
+        Loader {
+            id: recLoader
+            sourceComponent: repCom
         }
-    }
-} 
+        RecButton {
+            width: 18
+            height: 24
+            isEnabled: pageIndex != pageCount - 1
+            Text {
+                anchors.centerIn: parent
+                text: ">"
+            }
+        }
+    } 
+}
