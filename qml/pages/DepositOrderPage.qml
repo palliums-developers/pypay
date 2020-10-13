@@ -61,16 +61,17 @@ Page {
             width: 500
 
             TabButton {
+                id: depositTabBtn
                 text: qsTr("Current Deposit")
-                width: depositBtnText.contentWidth + 50
+                width: 200
                 leftPadding: 0
                 contentItem: Text {
-                    id: depositBtnText
-                    text: parent.text
-                    color: tabBar.currentIndex == 0 ? "#333333" : "#999999"
-                    font.pointSize: tabBar.currentIndex == 0 ? 16 : 12
-                    horizontalAlignment: Text.AlignLeft
-                    verticalAlignment: Text.AlignVCenter
+                        id: depositBtnText
+                        text: parent.text
+                        color: tabBar.currentIndex == 0 ? "#333333" : "#999999"
+                        font.pointSize: tabBar.currentIndex == 0 ? 16 : 12
+                        horizontalAlignment: Text.AlignLeft
+                        verticalAlignment: Text.AlignVCenter
                 }
                 background: Rectangle {
                     color: "#FFFFFF"
@@ -79,7 +80,7 @@ Page {
 
             TabButton {
                 text: qsTr("Deposit Detail")
-                width: depositDetailText.contentWidth + 50
+                width: 200
                 leftPadding: 0
                 contentItem: Text {
                     id: depositDetailText
@@ -93,6 +94,15 @@ Page {
                     color: "#FFFFFF"
                 }
             }
+        }
+        Rectangle {
+            anchors.left: tabBar.left
+            anchors.leftMargin: tabBar.currentIndex == 0 ? 0 : 200
+            anchors.top: tabBar.bottom
+            anchors.topMargin: 8
+            width: 40
+            height: 3
+            color: "blue"
         }
 
         StackLayout {
