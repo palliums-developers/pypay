@@ -120,6 +120,7 @@ Page {
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
                 header: Rectangle {
+                    z: 2
                     width: parent.width
                     height: 50
                     Text {
@@ -251,6 +252,7 @@ Page {
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
                 header: Rectangle {
+                    z: 2
                     width: parent.width
                     Column {
                         anchors.fill: parent
