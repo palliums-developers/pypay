@@ -2,7 +2,8 @@ import QtQuick 2.14
 import PyPay 1.0
 
 Item {
-    property string violasURL: "https://api4.violas.io"
+    //property string violasURL: "https://api4.violas.io"
+    property string violasURL: "http://localhost:5000"
     property bool isBusy: false
     property var rates: {}
     property var balances: []

@@ -26,7 +26,25 @@ Page {
     }
 
     BusyIndicator {
+        id: busy
         anchors.centerIn: parent
         running: true
+    }
+
+    Timer {
+        interval: 3000
+        repeat: false
+        running: true
+        onTriggered: {
+            busy.running = false
+            tip.visible = true
+        }
+    }
+
+    Text {
+        id: tip
+        text: qsTr("Server request error!")
+        anchors.centerIn: parent
+        visible: false
     }
 }
