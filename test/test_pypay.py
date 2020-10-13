@@ -150,6 +150,143 @@ def bank_borrow_info():
     }
     return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
 
+# /1.0/violas/bank/deposit/orders
+@app.route('/1.0/violas/bank/deposit/orders', methods=['GET'])
+def bank_deposit_orders():
+    data = [
+          {
+          "currency": "LBR",
+          "earnings": 22,
+          "id": "2000001",
+          "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+          "principal": 1500,
+          "rate": 3.9,
+          "status": 1,
+          "total_count": 2
+        },
+        {
+          "currency": "LBR",
+          "earnings": 22,
+          "id": "2000001",
+          "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+          "principal": 1500,
+          "rate": 3.9,
+          "status": 1,
+          "total_count": 2
+        },
+        {
+          "currency": "LBR",
+          "earnings": 22,
+          "id": "2000001",
+          "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+          "principal": 1500,
+          "rate": 3.9,
+          "status": 1,
+          "total_count": 2
+        },
+        {
+          "currency": "LBR",
+          "earnings": 22,
+          "id": "2000001",
+          "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+          "principal": 1500,
+          "rate": 3.9,
+          "status": 1,
+          "total_count": 2
+        },
+        {
+          "currency": "LBR",
+          "earnings": 22,
+          "id": "2000001",
+          "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+          "principal": 1500,
+          "rate": 3.9,
+          "status": 1,
+          "total_count": 2
+        },
+        {
+          "currency": "LBR",
+          "earnings": 22,
+          "id": "2000001",
+          "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+          "principal": 1500,
+          "rate": 3.9,
+          "status": 1,
+          "total_count": 2
+        },
+        {
+          "currency": "LBR",
+          "earnings": 22,
+          "id": "2000001",
+          "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+          "principal": 1500,
+          "rate": 3.9,
+          "status": 1,
+          "total_count": 2
+        },
+        {
+          "currency": "LBR",
+          "earnings": 22,
+          "id": "2000001",
+          "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+          "principal": 1500,
+          "rate": 3.9,
+          "status": 1,
+          "total_count": 2
+        },
+        {
+          "currency": "LBR",
+          "earnings": 22,
+          "id": "2000001",
+          "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+          "principal": 1500,
+          "rate": 3.9,
+          "status": 1,
+          "total_count": 2
+        },
+        {
+          "currency": "LBR",
+          "earnings": 22,
+          "id": "2000001",
+          "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+          "principal": 1500,
+          "rate": 3.9,
+          "status": 1,
+          "total_count": 2
+        },
+        {
+          "currency": "LBR",
+          "earnings": 22,
+          "id": "2000001",
+          "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+          "principal": 1500,
+          "rate": 3.9,
+          "status": 1,
+          "total_count": 2
+        },
+        {
+          "currency": "LBR",
+          "earnings": 22,
+          "id": "2000001",
+          "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+          "principal": 1500,
+          "rate": 3.9,
+          "status": 1,
+          "total_count": 2
+        },
+        {
+          "currency": "LBR",
+          "earnings": 22,
+          "id": "2000001",
+          "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+          "principal": 1500,
+          "rate": 3.9,
+          "status": 1,
+          "total_count": 2
+        },
+    ]
+    return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error':'Not found'}), 404)

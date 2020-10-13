@@ -194,15 +194,16 @@ Item {
     function getDepositOrder(addr, offset, limit, cb) {
         request('GET', '/1.0/violas/bank/deposit/orders?address=' + addr + '&offset=' + offset + '&limit=' + limit, null, 
             function(resp) {
-            for (var i=0; i<resp.data;i++) {
+            for (var i=0; i<resp.data.length;i++) {
                 var d = resp.data[i]
-                currentDepositModel.append({'currency':d.currency,
-                    'earnings':d.earnings,
-                    'orderId':d.id,
-                    'logo':d.logo,
-                    'principal':d.principal,
-                    'rate':d.rate,
-                    'status':d.status
+                currentDepositModel.append({
+                    "currency": d.currency,
+                    "earnings": d.earnings,
+                    "orderId": d.id,
+                    "logo": d.logo,
+                    "principal": d.principal,
+                    "rate": d.rate,
+                    "status": d.status
                     })                   
             }
             if (cb) {

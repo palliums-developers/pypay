@@ -331,6 +331,7 @@ Page {
                 }
             }
         }
+
         Column {
             visible: tabBar.currentIndex == 0 ? server.currentDepositModel.count == 0 : server.depositDetailModel.count == 0
             anchors.centerIn: parent
