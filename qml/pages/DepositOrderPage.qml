@@ -49,7 +49,6 @@ Page {
         anchors.top: backBtn.bottom
         anchors.topMargin: 24
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 24
         color: "#FFFFFF"
         
         TabBar {
@@ -111,6 +110,7 @@ Page {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
+            anchors.bottomMargin: 80
             currentIndex: tabBar.currentIndex
 
             ListView {
@@ -178,7 +178,7 @@ Page {
                 }
                 headerPositioning: ListView.OverlayHeader
                 delegate: Rectangle {
-                    width: parent.width
+                    width: currentDepositView.width
                     height: 50
                     Text {
                         id: tokenText
@@ -310,7 +310,7 @@ Page {
                 }
                 headerPositioning: ListView.OverlayHeader
                 delegate: Rectangle {
-                    width: parent.width
+                    width: borrowDetailView.width
                     height: 50
                     Text {
                         id: dateText
