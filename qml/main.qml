@@ -58,14 +58,6 @@ ApplicationWindow {
         importStack.visible = b
     }
 
-    function showBankDepositOrderPage(offset, limit) {
-        depositPage.source = ""
-        depositOrderPage.source = "pages/BusyPage.qml"
-        server.getDepositOrder(payController.addr, offset, limit, function() {
-            depositOrderPage.source = "pages/DepositOrderPage.qml"
-        })
-    }
-
     Settings {
         id: appSettings
         fileName: payController.datadir + "/pypay.ini"
@@ -407,7 +399,12 @@ ApplicationWindow {
                         bankStack.push(borrowPage)
                     }
                     onShowDepositOrderPage: {
-                        showBankDepositOrderPage(0, 10)
+                        depositPage.source = ""
+                        depositOrderPage.source = "pages/BusyPage.qml"
+                        var params = { "address": payController.addr, "offset": 0, "limit": 10 }
+                        server.getDepositOrder(params, function() {
+                            depositOrderPage.source = "pages/DepositOrderPage.qml"
+                        })
                         bankStack.push(depositOrderPage)
                     }
                     onShowBorrowOrderPage: {

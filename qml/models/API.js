@@ -8,9 +8,13 @@ function request(verb, URL, obj, cb, async=true) {
             if(cb) {
                 try {
                     print('request: ' + verb + ' ' + URL)
-                    print(xhr.responseText.toString())
-                    var res = JSON.parse(xhr.responseText.toString())
-                    cb(res);
+                    if (xhr.status == 200) {
+                        print(xhr.responseText.toString())
+                        var res = JSON.parse(xhr.responseText.toString())
+                        cb(res);
+                    } else {
+                        print(xhr.statusText)
+                    }
                 } catch(err) {
                     print(URL + ' : ' + err.message)
                 }
@@ -23,4 +27,10 @@ function request(verb, URL, obj, cb, async=true) {
     xhr.setRequestHeader('Accept', 'application/json');
     var data = obj?JSON.stringify(obj):''
     xhr.send(data)
+}
+
+function formatParams(params) {
+    return "?" + Object.keys(params).map(function(key) {
+            return key + "=" + params[key]
+        }).join("&")
 }
