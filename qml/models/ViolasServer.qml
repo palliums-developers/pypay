@@ -168,12 +168,14 @@ Item {
         });
     }
 
-    function getDepositOrderList(params, cb) {
+    function getDepositOrderList(params) {
         API.request('GET', API.violasURL + '/1.0/violas/bank/deposit/order/list' + API.formatParams(params), null, 
             function(resp) {
-            for (var i=0; i<resp.data;i++) {
+            depositDetailModel.clear()
+            for (var i=0; i<resp.data.length;i++) {
                 var d = resp.data[i]
-                depositDetailModel.append({'currency':d.currency,
+                depositDetailModel.append({
+                    'currency':d.currency,
                     'date':d.date,
                     'orderId':d.id,
                     'logo':d.logo,

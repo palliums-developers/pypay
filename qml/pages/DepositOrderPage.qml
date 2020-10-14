@@ -255,17 +255,18 @@ Page {
                 header: Rectangle {
                     z: 2
                     width: parent.width
+                    height: headCol.height
                     Column {
-                        anchors.fill: parent
+                        id: headCol
                         spacing: 8
                         Rectangle {
-                            width: parent.width
+                            width: borrowDetailView.width
                             height: 30
                             color: "blue"
-                            visible: false
+                            //visible: false
                         }
                         Rectangle {
-                            width: parent.width
+                            width: borrowDetailView.width
                             height: 50
                             //color: "red"
                             Text {
@@ -357,6 +358,8 @@ Page {
                     var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
                     server.getDepositOrder(params)
                 } else {
+                    var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
+                    server.getDepositOrderList(params)
                 }
             }
         }

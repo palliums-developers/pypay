@@ -408,6 +408,7 @@ ApplicationWindow {
                         server.getDepositOrder(params, function() {
                             depositOrderPage.source = "pages/DepositOrderPage.qml"
                         })
+                        server.getDepositOrderList(params)
                         bankStack.push(depositOrderPage)
                     }
                     onShowBorrowOrderPage: {
