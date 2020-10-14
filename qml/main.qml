@@ -394,7 +394,7 @@ ApplicationWindow {
                         bankStack.push(depositPage)
                     }
                     onShowBorrowPage: {
-                        depositPage.source = ""
+                        borrowPage.source = ""
                         borrowPage.source = "pages/BusyPage.qml"
                         server.getBorrowInfo({"id": id, "address": payController.addr}, function() {
                             borrowPage.source = "pages/BorrowPage.qml"  
@@ -402,7 +402,7 @@ ApplicationWindow {
                         bankStack.push(borrowPage)
                     }
                     onShowDepositOrderPage: {
-                        depositPage.source = ""
+                        depositOrderPage.source = ""
                         depositOrderPage.source = "pages/BusyPage.qml"
                         var params = { "address": payController.addr, "offset": 0, "limit": 10 }
                         server.getDepositOrderList(params)
@@ -412,7 +412,7 @@ ApplicationWindow {
                         bankStack.push(depositOrderPage)
                     }
                     onShowBorrowOrderPage: {
-                        depositPage.source = ""
+                        borrowOrderPage.source = ""
                         borrowOrderPage.source = "pages/BusyPage.qml"
                         server.getBorrowOrder(payController.addr, 0, 10, function() {
                             borrowOrderPage.source = "pages/BorrowOrderPage.qml"

@@ -107,7 +107,7 @@ Page {
         StackLayout {
             id: stackView
             anchors.top: tabBar.bottom
-            anchors.topMargin: 55
+            anchors.topMargin: 32
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
