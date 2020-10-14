@@ -405,10 +405,10 @@ ApplicationWindow {
                         depositPage.source = ""
                         depositOrderPage.source = "pages/BusyPage.qml"
                         var params = { "address": payController.addr, "offset": 0, "limit": 10 }
+                        server.getDepositOrderList(params)
                         server.getDepositOrder(params, function() {
                             depositOrderPage.source = "pages/DepositOrderPage.qml"
                         })
-                        server.getDepositOrderList(params)
                         bankStack.push(depositOrderPage)
                     }
                     onShowBorrowOrderPage: {

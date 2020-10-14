@@ -244,6 +244,21 @@ Page {
                         }
                     }
                 }
+                footer: Rectangle {
+                    z: 2
+                    width: currentDepositView.width
+                    height: 40
+                    SwitchPage {
+                        anchors.centerIn: parent
+                        pageCount: server.currentDepositModel.get(0).total_count / 10 + (server.currentDepositModel.get(0).total_count % 10 == 0 ? 0 : 1)
+                        visible: server.currentDepositModel.count != 0
+                        onPageClicked: {
+                            var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
+                            server.getDepositOrder(params)
+                        }
+                    }
+                }
+                footerPositioning: ListView.OverlayFooter
             }
 
             ListView {
@@ -343,26 +358,24 @@ Page {
                         text: status
                     }
                 }
+                footer: Rectangle {
+                    z: 2
+                    width: borrowDetailView.width
+                    height: 40
+                    SwitchPage {
+                        anchors.centerIn: parent
+                        pageCount: server.depositDetailModel.get(0).total_count / 10 + (server.depositDetailModel.get(0).total_count % 10 == 0 ? 0 : 1)
+                        visible: server.depositDetailModel.count != 0
+                        onPageClicked: {
+                            var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
+                            server.getDepositOrderList(params)
+                        }
+                    }
+                }
+                footerPositioning: ListView.OverlayFooter
             }
         }
 
-        SwitchPage {
-            id: pageSwitch
-            anchors.top: stackView.bottom
-            anchors.topMargin: 16
-            anchors.horizontalCenter: parent.horizontalCenter
-            pageCount: tabBar.currentIndex == 0 ? server.currentDepositModel.get(0).total_count / 10 + (server.currentDepositModel.get(0).total_count % 10 == 0 ? 0 : 1) : server.depositDetailModel.get(0).total_count / 10 + (server.depositDetailModel.get(0).total_count % 10 == 0 ? 0 : 1)
-            visible: tabBar.currentIndex == 0 ? server.currentDepositModel.count != 0 : server.depositDetailModel.count != 0
-            onPageClicked: {
-                if (tabBar.currentIndex == 0) {
-                    var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
-                    server.getDepositOrder(params)
-                } else {
-                    var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
-                    server.getDepositOrderList(params)
-                }
-            }
-        }
 
         Column {
             visible: tabBar.currentIndex == 0 ? server.currentDepositModel.count == 0 : server.depositDetailModel.count == 0
