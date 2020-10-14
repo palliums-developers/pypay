@@ -350,7 +350,8 @@ Page {
             anchors.top: stackView.bottom
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
-            pageCount: 5
+            pageCount: tabBar.currentIndex == 0 ? server.currentDepositModel.get(0).total_count / 10 + (server.currentDepositModel.get(0).total_count % 10 == 0 ? 0 : 1) : server.depositDetailModel.get(0).total_count / 10 + (server.depositDetailModel.get(0).total_count % 10 == 0 ? 0 : 1)
+            visible: tabBar.currentIndex == 0 ? server.currentDepositModel.count != 0 : server.depositDetailModel.count != 0
             onPageClicked: {
                 server.getDepositOrder(payController.addr, index * 10, 10)
             }

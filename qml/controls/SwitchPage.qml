@@ -9,6 +9,12 @@ Item {
     property int pageIndex: 0
     signal pageClicked(int index)
 
+    function refresh() {
+        pageClicked(pageIndex)
+        recLoader.sourceComponent = undefined
+        recLoader.sourceComponent = repCom
+    }
+
     Component {
         id: repCom
         Row {
@@ -27,9 +33,7 @@ Item {
                     }
                     onClickedSignal: {
                         pageIndex = index
-                        pageClicked(index)
-                        recLoader.sourceComponent = undefined
-                        sourceComponent = repCom
+                        refresh()
                     }
                 }
             }
@@ -46,6 +50,15 @@ Item {
                 anchors.centerIn: parent
                 text: "<"
             }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    if (parent.isEnabled) {
+                        pageIndex -= 1
+                        refresh()
+                    }
+                }
+            }
         }
         Loader {
             id: recLoader
@@ -58,6 +71,15 @@ Item {
             Text {
                 anchors.centerIn: parent
                 text: ">"
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    if (parent.isEnabled) {
+                        pageIndex += 1
+                        refresh()
+                    }
+                }
             }
         }
     } 

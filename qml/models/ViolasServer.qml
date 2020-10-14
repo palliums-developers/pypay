@@ -156,7 +156,8 @@ Item {
                     "logo": d.logo,
                     "principal": d.principal,
                     "rate": d.rate,
-                    "status": d.status
+                    "status": d.status,
+                    "total_count": d.total_count
                     })                   
             }
             if (cb) {
