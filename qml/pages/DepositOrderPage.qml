@@ -244,21 +244,6 @@ Page {
                         }
                     }
                 }
-                footer: Rectangle {
-                    z: 2
-                    width: currentDepositView.width
-                    height: 40
-                    SwitchPage {
-                        anchors.centerIn: parent
-                        pageCount: server.currentDepositModel.get(0).total_count / 10 + (server.currentDepositModel.get(0).total_count % 10 == 0 ? 0 : 1)
-                        visible: server.currentDepositModel.count != 0
-                        onPageClicked: {
-                            var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
-                            server.getDepositOrder(params)
-                        }
-                    }
-                }
-                footerPositioning: ListView.OverlayFooter
             }
 
             ListView {
@@ -278,7 +263,7 @@ Page {
                             width: borrowDetailView.width
                             height: 30
                             color: "blue"
-                            //visible: false
+                            visible: false
                         }
                         Rectangle {
                             width: borrowDetailView.width
@@ -358,21 +343,30 @@ Page {
                         text: status
                     }
                 }
-                footer: Rectangle {
-                    z: 2
-                    width: borrowDetailView.width
-                    height: 40
-                    SwitchPage {
-                        anchors.centerIn: parent
-                        pageCount: server.depositDetailModel.get(0).total_count / 10 + (server.depositDetailModel.get(0).total_count % 10 == 0 ? 0 : 1)
-                        visible: server.depositDetailModel.count != 0
-                        onPageClicked: {
-                            var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
-                            server.getDepositOrderList(params)
-                        }
-                    }
-                }
-                footerPositioning: ListView.OverlayFooter
+            }
+        }
+
+        SwitchPage {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: stackView.bottom
+            anchors.topMargin: 16
+            visible: tabBar.currentIndex == 0 && server.currentDepositModel.count != 0
+            pageCount: server.currentDepositModel.get(0).total_count / 10 + (server.currentDepositModel.get(0).total_count % 10 == 0 ? 0 : 1)
+            onPageClicked: {
+                var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
+                server.getDepositOrder(params)
+            }
+        }
+
+        SwitchPage {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: stackView.bottom
+            anchors.topMargin: 16
+            visible: tabBar.currentIndex == 1 && server.depositDetailModel.count != 0
+            pageCount: server.depositDetailModel.get(0).total_count / 10 + (server.depositDetailModel.get(0).total_count % 10 == 0 ? 0 : 1)
+            onPageClicked: {
+                var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
+                server.getDepositOrderList(params)
             }
         }
 
