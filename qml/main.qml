@@ -74,8 +74,6 @@ ApplicationWindow {
     Component.onCompleted: {
         if (appSettings.walletIsCreate) {
             payController.createWallet()
-            server.getDeposit()
-            server.getBorrow()
         }
         //console.log(payController.datadir)
     }
@@ -83,7 +81,12 @@ ApplicationWindow {
     Connections {
         target: payController
         function onAddr_changed() {
-            server.getBankAccountInfo(payController.addr)
+            var params = {"address": payController.addr}
+            server.getViolasCurrency()
+            server.getTokenPublished(params)
+            server.getBankAccountInfo(params)
+            server.getDeposit()
+            server.getBorrow()
         }
     }
 
@@ -385,7 +388,7 @@ ApplicationWindow {
                     onShowDepositPage: {
                         depositPage.source = ""
                         depositPage.source = "pages/BusyPage.qml"
-                        server.getDepositInfo(id, function() { 
+                        server.getDepositInfo({"id": id, "address": payController.addr}, function() { 
                             depositPage.source = "pages/DepositPage.qml"
                         })
                         bankStack.push(depositPage)
@@ -393,7 +396,7 @@ ApplicationWindow {
                     onShowBorrowPage: {
                         depositPage.source = ""
                         borrowPage.source = "pages/BusyPage.qml"
-                        server.getBorrowInfo(id, function() {
+                        server.getBorrowInfo({"id": id, "address": payController.addr}, function() {
                             borrowPage.source = "pages/BorrowPage.qml"  
                         })
                         bankStack.push(borrowPage)

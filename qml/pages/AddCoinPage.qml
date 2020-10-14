@@ -11,11 +11,6 @@ Control {
 
     signal goBack
 
-    Component.onCompleted: {
-        server.getTokenPublished()
-        server.getViolasCurrency()
-    }
-
     contentItem: Item {
         Image {
             source: "../icons/backarrow.svg"

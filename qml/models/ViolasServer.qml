@@ -54,11 +54,10 @@ Item {
             });
     }
 
-    function getTokenPublished() {
-        API.request('GET', API.violasURL + '/1.0/violas/currency/published?addr=' + payController.addr, null, function(resp) {
+    function getTokenPublished(params) {
+        API.request('GET', API.violasURL + '/1.0/violas/currency/published' + API.formatParams(params), null, function(resp) {
             if (resp.code == 2000) {
                 published = resp.data.published
-                //console.log(published)
             }
         });
     }
@@ -75,18 +74,21 @@ Item {
     }
 
     function getLibraCurrency() {
-        //request('GET', API.violasURL + '/1.0/libra/currency', null, function(resp) {
-        //    if (resp.code == 2000) {
-        //        var entries = resp.data.currencies;
-        //        for (var i=0; i<entries.length; i++) {
-        //            tokenModel.append(entries[i])
-        //        }
-        //    }
-        //});
+        API.request('GET', API.violasURL + '/1.0/libra/currency', null, function(resp) {
+            if (resp.code == 2000) {
+                var entries = resp.data.currencies;
+                for (var i=0; i<entries.length; i++) {
+                    tokenModel.append(entries[i])
+                }
+            }
+        });
     }
 
-    function getBankAccountInfo(addr) {
-        API.request('GET', API.violasURL + '/1.0/violas/bank/account/info?address=' + addr, null, function(resp) {
+
+    // Bank
+
+    function getBankAccountInfo(params) {
+        API.request('GET', API.violasURL + '/1.0/violas/bank/account/info' + API.formatParams(params), null, function(resp) {
                 bankAccountInfo = resp.data;
             });
     }
@@ -109,8 +111,8 @@ Item {
             });
     }
 
-    function getDepositInfo(id, cb) {
-        API.request('GET', API.violasURL + '/1.0/violas/bank/deposit/info?id='+ id + '&address=' + payController.addr,
+    function getDepositInfo(params, cb) {
+        API.request('GET', API.violasURL + '/1.0/violas/bank/deposit/info' + API.formatParams(params),
             null, function(resp) {
                 bankDepositInfo = resp.data;
                 for (var i=0; i<resp.data.intor.length; i++) {
@@ -126,8 +128,8 @@ Item {
             });
     }
 
-    function getBorrowInfo(id, cb) {
-        API.request('GET', API.violasURL + '/1.0/violas/bank/borrow/info?id='+ id + '&address=' + payController.addr,
+    function getBorrowInfo(params, cb) {
+        API.request('GET', API.violasURL + '/1.0/violas/bank/borrow/info' + API.formatParams(params),
             null, function(resp) {
                 bankBorrowInfo = resp.data;
                 for (var i=0; i<resp.data.intor.length; i++) {
@@ -166,23 +168,23 @@ Item {
         });
     }
 
-    function getDepositOrderList(addr, offset, limit, cb) {
-        //API.request('GET', API.violasURL + '/1.0/violas/bank/deposit/order/list?address=' + addr + '&offset=' + offset + '&limit=' + limit +'&start='+(new Date("2020-01-01 00:00:00").getTime())+'&end='+(new Date().getTime()), null, 
-        //    function(resp) {
-        //    for (var i=0; i<resp.data;i++) {
-        //        var d = resp.data[i]
-        //        depositDetailModel.append({'currency':d.currency,
-        //            'date':d.date,
-        //            'orderId':d.id,
-        //            'logo':d.logo,
-        //            'status':d.status,
-        //            'value':d.value,
-        //            'total_count':d.total_count,
-        //            })                   
-        //    }
-        //});
+    function getDepositOrderList(params, cb) {
+        API.request('GET', API.violasURL + '/1.0/violas/bank/deposit/order/list' + API.formatParams(params), null, 
+            function(resp) {
+            for (var i=0; i<resp.data;i++) {
+                var d = resp.data[i]
+                depositDetailModel.append({'currency':d.currency,
+                    'date':d.date,
+                    'orderId':d.id,
+                    'logo':d.logo,
+                    'status':d.status,
+                    'value':d.value,
+                    'total_count':d.total_count,
+                    })                   
+            }
+        });
     }
 
-    function getBorrowOrder(addr, offset, limit, cb) {
+    function getBorrowOrder(params, cb) {
     }
 }
