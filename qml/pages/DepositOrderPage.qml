@@ -346,12 +346,13 @@ Page {
         }
 
         SwitchPage {
+            id: pageSwitch
             anchors.top: stackView.bottom
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
             pageCount: 5
             onPageClicked: {
-                console.log("page clicked: ", index)
+                server.getDepositOrder(payController.addr, index * 10, 10)
             }
         }
 

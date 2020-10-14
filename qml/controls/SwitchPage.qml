@@ -27,7 +27,7 @@ Item {
                     }
                     onClickedSignal: {
                         pageIndex = index
-                        pageClicked(index + 1)
+                        pageClicked(index)
                         recLoader.sourceComponent = undefined
                         sourceComponent = repCom
                     }
