@@ -350,6 +350,9 @@ Page {
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
             pageCount: 5
+            onPageClicked: {
+                console.log("page clicked: ", index)
+            }
         }
 
         Column {

@@ -7,7 +7,7 @@ Item {
     id: root
     property int pageCount: 1
     property int pageIndex: 0
-    signal repComClicked(int index)
+    signal pageClicked(int index)
 
     Component {
         id: repCom
@@ -27,6 +27,7 @@ Item {
                     }
                     onClickedSignal: {
                         pageIndex = index
+                        pageClicked(index + 1)
                         recLoader.sourceComponent = undefined
                         sourceComponent = repCom
                     }
