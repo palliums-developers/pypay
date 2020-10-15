@@ -60,12 +60,10 @@ Page {
             width: 500
 
             TabButton {
-                id: depositTabBtn
                 text: qsTr("Current Deposit")
                 width: 200
                 leftPadding: 0
                 contentItem: Text {
-                        id: depositBtnText
                         text: parent.text
                         color: tabBar.currentIndex == 0 ? "#333333" : "#999999"
                         font.pointSize: tabBar.currentIndex == 0 ? 16 : 12
@@ -82,7 +80,6 @@ Page {
                 width: 200
                 leftPadding: 0
                 contentItem: Text {
-                    id: depositDetailText
                     text: parent.text
                     color: tabBar.currentIndex == 1 ? "#333333" : "#999999"
                     font.pointSize: tabBar.currentIndex == 1 ? 16 : 12
@@ -134,35 +131,35 @@ Page {
                     Text {
                         id: principalText
                         anchors.left: tokenText.left
-                        anchors.leftMargin: 100 / (1070 - 54*2) * parent.width
+                        anchors.leftMargin: (28 + 100) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Principal")
                     }
                     Text {
                         id: incomeText
-                        anchors.left: principalText.left
-                        anchors.leftMargin: 206 / (1070 - 54*2) * parent.width
+                        anchors.left: tokenText.left
+                        anchors.leftMargin: (28 + 334) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Income")
                     }
                     Text {
                         id: rateText
-                        anchors.left: incomeText.left
-                        anchors.leftMargin: 192 / (1070 - 54*2) * parent.width
+                        anchors.left: tokenText.left
+                        anchors.leftMargin: (28 + 554) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Rate")
                     }
                     Text {
                         id: statusText
-                        anchors.left: rateText.left
-                        anchors.leftMargin: 150 / (1070 - 54*2) * parent.width
+                        anchors.left: tokenText.left
+                        anchors.leftMargin: (28 + 734) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Status")
                     }
                     Text {
                         id: operationText
-                        anchors.right: parent.right
-                        anchors.rightMargin: 54
+                        anchors.left: tokenText.left
+                        anchors.leftMargin: (28 + 904) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Operation")
                     }
@@ -191,29 +188,29 @@ Page {
                     Text {
                         id: principalText
                         anchors.left: tokenText.left
-                        anchors.leftMargin: 100 / (1070 - 54*2) * parent.width
+                        anchors.leftMargin: (28 + 100) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: principal.toFixed(2)
                     }
                     Text {
                         id: incomeText
-                        anchors.left: principalText.left
-                        anchors.leftMargin: 206 / (1070 - 54*2) * parent.width
+                        anchors.left: tokenText.left
+                        anchors.leftMargin: (28 + 334) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: earnings.toFixed(2)
                     }
                     Text {
                         id: rateText
-                        anchors.left: incomeText.left
-                        anchors.leftMargin: 192 / (1070 - 54*2) * parent.width
+                        anchors.left: tokenText.left
+                        anchors.leftMargin: (28 + 554) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: rate * 100 + "%"
                         color: "#13B788"
                     }
                     Text {
                         id: statusText
-                        anchors.left: rateText.left
-                        anchors.leftMargin: 150 / (1070 - 54*2) * parent.width
+                        anchors.left: tokenText.left
+                        anchors.leftMargin: (28 + 734) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: {
                             if (status == 0) {
@@ -232,8 +229,8 @@ Page {
                     }
                     Text {
                         id: operationText
-                        anchors.right: parent.right
-                        anchors.rightMargin: 54
+                        anchors.left: tokenText.left
+                        anchors.leftMargin: (28 + 904) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Extraction")
                         color: "#7038FD"
@@ -247,7 +244,7 @@ Page {
             }
 
             ListView {
-                id: borrowDetailView
+                id: depositDetailView
                 model: server.depositDetailModel
                 spacing: 12
                 clip: true
@@ -260,13 +257,13 @@ Page {
                         id: headCol
                         spacing: 8
                         Rectangle {
-                            width: borrowDetailView.width
+                            width: depositDetailView.width
                             height: 30
                             color: "blue"
                             visible: false
                         }
                         Rectangle {
-                            width: borrowDetailView.width
+                            width: depositDetailView.width
                             height: 50
                             //color: "red"
                             Text {
@@ -279,21 +276,21 @@ Page {
                             Text {
                                 id: tokenText
                                 anchors.left: dateText.left
-                                anchors.leftMargin: 200 / (1070 - 54*2) * parent.width
+                                anchors.leftMargin: (28 + 180) / 1070 * parent.width
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: qsTr("Token")
                             }
                             Text {
                                 id: amountText
-                                anchors.left: tokenText.left
-                                anchors.leftMargin: 250 / (1070 - 54*2) * parent.width
+                                anchors.left: dateText.left
+                                anchors.leftMargin: (28 + 388) / 1070 * parent.width
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: qsTr("Amount")
                             }
                             Text {
                                 id: statusText
-                                anchors.right: parent.right
-                                anchors.rightMargin: 54
+                                anchors.left: dateText.left
+                                anchors.leftMargin: (28 + 718) / 1070 * parent.width
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: qsTr("Status")
                             }
@@ -312,7 +309,7 @@ Page {
                 }
                 headerPositioning: ListView.OverlayHeader
                 delegate: Rectangle {
-                    width: borrowDetailView.width
+                    width: depositDetailView.width
                     height: 50
                     Text {
                         id: dateText
@@ -324,21 +321,21 @@ Page {
                     Text {
                         id: tokenText
                         anchors.left: dateText.left
-                        anchors.leftMargin: 200 / (1070 - 54*2) * parent.width
+                        anchors.leftMargin: (28 + 180) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: currency
                     }
                     Text {
                         id: amountText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: 250 / (1070 - 54*2) * parent.width
+                        anchors.left: dateText.left
+                        anchors.leftMargin: (28 + 388) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: value
                     }
                     Text {
                         id: statusText
-                        anchors.right: parent.right
-                        anchors.rightMargin: 54
+                        anchors.left: dateText.left
+                        anchors.leftMargin: (28 + 718) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: status
                     }

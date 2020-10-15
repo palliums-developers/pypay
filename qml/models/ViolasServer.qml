@@ -188,5 +188,21 @@ Item {
     }
 
     function getBorrowOrder(params, cb) {
+        API.request('GET', API.violasURL + '/1.0/violas/bank/borrow/orders' + API.formatParams(params), null, 
+            function(resp) {
+            depositDetailModel.clear()
+            for (var i=0; i<resp.data.length;i++) {
+                var d = resp.data[i]
+                depositDetailModel.append({
+                    'currency':d.currency,
+                    'date':d.date,
+                    'orderId':d.id,
+                    'logo':d.logo,
+                    'status':d.status,
+                    'value':d.value,
+                    'total_count':d.total_count,
+                    })                   
+            }
+        });
     }
 }
