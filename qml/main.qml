@@ -415,7 +415,8 @@ ApplicationWindow {
                         borrowOrderPage.source = ""
                         borrowOrderPage.source = "pages/BusyPage.qml"
                         var params = { "address": payController.addr, "offset": 0, "limit": 10 }
-                        server.getBorrowOrder(params, function() {
+                        server.getViolasBankBorrowOrderList(params)
+                        server.getBankBorrowOrders(params, function() {
                             borrowOrderPage.source = "pages/BorrowOrderPage.qml"
                         })
                         bankStack.push(borrowOrderPage)

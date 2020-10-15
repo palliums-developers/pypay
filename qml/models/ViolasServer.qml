@@ -19,6 +19,8 @@ Item {
     property alias questionModel: questionModel
     property alias currentDepositModel: currentDepositModel
     property alias depositDetailModel: depositDetailModel
+    property alias currentBorrowModel: currentBorrowModel
+    property alias borrowDetailModel: borrowDetailModel
 
     ListModel {
         id: tokenModel
@@ -46,6 +48,14 @@ Item {
 
     ListModel {
         id: depositDetailModel
+    }
+
+    ListModel {
+        id: currentBorrowModel
+    }
+
+    ListModel {
+        id: borrowDetailModel
     }
 
     function getRate() {
@@ -175,33 +185,51 @@ Item {
             for (var i=0; i<resp.data.length;i++) {
                 var d = resp.data[i]
                 depositDetailModel.append({
-                    'currency':d.currency,
-                    'date':d.date,
-                    'orderId':d.id,
-                    'logo':d.logo,
-                    'status':d.status,
-                    'value':d.value,
-                    'total_count':d.total_count,
+                    'currency': d.currency,
+                    'date': d.date,
+                    'orderId': d.id,
+                    'logo': d.logo,
+                    'status': d.status,
+                    'value': d.value,
+                    'total_count': d.total_count
                     })                   
             }
         });
     }
 
-    function getBorrowOrder(params, cb) {
+    function getBankBorrowOrders(params, cb) {
         API.request('GET', API.violasURL + '/1.0/violas/bank/borrow/orders' + API.formatParams(params), null, 
             function(resp) {
-            depositDetailModel.clear()
+            currentBorrowModel.clear()
             for (var i=0; i<resp.data.length;i++) {
                 var d = resp.data[i]
-                depositDetailModel.append({
-                    'currency':d.currency,
-                    'date':d.date,
-                    'orderId':d.id,
-                    'logo':d.logo,
-                    'status':d.status,
-                    'value':d.value,
-                    'total_count':d.total_count,
-                    })                   
+                currentBorrowModel.append({
+                    'amount': d.amount,
+                    'orderId': d.id,
+                    'logo': d.logo,
+                    'name': d.name,
+                    'available_borrow': d.available_borrow,
+                    'total_count': d.total_count
+                    })
+            }
+        });
+    }
+
+    function getViolasBankBorrowOrderList(params) {
+        API.request('GET', API.violasURL + '/1.0/violas/bank/borrow/order/list' + API.formatParams(params), null, 
+            function(resp) {
+            borrowDetailModel.clear()
+            for (var i=0; i<resp.data.length;i++) {
+                var d = resp.data[i]
+                borrowDetailModel.append({
+                    'currency': d.currency,
+                    'date': d.date,
+                    'orderId': d.id,
+                    'logo': d.logo,
+                    'status': d.status,
+                    'value': d.value,
+                    'total_count': d.total_count
+                    })
             }
         });
     }
