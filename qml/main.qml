@@ -402,23 +402,11 @@ ApplicationWindow {
                         bankStack.push(borrowPage)
                     }
                     onShowDepositOrderPage: {
-                        depositOrderPage.source = ""
-                        depositOrderPage.source = "pages/BusyPage.qml"
-                        var params = { "address": payController.addr, "offset": 0, "limit": 10 }
-                        server.getDepositOrderList(params)
-                        server.getDepositOrder(params, function() {
-                            depositOrderPage.source = "pages/DepositOrderPage.qml"
-                        })
+                        depositOrderPage.source = "pages/DepositOrderPage.qml"
                         bankStack.push(depositOrderPage)
                     }
                     onShowBorrowOrderPage: {
-                        borrowOrderPage.source = ""
-                        borrowOrderPage.source = "pages/BusyPage.qml"
-                        var params = { "address": payController.addr, "offset": 0, "limit": 10 }
-                        server.getViolasBankBorrowOrderList(params)
-                        server.getBankBorrowOrders(params, function() {
-                            borrowOrderPage.source = "pages/BorrowOrderPage.qml"
-                        })
+                        borrowOrderPage.source = "pages/BorrowOrderPage.qml"
                         bankStack.push(borrowOrderPage)
                     }
                 }
@@ -463,6 +451,7 @@ ApplicationWindow {
                 target: borrowOrderPage.item
                 function onBackArrowClicked() {
                     bankStack.pop()
+                    borrowOrderPage.source = ""
                 }
             }
 

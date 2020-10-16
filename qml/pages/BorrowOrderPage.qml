@@ -10,11 +10,66 @@ Page {
     id: root
     signal backArrowClicked
 
+    function startBusy() {
+        timer.running = true
+        busy.running = true
+        maskRec.visible = true
+    }
+
+    function stopBusy() {
+        timer.running = false
+        busy.running = false
+        maskRec.visible = false
+    }
+
+    Component.onCompleted: {
+        var params = { "address": payController.addr, "offset": 0, "limit": 10 }
+        server.getBankBorrowOrders(params, function() {
+            currentBorrowSwitchPageLoader.sourceComponent = currentBorrowCompoent
+            stopBusy()
+        })
+    }
+
     background: Rectangle {
+        id: backRec
         color: "#F7F7F9"
     }
 
+    BusyIndicator {
+        z: 1000
+        id: busy
+        anchors.centerIn: parent
+        running: true
+    }
+
+    Rectangle {
+        z: 999
+        id: maskRec
+        color: backRec.color
+        anchors.fill: parent
+    }
+
+    Text {
+        id: tip
+        z: 1000
+        text: qsTr("Server request error!")
+        anchors.centerIn: parent
+        visible: false
+    }
+
+    Timer {
+        id: timer
+        interval: 3000
+        repeat: false
+        running: true
+        onTriggered: {
+            busy.running = false
+            tip.visible = true
+        }
+    }
+
     ImageButton {
+        z: 1000
         id: backBtn
         anchors.top: parent.top
         anchors.topMargin: 72
@@ -32,6 +87,7 @@ Page {
     }
 
     Text {
+        z: 1000
         id: titleText
         text: qsTr("Bank> <b><b>Borrow Order</b></b>")
         font.pointSize: 14
@@ -73,6 +129,16 @@ Page {
                 background: Rectangle {
                     color: "#FFFFFF"
                 }
+                onToggled: {
+                    if (server.currentBorrowModel.count == 0) {
+                        startBusy()
+                        var params = { "address": payController.addr, "offset": 0, "limit": 10 }
+                        server.getBankBorrowOrders(params, function() {
+                            currentBorrowSwitchPageLoader.sourceComponent = currentBorrowCompoent
+                            stopBusy()
+                        })
+                    }
+                }
             }
 
             TabButton {
@@ -88,6 +154,16 @@ Page {
                 }
                 background: Rectangle {
                     color: "#FFFFFF"
+                }
+                onToggled: {
+                    if (server.borrowDetailModel.count == 0) {
+                        startBusy()
+                        var params = { "address": payController.addr, "offset": 0, "limit": 10 }
+                        server.getViolasBankBorrowOrderList(params, function() {
+                            borrowDetailSwitchPageLoader.sourceComponent = borrowDetailComponent
+                            stopBusy()
+                        })
+                    }
                 }
             }
         }
@@ -169,7 +245,7 @@ Page {
                         anchors.left: parent.left
                         anchors.leftMargin: 54
                         anchors.verticalCenter: parent.verticalCenter
-                        text: currency
+                        text: name
                     }
                     Text {
                         id: amountText
@@ -201,7 +277,7 @@ Page {
                     }
                     Text {
                         id: detailOperationText
-                        anchors.left: borrowOperationText.right
+                        anchors.left: tokenText.left
                         anchors.leftMargin: (28 + 860) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Detail")
@@ -303,14 +379,14 @@ Page {
                         anchors.left: dateText.left
                         anchors.leftMargin: (28 + 388) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
-                        text: amount
+                        text: value
                     }
                     Text {
                         id: feeText
                         anchors.left: dateText.left
                         anchors.leftMargin: (28 + 690) / 1070 * parent.width
                         anchors.verticalCenter: parent.verticalCenter
-                        text: fee
+                        text: "ーー"
                     }
                     Text {
                         id: statusText
@@ -323,30 +399,55 @@ Page {
             }
         }
 
-        SwitchPage {
+        Loader {
+            id: currentBorrowSwitchPageLoader
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: stackView.bottom
             anchors.topMargin: 16
-            visible: tabBar.currentIndex == 0 && server.currentBorrowModel.count != 0
-            pageCount: server.currentBorrowModel.get(0).total_count / 10 + (server.currentBorrowModel.get(0).total_count % 10 == 0 ? 0 : 1)
-            onPageClicked: {
-                var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
-                server.getBorrowOrder(params)
-            }
+            visible: tabBar.currentIndex == 0
         }
 
-        SwitchPage {
+        Loader {
+            id: borrowDetailSwitchPageLoader
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: stackView.bottom
             anchors.topMargin: 16
-            visible: tabBar.currentIndex == 1 && server.borrowDetailModel.count != 0
-            pageCount: server.borrowDetailModel.get(0).total_count / 10 + (server.borrowDetailModel.get(0).total_count % 10 == 0 ? 0 : 1)
-            onPageClicked: {
-                var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
-                server.getBorrowOrderList(params)
+            visible: tabBar.currentIndex == 1
+        }
+
+        Component {
+            id: currentBorrowCompoent
+            SwitchPage {
+                pageCount: server.currentBorrowModel.get(0).total_count / 10 + (server.currentBorrowModel.get(0).total_count % 10 == 0 ? 0 : 1)
+                onPageClicked: {
+                    startBusy()
+                    var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
+                    server.getBankBorrowOrders(params, function() {
+                        pageCount = server.currentBorrowModel.get(0).total_count / 10 + (server.currentBorrowModel.get(0).total_count % 10 == 0 ? 0 : 1)
+                        pageIndex = pageCount > index ? index : 0
+                        refresh()
+                        stopBusy()
+                    })
+                }
             }
         }
 
+        Component {
+            id: borrowDetailComponent
+            SwitchPage {
+                pageCount: server.borrowDetailModel.get(0).total_count / 10 + (server.borrowDetailModel.get(0).total_count % 10 == 0 ? 0 : 1)
+                onPageClicked: {
+                    startBusy()
+                    var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
+                    server.getViolasBankBorrowOrderList(params, function() {
+                        pageCount = server.borrowDetailModel.get(0).total_count / 10 + (server.borrowDetailModel.get(0).total_count % 10 == 0 ? 0 : 1)
+                        pageIndex = pageCount > index ? index : 0
+                        refresh()
+                        stopBusy()
+                    })
+                }
+            }
+        }
 
         Column {
             visible: tabBar.currentIndex == 0 ? server.currentBorrowModel.count == 0 : server.borrowDetailModel.count == 0

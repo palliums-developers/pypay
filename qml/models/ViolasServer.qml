@@ -212,10 +212,13 @@ Item {
                     'total_count': d.total_count
                     })
             }
+            if (cb) {
+                cb()
+            }
         });
     }
 
-    function getViolasBankBorrowOrderList(params) {
+    function getViolasBankBorrowOrderList(params, cb) {
         API.request('GET', API.violasURL + '/1.0/violas/bank/borrow/order/list' + API.formatParams(params), null, 
             function(resp) {
             borrowDetailModel.clear()
@@ -230,6 +233,9 @@ Item {
                     'value': d.value,
                     'total_count': d.total_count
                     })
+            }
+            if (cb) {
+                cb()
             }
         });
     }

@@ -2,13 +2,13 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 Rectangle {
-    id: control
+    id: root
     property bool isSelected: false
     property bool isEnabled: true
     property string highLightColor: "#7038FDFF"
     property string commonColor: "#C2C2C2FF"
     
-    signal clickedSignal
+    signal clicked
 
     border.color: isSelected ? highLightColor : commonColor
     opacity: isEnabled ? 1 : 0.2
@@ -17,13 +17,13 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: isEnabled
         onEntered: {
-            control.border.color = highLightColor
+            root.border.color = highLightColor
         }
         onExited: {
-            control.border.color = isSelected ? highLightColor : commonColor
+            root.border.color = isSelected ? highLightColor : commonColor
         }
         onClicked: {
-            clickedSignal()
+            root.clicked()
         }
     }
 } 

@@ -7,33 +7,32 @@ Item {
     id: root
     property int pageCount: 1
     property int pageIndex: 0
+    property int spacing: 4
+    property int oneRecWidth: 24
     signal pageClicked(int index)
 
     function refresh() {
-        pageClicked(pageIndex)
-        recLoader.sourceComponent = undefined
-        recLoader.sourceComponent = repCom
+        loader.sourceComponent = undefined
+        loader.sourceComponent = pageNumComponent
     }
 
     Component {
-        id: repCom
+        id: pageNumComponent
         Row {
-            spacing: 4
+            spacing: root.spacing
             Repeater {
-                id: rep
                 model: pageCount
                 RecButton {
-                    width: 24
-                    height: 24
+                    width: oneRecWidth
+                    height: oneRecWidth
                     radius: 1
                     isSelected: index == pageIndex
                     Text {
                         anchors.centerIn: parent
                         text: index + 1
                     }
-                    onClickedSignal: {
-                        pageIndex = index
-                        refresh()
+                    onClicked: {
+                        root.pageClicked(index)
                     }
                 }
             }
@@ -41,45 +40,35 @@ Item {
     }
 
     Row {
-        spacing: 4
+        spacing: root.spacing
         RecButton {
-            width: 18
-            height: 24
+            width: oneRecWidth * 2 / 3
+            height: oneRecWidth
+            radius: 1
             isEnabled: pageIndex != 0
             Text {
                 anchors.centerIn: parent
                 text: "<"
             }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    if (parent.isEnabled) {
-                        pageIndex -= 1
-                        refresh()
-                    }
-                }
+            onClicked: {
+                root.pageClicked(pageIndex - 1)
             }
         }
         Loader {
-            id: recLoader
-            sourceComponent: repCom
+            id: loader
+            sourceComponent: pageNumComponent
         }
         RecButton {
-            width: 18
-            height: 24
+            width: oneRecWidth * 2 / 3
+            height: oneRecWidth
+            radius: 1
             isEnabled: pageIndex != pageCount - 1
             Text {
                 anchors.centerIn: parent
                 text: ">"
             }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    if (parent.isEnabled) {
-                        pageIndex += 1
-                        refresh()
-                    }
-                }
+            onClicked: {
+                root.pageClicked(pageIndex + 1)
             }
         }
     } 

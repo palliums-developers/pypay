@@ -191,6 +191,45 @@ def bank_deposit_order_list():
             })
     return jsonify({'code': 2000, 'data': data[offset : offset+limit], 'message': 'ok'})
 
+# /1.0/violas/bank/borrow/orders
+@app.route('/1.0/violas/bank/borrow/orders', methods=['GET'])
+def bank_borrow_orders():
+    address = request.args.get("address")
+    offset = int(request.args.get("offset"))
+    limit = int(request.args.get("limit"))
+    data = []
+    count = 11
+    for i in range(count):
+        data.append({
+                "amount": 1500,
+                "id": "2000001",
+                "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+                "name": "LBR",
+                "available_borrow": 1500,
+                "total_count": count
+            })
+    return jsonify({'code': 2000, 'data': data[offset : offset+limit], 'message': 'ok'})
+
+# /1.0/violas/bank/borrow/order/list
+@app.route('/1.0/violas/bank/borrow/order/list', methods=['GET'])
+def bank_borrow_order_list():
+    address = request.args.get("address")
+    offset = int(request.args.get("offset"))
+    limit = int(request.args.get("limit"))
+    data = []
+    count = 61
+    for i in range(count):
+        data.append({
+                "currency": "LBR",
+                "date": 1518391892,
+                "id": "2000001",
+                "logo": "https://api4.violas.io/1.0/violas/icon/violas.png",
+                "status": 1,
+                "value": 182.22,
+                "total_count": count
+            })
+    return jsonify({'code': 2000, 'data': data[offset : offset+limit], 'message': 'ok'})
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error':'Not found'}), 404)
