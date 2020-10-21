@@ -60,7 +60,7 @@ class AccountState(Struct):
         account_resource = self.get_account_resource()
         if account_resource:
             if currency_code is None:
-                currency_code = LBR_NAME
+                currency_code = DEFAULT_COIN_NAME
             currency_type_tag = type_tag_for_currency_code(currency_code, currency_module_address)
             resource = self.get(BalanceResource.access_path_for(currency_type_tag))
             if resource:

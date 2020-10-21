@@ -3,7 +3,7 @@ import requests
 from libra_client.json_rpc.views import TransactionView
 from typing import Optional, Union
 
-from libra_client.lbrtypes.account_config.constants.lbr import LBR_NAME, CORE_CODE_ADDRESS
+from libra_client.lbrtypes.account_config.constants.lbr import DEFAULT_COIN_NAME, CORE_CODE_ADDRESS
 from libra_client.move_core_types.language_storage import TypeTag, StructTag
 from libra_client.move_core_types.account_address import AccountAddress as Address
 from libra_client.methods import LibraClient
@@ -19,7 +19,7 @@ from libra_client.lbrtypes.account_config import  association_address, treasury_
 from libra_client.lbrtypes.transaction.helper import create_user_txn
 from libra_client.lbrtypes.account_state import AccountState
 from libra_client.lbrtypes.account_config import config_address
-from libra_client.lbrtypes.account_config import LBR_NAME
+from libra_client.lbrtypes.account_config import DEFAULT_COIN_NAME
 from libra_client.lbrtypes.event import EventKey
 from libra_client.lbrtypes import NamedChain
 
@@ -68,7 +68,7 @@ class Client():
     WAIT_TRANSACTION_COUNT = 1000
     WAIT_TRANSACTION_INTERVAL = 0.1
 
-    def __init__(self, network="libra_testnet", waypoint: Optional[Waypoint]=None):
+    def __init__(self, network="bj_testnet", waypoint: Optional[Waypoint]=None):
         ensure(network in NETWORKS, "The specified chain does not exist")
         chain = NETWORKS[network]
         ensure("url" in chain, "The specified chain has no url")
@@ -117,7 +117,7 @@ class Client():
         address = Address.normalize_to_bytes(account_address)
         state = self.client.get_account_state(address, True)
         if state:
-            return { balance.currency: balance.amount for balance in state.balances}
+            return {balance.currency: balance.amount for balance in state.balances}
         return {}
 
     def get_sequence_number(self, account_address: Union[bytes, str]) -> Optional[int]:
@@ -187,10 +187,10 @@ class Client():
     def mint_coin(self, receiver_address, micro_coins, auth_key_prefix=None, human_name="", data="", add_all_currencies=False, is_blocking=True, currency_module_address=None,
                   currency_code=None,
                   max_gas_amount=MAX_GAS_AMOUNT, gas_unit_price=GAS_UNIT_PRICE, txn_expiration=TXN_EXPIRATION, gas_currency_code=None):
-        from libra_client.lbrtypes.account_config import LBR_NAME
+        from libra_client.lbrtypes.account_config import DEFAULT_COIN_NAME
         if currency_code is None:
-            currency_code = LBR_NAME
-        if self.get_account_state(receiver_address) is None and hasattr(self, "associate_account"):
+            currency_code = DEFAULT_COIN_NAME
+        if self.get_account_state(receiver_address) is None and self.treasury_compliance_account is not None:
             args = []
             args.append(TransactionArgument.to_U64(0))
             args.append(TransactionArgument.to_address(receiver_address))
@@ -199,7 +199,7 @@ class Client():
             args.append(TransactionArgument.to_bool(add_all_currencies))
             ty_args = self.get_type_args(currency_code, currency_module_address)
             script = Script.gen_script(CodeType.CREATE_PARENT_VASP_ACCOUNT, *args, ty_args=ty_args, currency_module_address=currency_module_address)
-            self.submit_script(self.associate_account, script, is_blocking, gas_currency_code, max_gas_amount, gas_unit_price, txn_expiration)
+            self.submit_script(self.treasury_compliance_account, script, is_blocking, gas_currency_code, max_gas_amount, gas_unit_price, txn_expiration)
         if hasattr(self, "testnet_dd_account"):
             args = []
             args.append(TransactionArgument.to_address(receiver_address))
@@ -325,7 +325,7 @@ class Client():
         if currency_module_address is None:
             currency_module_address = CORE_CODE_ADDRESS
         if currency_code is None:
-            currency_code = LBR_NAME
+            currency_code = DEFAULT_COIN_NAME
         if struct_name is None:
             struct_name = currency_code
         currency_module_address = Address.normalize_to_bytes(currency_module_address)
@@ -384,4 +384,14 @@ class Client():
             return gas_currency_code
         if currency_code:
             return currency_code
-        return LBR_NAME
+        return DEFAULT_COIN_NAME
+
+    def return_when_error(value):
+        def get_exception(func):
+            def catch_execption_func(*args, **kwargs):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    return value
+            return catch_execption_func
+        return get_exception

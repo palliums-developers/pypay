@@ -17,8 +17,6 @@ class StrT(Base):
     
     @classmethod
     def from_value(cls, value):
-        if value is None:
-            return ""
         return value
 
     @classmethod

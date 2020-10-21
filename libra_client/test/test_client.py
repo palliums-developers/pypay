@@ -36,11 +36,8 @@ def test_get_balance():
 def test_get_balances():
     [a1] = create_accounts(1)
     client = create_client()
-    client.mint_coin(a1.address_hex, 11, auth_key_prefix=a1.auth_key_prefix, currency_code="LBR")
-    client.add_currency_to_account(a1, "Coin1")
     client.mint_coin(a1.address_hex, 22, auth_key_prefix=a1.auth_key_prefix, currency_code="Coin1")
     balances = client.get_balances(a1.address_hex)
-    assert balances["LBR"] == 11
     assert balances["Coin1"] == 22
 
 def test_get_sequence_number():
@@ -67,10 +64,9 @@ def test_get_latest_version():
     assert v1 < v2
 
 def test_get_registered_currencies():
-    import time
     client = create_client()
     cs = client.get_registered_currencies()
-    assert len(cs) >=3
+    assert len(cs) >=1
 
 def test_get_currency_info():
     import time

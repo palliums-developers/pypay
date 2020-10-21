@@ -25,12 +25,12 @@ def test_get_sender():
     [a1, a2] = create_accounts(2)
     seq = client.mint_coin(a1.address, 100, auth_key_prefix=a1.auth_key_prefix, is_blocking=True)
     tx = client.get_account_transaction(testnet_dd_account_address(), seq)
-    assert tx.get_sender() == testnet_dd_account_address().hex()
+    assert tx.get_sender() == testnet_dd_account_address().hex().upper()
 
     seq = client.mint_coin(a2.address, 100, auth_key_prefix=a2.auth_key_prefix, is_blocking=True)
     seq = client.transfer_coin(a1, a2.address, 10, is_blocking=True)
     tx = client.get_account_transaction(a1.address, seq)
-    assert tx.get_sender() == a1.address_hex
+    assert tx.get_sender() == a1.address_hex.upper()
 
     tx = client.get_transaction(0)
     assert None == tx.get_sender()
@@ -43,12 +43,12 @@ def test_get_receiver():
     [a1, a2] = create_accounts(2)
     seq = client.mint_coin(a1.address, 100, auth_key_prefix=a1.auth_key_prefix, is_blocking=True, currency_code="Coin1")
     tx = client.get_account_transaction(testnet_dd_account_address(), seq)
-    assert tx.get_receiver() == a1.address_hex
+    assert tx.get_receiver() == a1.address_hex.upper()
 
     seq = client.mint_coin(a2.address, 100, auth_key_prefix=a2.auth_key_prefix, is_blocking=True, currency_code="Coin1")
     seq = client.transfer_coin(a1, a2.address, 10, is_blocking=True, currency_code="Coin1")
     tx = client.get_account_transaction(a1.address, seq)
-    assert tx.get_receiver() == a2.address_hex
+    assert tx.get_receiver() == a2.address_hex.upper()
 
     tx = client.get_transaction(0)
     assert None == tx.get_receiver()
