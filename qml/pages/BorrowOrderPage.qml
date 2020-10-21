@@ -193,37 +193,37 @@ Page {
                 spacing: 12
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
+                ScrollIndicator.horizontal: ScrollIndicator { }
                 header: Rectangle {
                     z: 2
                     width: parent.width
                     height: 50
-                    Text {
-                        id: tokenText
-                        anchors.left: parent.left
-                        anchors.leftMargin: 54
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Token")
-                    }
-                    Text {
-                        id: amountText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 100) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Amount")
-                    }
-                    Text {
-                        id: availableBorrowText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 296) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Available Borrow")
-                    }
-                    Text {
-                        id: operationText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 690) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Operation")
+                    RowLayout {
+                        anchors.fill: parent
+                        Text {
+                            Layout.leftMargin: 54
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 200
+                            Layout.maximumWidth: 500
+                            text: qsTr("Token")
+                        }
+                        Text {
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 200
+                            Layout.maximumWidth: 500
+                            text: qsTr("Amount")
+                        }
+                        Text {
+                            Layout.fillWidth: true
+                            text: qsTr("Available Borrow")
+                        }
+                        Text {
+                            Layout.rightMargin: 54
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 200
+                            Layout.maximumWidth: 500
+                            text: qsTr("Operation")
+                        }
                     }
                     Rectangle {
                         anchors.left: parent.left
@@ -240,47 +240,55 @@ Page {
                 delegate: Rectangle {
                     width: currentBorrowView.width
                     height: 50
-                    Text {
-                        id: tokenText
-                        anchors.left: parent.left
-                        anchors.leftMargin: 54
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: name
-                    }
-                    Text {
-                        id: amountText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 100) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: amount.toFixed(2)
-                    }
-                    Text {
-                        id: availableBorrowText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 296) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: available_borrow.toFixed(2)
-                    }
-                    Text {
-                        id: repaymentOperationText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 690) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Repayment")
-                    }
-                    Text {
-                        id: borrowOperationText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 774) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Borrow")
-                    }
-                    Text {
-                        id: detailOperationText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 860) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Detail")
+                    RowLayout {
+                        anchors.fill: parent
+                        Text {
+                            Layout.leftMargin: 54
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 200
+                            Layout.maximumWidth: 500
+                            text: name
+                        }
+                        Text {
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 200
+                            Layout.maximumWidth: 500
+                            text: amount.toFixed(2)
+                        }
+                        Text {
+                            Layout.fillWidth: true
+                            text: available_borrow.toFixed(2)
+                        }
+                        Item {
+                            Layout.rightMargin: 54
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 200
+                            Layout.maximumWidth: 500
+                            RowLayout {
+                                anchors.fill: parent
+                                spacing: 0
+                                TextButton {
+                                    text: qsTr("Repayment")
+                                    onClicked: {
+                                        console.log("...")
+                                    }
+                                }
+                                TextButton {
+                                    Layout.alignment: Qt.AlignmentVCenter | Qt.AlignHCenter
+                                    text: qsTr("Borrow")
+                                    onClicked: {
+                                        console.log("...")
+                                    }
+                                }
+                                TextButton {
+                                    Layout.alignment: Qt.AlignmentVCenter | Qt.AlignRight
+                                    text: qsTr("Detail")
+                                    onClicked: {
+                                        console.log("...")
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
