@@ -200,29 +200,49 @@ Page {
                     height: 50
                     RowLayout {
                         anchors.fill: parent
-                        Text {
+                        Item {
                             Layout.leftMargin: 54
                             Layout.minimumWidth: 100
-                            Layout.preferredWidth: 200
+                            Layout.preferredWidth: 1 / 4 * parent.width
+                            Layout.preferredHeight: parent.height
                             Layout.maximumWidth: 500
-                            text: qsTr("Token")
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Token")
+                            }
                         }
-                        Text {
+                        Item {
                             Layout.minimumWidth: 100
-                            Layout.preferredWidth: 200
+                            Layout.preferredWidth: 1 / 4 * parent.width
+                            Layout.preferredHeight: parent.height
                             Layout.maximumWidth: 500
-                            text: qsTr("Amount")
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Amount")
+                            }
                         }
-                        Text {
+                        Item {
                             Layout.fillWidth: true
-                            text: qsTr("Available Borrow")
+                            Layout.preferredHeight: parent.height
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Available Borrow")
+                            }
                         }
-                        Text {
+                        Item {
                             Layout.rightMargin: 54
                             Layout.minimumWidth: 100
-                            Layout.preferredWidth: 200
+                            Layout.preferredWidth: 1 / 4 * parent.width
+                            Layout.preferredHeight: parent.height
                             Layout.maximumWidth: 500
-                            text: qsTr("Operation")
+                            Text {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Operation")
+                            }
                         }
                     }
                     Rectangle {
@@ -242,28 +262,44 @@ Page {
                     height: 50
                     RowLayout {
                         anchors.fill: parent
-                        Text {
+                        Item {
                             Layout.leftMargin: 54
                             Layout.minimumWidth: 100
-                            Layout.preferredWidth: 200
+                            Layout.preferredWidth: 1 / 4 * parent.width
+                            Layout.preferredHeight: parent.height
                             Layout.maximumWidth: 500
-                            text: name
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: name
+                            }
                         }
-                        Text {
+                        Item {
                             Layout.minimumWidth: 100
-                            Layout.preferredWidth: 200
+                            Layout.preferredWidth: 1 / 4 * parent.width
+                            Layout.preferredHeight: parent.height
                             Layout.maximumWidth: 500
-                            text: amount.toFixed(2)
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: amount.toFixed(2)
+                            }
                         }
-                        Text {
+                        Item {
                             Layout.fillWidth: true
-                            text: available_borrow.toFixed(2)
+                            Layout.preferredHeight: parent.height
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: available_borrow.toFixed(2)
+                            }
                         }
                         Item {
                             Layout.rightMargin: 54
                             Layout.minimumWidth: 100
-                            Layout.preferredWidth: 200
-                            Layout.maximumWidth: 500
+                            Layout.preferredWidth: 1 / 4 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 250
                             RowLayout {
                                 anchors.fill: parent
                                 spacing: 0
@@ -315,41 +351,63 @@ Page {
                         Rectangle {
                             width: borrowDetailView.width
                             height: 50
-                            //color: "red"
-                            Text {
-                                id: dateText
-                                anchors.left: parent.left
-                                anchors.leftMargin: 54
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: qsTr("Date")
-                            }
-                            Text {
-                                id: tokenText
-                                anchors.left: dateText.left
-                                anchors.leftMargin: (28 + 180) / 1070 * parent.width
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: qsTr("Token")
-                            }
-                            Text {
-                                id: amountText
-                                anchors.left: dateText.left
-                                anchors.leftMargin: (28 + 388) / 1070 * parent.width
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: qsTr("Amount")
-                            }
-                            Text {
-                                id: feeText
-                                anchors.left: dateText.left
-                                anchors.leftMargin: (28 + 690) / 1070 * parent.width
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: qsTr("Fee")
-                            }
-                            Text {
-                                id: statusText
-                                anchors.left: dateText.left
-                                anchors.leftMargin: (28 + 860) / 1070 * parent.width
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: qsTr("Status")
+                            RowLayout {
+                                anchors.fill: parent
+                                Item {
+                                    Layout.leftMargin: 54
+                                    Layout.minimumWidth: 100
+                                    Layout.preferredWidth: 1 / 5 * parent.width
+                                    Layout.preferredHeight: parent.height
+                                    Layout.maximumHeight: 400
+                                    Text {
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: qsTr("Date")
+                                    }
+                                }
+                                Item {
+                                    Layout.minimumWidth: 100
+                                    Layout.preferredWidth: 1 / 5 * parent.width
+                                    Layout.preferredHeight: parent.height
+                                    Layout.maximumHeight: 400
+                                    Text {
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: qsTr("Token")
+                                    }
+                                }
+                                Item {
+                                    Layout.minimumWidth: 100
+                                    Layout.preferredWidth: 1 / 5 * parent.width
+                                    Layout.preferredHeight: parent.height
+                                    Layout.maximumHeight: 400
+                                    Text {
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: qsTr("Amount")
+                                    }
+                                }
+                                Item {
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: parent.height
+                                    Text {
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: qsTr("Fee")
+                                    }
+                                }
+                                Item {
+                                    Layout.rightMargin: 54
+                                    Layout.minimumWidth: 100
+                                    Layout.preferredWidth: 1 / 5 * parent.width
+                                    Layout.preferredHeight: parent.height
+                                    Layout.maximumHeight: 400
+                                    Text {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: qsTr("Status")
+                                    }
+                                }
                             }
                             Rectangle {
                                 anchors.left: parent.left
@@ -368,40 +426,63 @@ Page {
                 delegate: Rectangle {
                     width: borrowDetailView.width
                     height: 50
-                    Text {
-                        id: dateText
-                        anchors.left: parent.left
-                        anchors.leftMargin: 54
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: date
-                    }
-                    Text {
-                        id: tokenText
-                        anchors.left: dateText.left
-                        anchors.leftMargin: (28 + 180) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: currency
-                    }
-                    Text {
-                        id: amountText
-                        anchors.left: dateText.left
-                        anchors.leftMargin: (28 + 388) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: value
-                    }
-                    Text {
-                        id: feeText
-                        anchors.left: dateText.left
-                        anchors.leftMargin: (28 + 690) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "ーー"
-                    }
-                    Text {
-                        id: statusText
-                        anchors.left: dateText.left
-                        anchors.leftMargin: (28 + 860) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: status
+                    RowLayout {
+                        anchors.fill: parent
+                        Item {
+                            Layout.leftMargin: 54
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 5 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumHeight: 400
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: date
+                            }
+                        }
+                        Item {
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 5 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumHeight: 400
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: currency
+                            }
+                        }
+                        Item {
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 5 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumHeight: 400
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: value
+                            }
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: parent.height
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "ーー"
+                            }
+                        }
+                        Item {
+                            Layout.rightMargin: 54
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 5 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumHeight: 400
+                            Text {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: status
+                            }
+                        }
                     }
                 }
             }
