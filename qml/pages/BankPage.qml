@@ -2,21 +2,17 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import "../pages"
 import "../controls"
 
 import PyPay 1.0
 
-Page {
+PyPayPage {
     id: root
-
     signal showDepositPage(string id)
     signal showBorrowPage(string id)
     signal showDepositOrderPage
     signal showBorrowOrderPage
-
-    background: Rectangle {
-        color: "#F7F7F9"
-    }
 
     Rectangle {
         id: bankRec

@@ -3,26 +3,17 @@ import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.15
 
 import "../controls"
+import "../pages"
 
 import PyPay 1.0
 
-Page {
+PyPayPage {
     id: root
-    signal backArrowClicked
-
-    function startBusy() {
-        timer.running = true
-        busy.running = true
-        maskRec.visible = true
-    }
-
-    function stopBusy() {
-        timer.running = false
-        busy.running = false
-        maskRec.visible = false
-    }
+    isShowHeader: true
+    title: qsTr("Bank > <b>Borrow</b>")
 
     Component.onCompleted: {
+        startBusy()
         var params = { "address": payController.addr, "offset": 0, "limit": 10 }
         server.getBankBorrowOrders(params, function() {
             currentBorrowSwitchPageLoader.sourceComponent = currentBorrowCompoent
@@ -30,80 +21,13 @@ Page {
         })
     }
 
-    background: Rectangle {
-        id: backRec
-        color: "#F7F7F9"
-    }
-
-    BusyIndicator {
-        z: 1000
-        id: busy
-        anchors.centerIn: parent
-        running: true
-    }
-
-    Rectangle {
-        z: 999
-        id: maskRec
-        color: backRec.color
-        anchors.fill: parent
-    }
-
-    Text {
-        id: tip
-        z: 1000
-        text: qsTr("Server request error!")
-        anchors.centerIn: parent
-        visible: false
-    }
-
-    Timer {
-        id: timer
-        interval: 3000
-        repeat: false
-        running: true
-        onTriggered: {
-            busy.running = false
-            tip.visible = true
-        }
-    }
-
-    ImageButton {
-        z: 1000
-        id: backBtn
-        anchors.top: parent.top
-        anchors.topMargin: 72
-        anchors.left: parent.left
-        anchors.leftMargin: 72
-        width: 24
-        height: 24
-        source: "../icons/backarrow3.svg"
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                backArrowClicked()
-            }
-        }
-    }
-
-    Text {
-        z: 1000
-        id: titleText
-        text: qsTr("Bank> <b><b>Borrow Order</b></b>")
-        font.pointSize: 14
-        color: "#5C5C5C"
-        anchors.verticalCenter: backBtn.verticalCenter
-        anchors.left: backBtn.right
-        anchors.leftMargin: 8
-    }
-
     Rectangle {
         anchors.left: parent.left
         anchors.leftMargin: 50
         anchors.right: parent.right
         anchors.rightMargin: 50
-        anchors.top: backBtn.bottom
-        anchors.topMargin: 24
+        anchors.top: parent.top
+        anchors.topMargin: 140
         anchors.bottom: parent.bottom
         color: "#FFFFFF"
         
