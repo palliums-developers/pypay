@@ -1,47 +1,31 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick 2.15 
+import QtQuick.Controls 2.15 
 
-import "../controls"
+import "../controls" 
 
 Item {
     id: root
-    property int pageCount: 1
+    property int numOfPerPage: 10
     property int pageIndex: 0
     property int spacing: 4
     property int oneRecWidth: 24
+    property alias listModel: listModel
     signal pageClicked(int index)
+    width: oneRecWidth * 2 / 3 + oneRecWidth * listModel.count + spacing * (listModel.count - 1) + oneRecWidth * 2 / 3
+    height: oneRecWidth
 
-    function refresh() {
-        loader.sourceComponent = undefined
-        loader.sourceComponent = pageNumComponent
+    ListModel {
+        id: listModel
     }
 
-    Component {
-        id: pageNumComponent
-        Row {
-            spacing: root.spacing
-            Repeater {
-                model: pageCount
-                RecButton {
-                    width: oneRecWidth
-                    height: oneRecWidth
-                    radius: 1
-                    isSelected: index == pageIndex
-                    Text {
-                        anchors.centerIn: parent
-                        text: index + 1
-                    }
-                    onClicked: {
-                        root.pageClicked(index)
-                    }
-                }
-            }
-        }
-    }
-
-    Row {
+    ListView {
+        id: listView
+        anchors.fill: parent
+        model: listModel
+        orientation: ListView.Horizontal
         spacing: root.spacing
-        RecButton {
+        highlight: Rectangle { color: "lightsteelblue"; radius: 1 }
+        header: RecButton {
             width: oneRecWidth * 2 / 3
             height: oneRecWidth
             radius: 1
@@ -51,25 +35,43 @@ Item {
                 text: "<"
             }
             onClicked: {
-                root.pageClicked(pageIndex - 1)
+                if (isEnabled) {
+                    root.pageClicked(pageIndex - 1)
+                    pageIndex -= 1
+                }
             }
         }
-        Loader {
-            id: loader
-            sourceComponent: pageNumComponent
+        delegate: RecButton {
+            width: oneRecWidth
+            height: oneRecWidth
+            isSelected: index == pageIndex
+            Text {
+                anchors.centerIn: parent
+                text: index + 1
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    root.pageClicked(index)
+                    pageIndex = index
+                }
+            }
         }
-        RecButton {
+        footer: RecButton {
             width: oneRecWidth * 2 / 3
             height: oneRecWidth
             radius: 1
-            isEnabled: pageIndex != pageCount - 1
+            isEnabled: pageIndex != listModel.count - 1
             Text {
                 anchors.centerIn: parent
                 text: ">"
             }
             onClicked: {
-                root.pageClicked(pageIndex + 1)
+                if (isEnabled) {
+                    root.pageClicked(pageIndex + 1)
+                    pageIndex += 1
+                }
             }
         }
-    } 
+    }
 }

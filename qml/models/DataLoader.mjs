@@ -26,24 +26,24 @@ function request(verb, URL, obj, cb, async=true) {
 }
 
 WorkerScript.onMessage = function(msg) {
-    if (msg.action = 'getBalances') {
-        msg.model.clear();
-        request('GET', violasURL + '/1.0/violas/balance?addr=' + msg.violasAddr, null, function(resp) {
-            if (resp.code == 2000) {
-                var entries = resp.data.balances;
-                for (var i=0; i<entries.length; i++) {
-                    msg.model.append(entries[i]);
-                }
-            }
-        }, false);
-        request('GET', violasURL + '/1.0/libra/balance?addr=' + msg.libraAddr, null, function(resp) {
-            if (resp.code == 2000) {
-                var entries = resp.data.balances;
-                for (var i=0; i<entries.length; i++) {
-                    msg.model.append(entries[i]);
-                }
-            }
-        }, false);
-        msg.model.sync();
-    }
+//    if (msg.action = 'getBalances') {
+//        msg.model.clear();
+//        request('GET', violasURL + '/1.0/violas/balance?addr=' + msg.violasAddr, null, function(resp) {
+//            if (resp.code == 2000) {
+//                var entries = resp.data.balances;
+//                for (var i=0; i<entries.length; i++) {
+//                    msg.model.append(entries[i]);
+//                }
+//            }
+//        }, false);
+//        request('GET', violasURL + '/1.0/libra/balance?addr=' + msg.libraAddr, null, function(resp) {
+//            if (resp.code == 2000) {
+//                var entries = resp.data.balances;
+//                for (var i=0; i<entries.length; i++) {
+//                    msg.model.append(entries[i]);
+//                }
+//            }
+//        }, false);
+//        msg.model.sync();
+//    }
 }

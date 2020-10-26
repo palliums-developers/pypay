@@ -16,7 +16,11 @@ PyPayPage {
         startBusy()
         var params = { "address": payController.addr, "offset": 0, "limit": 10 }
         server.getBankBorrowOrders(params, function() {
-            currentBorrowSwitchPageLoader.sourceComponent = currentBorrowCompoent
+            var count =  server.currentBorrowModel.count == 0 ? 0 : server.currentBorrowModel.get(0).total_count
+            var numOfPerPage = currentBorrowSwitchPage.numOfPerPage
+            for (var i = 0; i <  count / numOfPerPage; i++) {
+                currentBorrowSwitchPage.listModel.append({index: i})
+            }
             stopBusy()
         })
     }
@@ -55,12 +59,6 @@ PyPayPage {
                 }
                 onToggled: {
                     if (server.currentBorrowModel.count == 0) {
-                        startBusy()
-                        var params = { "address": payController.addr, "offset": 0, "limit": 10 }
-                        server.getBankBorrowOrders(params, function() {
-                            currentBorrowSwitchPageLoader.sourceComponent = currentBorrowCompoent
-                            stopBusy()
-                        })
                     }
                 }
             }
@@ -84,7 +82,11 @@ PyPayPage {
                         startBusy()
                         var params = { "address": payController.addr, "offset": 0, "limit": 10 }
                         server.getViolasBankBorrowOrderList(params, function() {
-                            borrowDetailSwitchPageLoader.sourceComponent = borrowDetailComponent
+                            var count =  server.borrowDetailModel.count == 0 ? 0 : server.borrowDetailModel.get(0).total_count
+                            var numOfPerPage = borrowDetailSwitchPage.numOfPerPage
+                            for (var i = 0; i <  count / numOfPerPage; i++) {
+                                borrowDetailSwitchPage.listModel.append({index: i})
+                            }
                             stopBusy()
                         })
                     }
@@ -412,53 +414,43 @@ PyPayPage {
             }
         }
 
-        Loader {
-            id: currentBorrowSwitchPageLoader
+        SwitchPage {
+            id: currentBorrowSwitchPage
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: stackView.bottom
             anchors.topMargin: 16
-            visible: tabBar.currentIndex == 0
-        }
-
-        Loader {
-            id: borrowDetailSwitchPageLoader
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: stackView.bottom
-            anchors.topMargin: 16
-            visible: tabBar.currentIndex == 1
-        }
-
-        Component {
-            id: currentBorrowCompoent
-            SwitchPage {
-                pageCount: server.currentBorrowModel.get(0).total_count / 10 + (server.currentBorrowModel.get(0).total_count % 10 == 0 ? 0 : 1)
-                onPageClicked: {
-                    startBusy()
-                    var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
-                    server.getBankBorrowOrders(params, function() {
-                        pageCount = server.currentBorrowModel.get(0).total_count / 10 + (server.currentBorrowModel.get(0).total_count % 10 == 0 ? 0 : 1)
-                        pageIndex = pageCount > index ? index : 0
-                        refresh()
-                        stopBusy()
-                    })
-                }
+            visible: tabBar.currentIndex == 0 && listModel.count != 0
+            onPageClicked: {
+                startBusy()
+                var params = { "address": payController.addr, "offset": index * numOfPerPage, "limit": numOfPerPage }
+                server.getBankBorrowOrders(params, function() {
+                    var count =  server.currentBorrowModel.count == 0 ? 0 : server.currentBorrowModel.get(0).total_count
+                    listModel.clear()
+                    for (var i = 0; i <  count / numOfPerPage; i++) {
+                        listModel.append({index: i})
+                    }
+                    stopBusy()
+                })
             }
         }
 
-        Component {
-            id: borrowDetailComponent
-            SwitchPage {
-                pageCount: server.borrowDetailModel.get(0).total_count / 10 + (server.borrowDetailModel.get(0).total_count % 10 == 0 ? 0 : 1)
-                onPageClicked: {
-                    startBusy()
-                    var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
-                    server.getViolasBankBorrowOrderList(params, function() {
-                        pageCount = server.borrowDetailModel.get(0).total_count / 10 + (server.borrowDetailModel.get(0).total_count % 10 == 0 ? 0 : 1)
-                        pageIndex = pageCount > index ? index : 0
-                        refresh()
-                        stopBusy()
-                    })
-                }
+        SwitchPage {
+            id: borrowDetailSwitchPage
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: stackView.bottom
+            anchors.topMargin: 16
+            visible: tabBar.currentIndex == 1 && listModel.count != 0
+            onPageClicked: {
+                startBusy()
+                var params = { "address": payController.addr, "offset": index * numOfPerPage, "limit": numOfPerPage }
+                server.getViolasBankBorrowOrderList(params, function() {
+                    var count =  server.borrowDetailModel.count == 0 ? 0 : server.borrowDetailModel.get(0).total_count;
+                    listModel.clear()
+                    for (var i = listModel.count; i <  count / numOfPerPage; i++) {
+                        listModel.append({index: i})
+                    }
+                    stopBusy()
+                })
             }
         }
 
