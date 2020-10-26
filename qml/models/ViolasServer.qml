@@ -155,7 +155,7 @@ Item {
             });
     }
 
-    function getDepositOrder(params, cb) {
+    function getViolasBankDepositOrders(params, cb) {
         API.request('GET', API.violasURL + '/1.0/violas/bank/deposit/orders' + API.formatParams(params), null,
             function(resp) {
             currentDepositModel.clear()
@@ -178,7 +178,7 @@ Item {
         });
     }
 
-    function getDepositOrderList(params) {
+    function getViolasBankDepositOrderList(params, cb) {
         API.request('GET', API.violasURL + '/1.0/violas/bank/deposit/order/list' + API.formatParams(params), null, 
             function(resp) {
             depositDetailModel.clear()
@@ -192,12 +192,15 @@ Item {
                     'status': d.status,
                     'value': d.value,
                     'total_count': d.total_count
-                    })                   
+                    })
+            }
+            if (cb) {
+                cb()
             }
         });
     }
 
-    function getBankBorrowOrders(params, cb) {
+    function getViolasBankBorrowOrders(params, cb) {
         API.request('GET', API.violasURL + '/1.0/violas/bank/borrow/orders' + API.formatParams(params), null, 
             function(resp) {
             currentBorrowModel.clear()

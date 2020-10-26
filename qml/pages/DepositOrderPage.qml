@@ -3,42 +3,26 @@ import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.15
 
 import "../controls"
+import "../pages"
 
 import PyPay 1.0
 
-Page {
+PyPayPage {
     id: root
-    signal backArrowClicked
+    isShowHeader: true
+    title: qsTr("Bank > <b>Deposit</b>")
 
-    background: Rectangle {
-        color: "#F7F7F9"
-    }
-
-    ImageButton {
-        id: backBtn
-        anchors.top: parent.top
-        anchors.topMargin: 72
-        anchors.left: parent.left
-        anchors.leftMargin: 72
-        width: 24
-        height: 24
-        source: "../icons/backarrow3.svg"
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                backArrowClicked()
+    Component.onCompleted: {
+        startBusy()
+        var params = { "address": payController.addr, "offset": 0, "limit": 10 }
+        server.getViolasBankDepositOrders(params, function() {
+            var count =  server.currentDepositModel.count == 0 ? 0 : server.currentDepositModel.get(0).total_count
+            var numOfPerPage = currentDepositSwitchPage.numOfPerPage
+            for (var i = 0; i <  count / numOfPerPage; i++) {
+                currentDepositSwitchPage.listModel.append({index: i})
             }
-        }
-    }
-
-    Text {
-        id: titleText
-        text: qsTr("Bank> <b><b>Deposit Order</b></b>")
-        font.pointSize: 14
-        color: "#5C5C5C"
-        anchors.verticalCenter: backBtn.verticalCenter
-        anchors.left: backBtn.right
-        anchors.leftMargin: 8
+            stopBusy()
+        })
     }
 
     Rectangle {
@@ -46,8 +30,8 @@ Page {
         anchors.leftMargin: 50
         anchors.right: parent.right
         anchors.rightMargin: 50
-        anchors.top: backBtn.bottom
-        anchors.topMargin: 24
+        anchors.top: parent.top
+        anchors.topMargin: 140
         anchors.bottom: parent.bottom
         color: "#FFFFFF"
         
@@ -89,6 +73,20 @@ Page {
                 background: Rectangle {
                     color: "#FFFFFF"
                 }
+                onToggled: {
+                    if (server.depositDetailModel.count == 0) {
+                        startBusy()
+                        var params = { "address": payController.addr, "offset": 0, "limit": 10 }
+                        server.getViolasBankDepositOrderList(params, function() {
+                            var count =  server.depositDetailModel.count == 0 ? 0 : server.depositDetailModel.get(0).total_count
+                            var numOfPerPage = depositDetailSwitchPage.numOfPerPage
+                            for (var i = 0; i <  count / numOfPerPage; i++) {
+                                depositDetailSwitchPage.listModel.append({index: i})
+                            }
+                            stopBusy()
+                        })
+                    }
+                }
             }
         }
         Rectangle {
@@ -121,47 +119,74 @@ Page {
                     z: 2
                     width: parent.width
                     height: 50
-                    Text {
-                        id: tokenText
-                        anchors.left: parent.left
-                        anchors.leftMargin: 54
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Token")
-                    }
-                    Text {
-                        id: principalText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 100) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Principal")
-                    }
-                    Text {
-                        id: incomeText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 334) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Income")
-                    }
-                    Text {
-                        id: rateText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 554) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Rate")
-                    }
-                    Text {
-                        id: statusText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 734) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Status")
-                    }
-                    Text {
-                        id: operationText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 904) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Operation")
+                    RowLayout {
+                        anchors.fill: parent
+                        Item {
+                            Layout.leftMargin: 54
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 6 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 300
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Token")
+                            }
+                        }
+                        Item {
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 6 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 300
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Principal")
+                            }
+                        }
+                        Item {
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 6 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 300
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Income")
+                            }
+                        }
+                        Item {
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 6 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 300
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Rate")
+                            }
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: parent.height
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Status")
+                            }
+                        }
+                        Item {
+                            Layout.rightMargin: 54
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 6 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 300
+                            Text {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Operation")
+                            }
+                        }
                     }
                     Rectangle {
                         anchors.left: parent.left
@@ -178,65 +203,92 @@ Page {
                 delegate: Rectangle {
                     width: currentDepositView.width
                     height: 50
-                    Text {
-                        id: tokenText
-                        anchors.left: parent.left
-                        anchors.leftMargin: 54
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: currency
-                    }
-                    Text {
-                        id: principalText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 100) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: principal.toFixed(2)
-                    }
-                    Text {
-                        id: incomeText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 334) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: earnings.toFixed(2)
-                    }
-                    Text {
-                        id: rateText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 554) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: rate * 100 + "%"
-                        color: "#13B788"
-                    }
-                    Text {
-                        id: statusText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 734) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: {
-                            if (status == 0) {
-                                return qsTr("Deposited")
-                            } else if (status == 1) {
-                                return qsTr("Extraction")
-                            } else if (status == -1) {
-                                return qsTr("Extraction failed")
-                            } else if (status == -2) {
-                                return qsTr("Deposition failed")
-                            } else {
-                                return qsTr("Unknown, ") + status
+                    RowLayout {
+                        anchors.fill: parent
+                        Item {
+                            Layout.leftMargin: 54
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 6 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 300
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: currency
                             }
                         }
-                        color: "#13B788"
-                    }
-                    Text {
-                        id: operationText
-                        anchors.left: tokenText.left
-                        anchors.leftMargin: (28 + 904) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Extraction")
-                        color: "#7038FD"
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
+                        Item {
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 6 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 300
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: principal.toFixed(2)
+                            }
+                        }
+                        Item {
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 6 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 300
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: earnings.toFixed(2)
+                            }
+                        }
+                        Item {
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 6 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 300
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: rate * 100 + "%"
+                                color: "#13B788"
+                            }
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: parent.height
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: {
+                                    if (status == 0) {
+                                        return qsTr("Deposited")
+                                    } else if (status == 1) {
+                                        return qsTr("Extraction")
+                                    } else if (status == -1) {
+                                        return qsTr("Extraction failed")
+                                    } else if (status == -2) {
+                                        return qsTr("Deposition failed")
+                                    } else {
+                                        return qsTr("Unknown, ") + status
+                                    }
+                                }
+                                color: "#13B788"
+                            }
+                        }
+                        Item {
+                            Layout.rightMargin: 54
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 6 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 300
+                            Text {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Extraction")
+                                color: "#7038FD"
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                    }
+                                }
                             }
                         }
                     }
@@ -266,33 +318,52 @@ Page {
                             width: depositDetailView.width
                             height: 50
                             //color: "red"
-                            Text {
-                                id: dateText
-                                anchors.left: parent.left
-                                anchors.leftMargin: 54
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: qsTr("Date")
-                            }
-                            Text {
-                                id: tokenText
-                                anchors.left: dateText.left
-                                anchors.leftMargin: (28 + 180) / 1070 * parent.width
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: qsTr("Token")
-                            }
-                            Text {
-                                id: amountText
-                                anchors.left: dateText.left
-                                anchors.leftMargin: (28 + 388) / 1070 * parent.width
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: qsTr("Amount")
-                            }
-                            Text {
-                                id: statusText
-                                anchors.left: dateText.left
-                                anchors.leftMargin: (28 + 718) / 1070 * parent.width
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: qsTr("Status")
+                            RowLayout {
+                                anchors.fill: parent
+                                Item {
+                                    Layout.leftMargin: 54
+                                    Layout.minimumWidth: 100
+                                    Layout.preferredWidth: 1 / 4 * parent.width
+                                    Layout.preferredHeight: parent.height
+                                    Layout.maximumWidth: 500
+                                    Text {
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: qsTr("Date")
+                                    }
+                                }
+                                Item {
+                                    Layout.minimumWidth: 100
+                                    Layout.preferredWidth: 1 / 4 * parent.width
+                                    Layout.preferredHeight: parent.height
+                                    Layout.maximumWidth: 500
+                                    Text {
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: qsTr("Token")
+                                    }
+                                }
+                                Item {
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: parent.height
+                                    Text {
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: qsTr("Amount")
+                                    }
+                                }
+                                Item {
+                                    Layout.rightMargin: 54
+                                    Layout.minimumWidth: 100
+                                    Layout.preferredWidth: 1 / 4 * parent.width
+                                    Layout.preferredHeight: parent.height
+                                    Layout.maximumWidth: 500
+                                    Text {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: qsTr("Status")
+                                    }
+                                }
                             }
                             Rectangle {
                                 anchors.left: parent.left
@@ -311,59 +382,94 @@ Page {
                 delegate: Rectangle {
                     width: depositDetailView.width
                     height: 50
-                    Text {
-                        id: dateText
-                        anchors.left: parent.left
-                        anchors.leftMargin: 54
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: date
-                    }
-                    Text {
-                        id: tokenText
-                        anchors.left: dateText.left
-                        anchors.leftMargin: (28 + 180) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: currency
-                    }
-                    Text {
-                        id: amountText
-                        anchors.left: dateText.left
-                        anchors.leftMargin: (28 + 388) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: value
-                    }
-                    Text {
-                        id: statusText
-                        anchors.left: dateText.left
-                        anchors.leftMargin: (28 + 718) / 1070 * parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: status
+                    RowLayout {
+                        anchors.fill: parent
+                        Item {
+                            Layout.leftMargin: 54
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 4 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 500
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: date
+                            }
+                        }
+                        Item {
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 4 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 500
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: currency
+                            }
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: parent.height
+                            Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: value
+                            }
+                        }
+                        Item {
+                            Layout.rightMargin: 54
+                            Layout.minimumWidth: 100
+                            Layout.preferredWidth: 1 / 4 * parent.width
+                            Layout.preferredHeight: parent.height
+                            Layout.maximumWidth: 500
+                            Text {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: status
+                            }
+                        }
                     }
                 }
             }
         }
 
         SwitchPage {
+            id: currentDepositSwitchPage
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: stackView.bottom
             anchors.topMargin: 16
-            visible: tabBar.currentIndex == 0 && server.currentDepositModel.count != 0
-            pageCount: server.currentDepositModel.get(0).total_count / 10 + (server.currentDepositModel.get(0).total_count % 10 == 0 ? 0 : 1)
+            visible: tabBar.currentIndex == 0 && listModel.count != 0
             onPageClicked: {
-                var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
-                server.getDepositOrder(params)
+                startBusy()
+                var params = { "address": payController.addr, "offset": index * numOfPerPage, "limit": numOfPerPage }
+                server.getViolasBankDepositOrders(params, function() {
+                    var count =  server.currentDepositModel.count == 0 ? 0 : server.currentDepositModel.get(0).total_count
+                    listModel.clear()
+                    for (var i = 0; i <  count / numOfPerPage; i++) {
+                        listModel.append({index: i})
+                    }
+                    stopBusy()
+                })
             }
         }
 
         SwitchPage {
+            id: depositDetailSwitchPage
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: stackView.bottom
             anchors.topMargin: 16
-            visible: tabBar.currentIndex == 1 && server.depositDetailModel.count != 0
-            pageCount: server.depositDetailModel.get(0).total_count / 10 + (server.depositDetailModel.get(0).total_count % 10 == 0 ? 0 : 1)
+            visible: tabBar.currentIndex == 1 && listModel.count != 0
             onPageClicked: {
-                var params = { "address": payController.addr, "offset": index * 10, "limit": 10 }
-                server.getDepositOrderList(params)
+                startBusy()
+                var params = { "address": payController.addr, "offset": index * numOfPerPage, "limit": numOfPerPage }
+                server.getViolasBankDepositOrderList(params, function() {
+                    var count =  server.depositDetailModel.count == 0 ? 0 : server.depositDetailModel.get(0).total_count;
+                    listModel.clear()
+                    for (var i = listModel.count; i <  count / numOfPerPage; i++) {
+                        listModel.append({index: i})
+                    }
+                    stopBusy()
+                })
             }
         }
 

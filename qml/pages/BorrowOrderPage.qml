@@ -15,7 +15,7 @@ PyPayPage {
     Component.onCompleted: {
         startBusy()
         var params = { "address": payController.addr, "offset": 0, "limit": 10 }
-        server.getBankBorrowOrders(params, function() {
+        server.getViolasBankBorrowOrders(params, function() {
             var count =  server.currentBorrowModel.count == 0 ? 0 : server.currentBorrowModel.get(0).total_count
             var numOfPerPage = currentBorrowSwitchPage.numOfPerPage
             for (var i = 0; i <  count / numOfPerPage; i++) {
@@ -423,7 +423,7 @@ PyPayPage {
             onPageClicked: {
                 startBusy()
                 var params = { "address": payController.addr, "offset": index * numOfPerPage, "limit": numOfPerPage }
-                server.getBankBorrowOrders(params, function() {
+                server.getViolasBankBorrowOrders(params, function() {
                     var count =  server.currentBorrowModel.count == 0 ? 0 : server.currentBorrowModel.get(0).total_count
                     listModel.clear()
                     for (var i = 0; i <  count / numOfPerPage; i++) {
