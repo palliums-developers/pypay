@@ -1,67 +1,36 @@
-import QtQuick 2.14
+import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import "../controls"
+import "../pages"
 
 import PyPay 1.0
 
-Page {
+PyPayPage {
     id: root
+    isShowHeader: true
+    title: qsTr("Bank > <b>Borrow</b>")
 
-    property int topMargin: 79      // top to borrowBtn
-    property int bottomMargin: 49   // bottom to borrowBtn   
-    property bool isSelected: false
-
-    signal backArrowClicked
-
-    background: Rectangle {
-        color: "#F7F7F9"
-    }
-
-    ImageButton {
-        id: backBtn
-        anchors.top: parent.top
-        anchors.topMargin: 72
-        anchors.left: parent.left
-        anchors.leftMargin: 72
-        width: 24
-        height: 24
-        source: "../icons/backarrow3.svg"
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                backArrowClicked()
-            }
-        }
-    }
-
-    Text {
-        id: titleText
-        text: qsTr("Bank > <b><b>Borrow</b></b>")
-        font.pointSize: 14
-        color: "#5C5C5C"
-        anchors.verticalCenter: backBtn.verticalCenter
-        anchors.left: backBtn.right
-        anchors.leftMargin: 8
+    Component.onCompleted: {
+        startBusy()
+        var params = { "id": server.requestID, "address": payController.addr }
+        server.getViolasBankBorrowInfo(params, function() { 
+            stopBusy()
+        })
     }
 
     Flickable {
         clip: true
-        anchors.top: parent.top
-        anchors.topMargin: 140
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 40
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: 716
-        contentHeight: contentColumn.height + root.topMargin + 
-            borrowBtn.height + root.bottomMargin + contentColumn2.height
+        anchors.fill: parent
+        contentHeight: 140 + contentColumn.height + 80 + borrowBtn.height + 50 + contentColumn2.height + 40
 
         Column {
             id: contentColumn
             anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
+            anchors.topMargin: 140
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: 716
             spacing: 10
 
             Rectangle {
@@ -247,7 +216,7 @@ Page {
         MyButton3 {
             id: borrowBtn
             anchors.top: contentColumn.bottom
-            anchors.topMargin: root.topMargin
+            anchors.topMargin: 80
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Borrow Now")
             width: 200
@@ -257,9 +226,9 @@ Page {
         Column {
             id: contentColumn2
             anchors.top: borrowBtn.bottom
-            anchors.topMargin: root.bottomMargin
-            anchors.left: parent.left
-            anchors.right: parent.right
+            anchors.topMargin: 50
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: 716
             spacing: 10
 
             Rectangle {
@@ -280,17 +249,22 @@ Page {
                     anchors.topMargin: 32
                 }
                 Image {
+                    anchors.left: intorText.right
+                    anchors.leftMargin: 8
+                    anchors.verticalCenter: intorText.verticalCenter
+                    width: 14
+                    source: "../icons/exclMark.png"
+                    fillMode: Image.PreserveAspectFit
+                }
+                ImageButton {
                     anchors.right: parent.right
                     anchors.rightMargin: 50
                     anchors.verticalCenter: intorText.verticalCenter
                     source: intorRec.isShowMore ? "../icons/arrow_down.svg" : "../icons/arrow_right.svg"
                     width: 12
                     fillMode: Image.PreserveAspectFit
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            intorRec.isShowMore = !intorRec.isShowMore
-                        }
+                    onClicked: {
+                        intorRec.isShowMore = !intorRec.isShowMore
                     }
                 }
                 Column {
@@ -326,17 +300,22 @@ Page {
                     anchors.topMargin: 32
                 }
                 Image {
+                    anchors.left: questionText.right
+                    anchors.leftMargin: 8
+                    anchors.verticalCenter: questionText.verticalCenter
+                    width: 14
+                    source: "../icons/quesMark.png"
+                    fillMode: Image.PreserveAspectFit
+                }
+                ImageButton {
                     anchors.right: parent.right
                     anchors.rightMargin: 50
                     anchors.verticalCenter: questionText.verticalCenter
                     source: questionRec.isShowMore ? "../icons/arrow_down.svg" : "../icons/arrow_right.svg"
                     width: 12
                     fillMode: Image.PreserveAspectFit
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            questionRec.isShowMore = !questionRec.isShowMore
-                        }
+                    onClicked: {
+                        questionRec.isShowMore = !questionRec.isShowMore
                     }
                 }
                 Column {

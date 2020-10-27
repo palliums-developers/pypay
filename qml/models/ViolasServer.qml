@@ -32,7 +32,23 @@ Item {
         "token_name": "",
         "token_show_name": ""
     }
-    property var bankBorrowInfo: ({})
+    property var bankBorrowInfo: {
+        "id": "",
+        "intor": [],
+        "logo": "",
+        "minimum_amount": 0,
+        "minimum_step": 0,
+        "name": "",
+        "pledge_rate": 0.0,
+        "question": [],
+        "quota_limit": 0,
+        "quota_used": 0,
+        "rate": 0.0,
+        "token_address": "",
+        "token_module": "",
+        "token_name": "",
+        "token_show_name": ""
+    }
 
     property string requestID: ""
 
@@ -160,9 +176,11 @@ Item {
         API.request('GET', API.violasURL + '/1.0/violas/bank/deposit/info' + API.formatParams(params),
             null, function(resp) {
                 bankDepositInfo = resp.data;
+                intorModel.clear()
                 for (var i=0; i<resp.data.intor.length; i++) {
                     intorModel.append({"title":resp.data.intor[i].title, "content":resp.data.intor[i].text})
                 }
+                questionModel.clear()
                 for (var i=0; i<resp.data.question.length; i++) {
                     questionModel.append({"title":resp.data.question[i].title, "content":resp.data.question[i].text})
                 }
@@ -172,20 +190,21 @@ Item {
             });
     }
 
-    function getBorrowInfo(params, cb) {
+    function getViolasBankBorrowInfo(params, cb) {
         API.request('GET', API.violasURL + '/1.0/violas/bank/borrow/info' + API.formatParams(params),
             null, function(resp) {
                 bankBorrowInfo = resp.data;
+                intorModel.clear()
                 for (var i=0; i<resp.data.intor.length; i++) {
                     intorModel.append({"title":resp.data.intor[i].title, "content":resp.data.intor[i].text})
                 }
+                questionModel.clear()
                 for (var i=0; i<resp.data.question.length; i++) {
                     questionModel.append({"title":resp.data.question[i].title, "content":resp.data.question[i].text})
                 }
                 if (cb) {
                     cb()
                 }
-                console.log(JSON.stringify(bankBorrowInfo))
             });
     }
 

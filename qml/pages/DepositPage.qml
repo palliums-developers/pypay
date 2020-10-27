@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
@@ -231,17 +231,22 @@ PyPayPage {
                     anchors.topMargin: 32
                 }
                 Image {
+                    anchors.left: intorText.right
+                    anchors.leftMargin: 8
+                    anchors.verticalCenter: intorText.verticalCenter
+                    width: 14
+                    source: "../icons/exclMark.png"
+                    fillMode: Image.PreserveAspectFit
+                }
+                ImageButton {
                     anchors.right: parent.right
                     anchors.rightMargin: 50
                     anchors.verticalCenter: intorText.verticalCenter
                     source: intorRec.isShowMore ? "../icons/arrow_down.svg" : "../icons/arrow_right.svg"
                     width: 12
                     fillMode: Image.PreserveAspectFit
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            intorRec.isShowMore = !intorRec.isShowMore
-                        }
+                    onClicked: {
+                        intorRec.isShowMore = !intorRec.isShowMore
                     }
                 }
                 Column {
@@ -277,17 +282,22 @@ PyPayPage {
                     anchors.topMargin: 32
                 }
                 Image {
+                    anchors.left: questionText.right
+                    anchors.leftMargin: 8
+                    anchors.verticalCenter: questionText.verticalCenter
+                    width: 14
+                    source: "../icons/quesMark.png"
+                    fillMode: Image.PreserveAspectFit
+                }
+                ImageButton {
                     anchors.right: parent.right
                     anchors.rightMargin: 50
                     anchors.verticalCenter: questionText.verticalCenter
                     source: questionRec.isShowMore ? "../icons/arrow_down.svg" : "../icons/arrow_right.svg"
                     width: 12
                     fillMode: Image.PreserveAspectFit
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            questionRec.isShowMore = !questionRec.isShowMore
-                        }
+                    onClicked: {
+                        questionRec.isShowMore = !questionRec.isShowMore
                     }
                 }
                 Column {

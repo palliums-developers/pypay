@@ -4,6 +4,7 @@ import QtQuick.Controls 2.14
 Image {
     id: control
     property bool isHover: false
+    signal clicked
     opacity: isHover ? 0.5 : 1
     MouseArea {
         anchors.fill: parent
@@ -13,6 +14,9 @@ Image {
         }
         onExited: {
             control.isHover = false
+        }
+        onClicked: {
+            control.clicked()
         }
     }
 }

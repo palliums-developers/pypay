@@ -396,12 +396,9 @@ ApplicationWindow {
                     depositPage.source = "pages/DepositPage.qml"
                     bankStack.push(depositPage)
                 }
-                function onShowBorrowPage() {
-                    borrowPage.source = ""
-                    borrowPage.source = "pages/BusyPage.qml"
-                    server.getBorrowInfo({"id": id, "address": payController.addr}, function() {
-                        borrowPage.source = "pages/BorrowPage.qml"  
-                    })
+                function onShowBorrowPage(requestID) {
+                    server.requestID = requestID
+                    borrowPage.source = "pages/BorrowPage.qml"
                     bankStack.push(borrowPage)
                 }
                 function onShowDepositOrderPage() {
