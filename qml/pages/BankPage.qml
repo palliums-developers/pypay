@@ -14,16 +14,6 @@ PyPayPage {
     signal showDepositOrderPage
     signal showBorrowOrderPage
 
-    Component.onCompleted: {
-        startBusy()
-        var params = { "address": payController.addr }
-        server.getViolasBankProductDeposit()
-        server.getViolasBankProductBorrow()
-        server.getViolasBankAccountInfo(params, function() {
-            stopBusy()
-        })
-    }
-
     Rectangle {
         id: bankRec
         anchors.left: parent.left

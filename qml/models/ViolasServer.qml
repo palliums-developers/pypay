@@ -5,12 +5,36 @@ import "../models/API.js" as API
 import PyPay 1.0
 
 Item {
-    property var rates: {}
+    property var rates: ({})
     property var balances: []
     property var published: []
-    property var bankAccountInfo: ({})
-    property var bankDepositInfo: ({})
+    property var bankAccountInfo: {
+        "amount": 0.0,
+        "borrow": 0.0,
+        "total": 0.0,
+        "yesterday": 0.0
+    }
+    property var bankDepositInfo: {
+        "id": "",
+        "intor": [],
+        "logo": "",
+        "minimum_amount": 0,
+        "minimum_step": 0,
+        "name": "",
+        "pledge_rate": 0,
+        "question": [],
+        "quota_limit": 0,
+        "quota_used": 0,
+        "rate": 0,
+        "rate_desc": "",
+        "token_address": "",
+        "token_module": "",
+        "token_name": "",
+        "token_show_name": ""
+    }
     property var bankBorrowInfo: ({})
+
+    property string requestID: ""
 
     property alias tokenModel: tokenModel
     property alias depositModel: depositModel
@@ -132,7 +156,7 @@ Item {
             });
     }
 
-    function getDepositInfo(params, cb) {
+    function getViolasBankDepositInfo(params, cb) {
         API.request('GET', API.violasURL + '/1.0/violas/bank/deposit/info' + API.formatParams(params),
             null, function(resp) {
                 bankDepositInfo = resp.data;
@@ -145,7 +169,6 @@ Item {
                 if (cb) {
                     cb()
                 }
-                console.log(JSON.stringify(bankDepositInfo))
             });
     }
 

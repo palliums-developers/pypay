@@ -3,63 +3,34 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import "../controls"
+import "../pages"
 
 import PyPay 1.0
 
-Page {
+PyPayPage {
     id: root
+    isShowHeader: true
+    title: qsTr("Bank > <b>Deposit</b>")
 
-    property int topMargin: 43
-    property int bottomMargin: 49      
-
-    signal backArrowClicked
-
-    background: Rectangle {
-        color: "#F7F7F9"
-    }
-
-    ImageButton {
-        id: backBtn
-        anchors.top: parent.top
-        anchors.topMargin: 72
-        anchors.left: parent.left
-        anchors.leftMargin: 72
-        width: 24
-        height: 24
-        source: "../icons/backarrow3.svg"
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                backArrowClicked()
-            }
-        }
-    }
-
-    Text {
-        id: titleText
-        text: qsTr("Bank > <b><b>Deposit</b></b>")
-        font.pointSize: 14
-        color: "#5C5C5C"
-        anchors.verticalCenter: backBtn.verticalCenter
-        anchors.left: backBtn.right
-        anchors.leftMargin: 8
+    Component.onCompleted: {
+        startBusy()
+        var params = { "id": server.requestID, "address": payController.addr }
+        server.getViolasBankDepositInfo(params, function() { 
+            stopBusy()
+        })
     }
 
     Flickable {
         clip: true
-        anchors.top: parent.top
-        anchors.topMargin: 140
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 40
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: 716
-        contentHeight: contentColumn.height + root.topMargin + depositBtn.height + root.bottomMargin + contentColumn2.height
+        anchors.fill: parent
+        contentHeight: 140 + contentColumn.height + 42 + depositBtn.height + 50 + contentColumn2.height + 40
 
         Column {
             id: contentColumn
             anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
+            anchors.topMargin: 140
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: 716
             spacing: 10
 
             Rectangle {
@@ -227,7 +198,7 @@ Page {
         MyButton3 {
             id: depositBtn
             anchors.top: contentColumn.bottom
-            anchors.topMargin: root.topMargin
+            anchors.topMargin: 42
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Deposit Now")
             width: 200
@@ -237,9 +208,9 @@ Page {
         Column {
             id: contentColumn2
             anchors.top: depositBtn.bottom
-            anchors.topMargin: root.bottomMargin
-            anchors.left: parent.left
-            anchors.right: parent.right
+            anchors.topMargin: 50
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: 716
             spacing: 10
 
             Rectangle {
