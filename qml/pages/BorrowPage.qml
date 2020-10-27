@@ -23,6 +23,7 @@ PyPayPage {
     Flickable {
         clip: true
         anchors.fill: parent
+        ScrollIndicator.vertical: ScrollIndicator { }
         contentHeight: 140 + contentColumn.height + 80 + borrowBtn.height + 50 + contentColumn2.height + 40
 
         Column {
