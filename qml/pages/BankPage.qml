@@ -76,7 +76,7 @@ PyPayPage {
         }
         Text {
             id: borrowText
-            text: qsTr("Borrow ($)\t\t")
+            text: qsTr("Borrow ($)")
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: borrowImage.right
@@ -85,11 +85,12 @@ PyPayPage {
             verticalAlignment: Text.AlignVCenter
         }
         Text {
+            id: borrowValueText
             text: appSettings.eyeIsOpen ? qsTr("≈") + server.bankAccountInfo.borrow : "******"
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: borrowText.right
-            anchors.leftMargin: 8
+            anchors.leftMargin: 18
             anchors.verticalCenter: borrowText.verticalCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -106,7 +107,7 @@ PyPayPage {
         }
         Text {
             id: incomeText
-            text: qsTr("Total ($)\t\t")
+            text: qsTr("Total ($)")
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: incomeImage.right
@@ -119,8 +120,7 @@ PyPayPage {
             text: appSettings.eyeIsOpen ? qsTr("≈") + server.bankAccountInfo.total : "******"
             color: "#FFFFFF"
             font.pointSize: 12
-            anchors.left: incomeText.right
-            anchors.leftMargin: 8
+            anchors.left: borrowValueText.left
             anchors.verticalCenter: incomeText.verticalCenter
             verticalAlignment: Text.AlignVCenter
         }
