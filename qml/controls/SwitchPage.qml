@@ -25,19 +25,25 @@ Item {
         orientation: ListView.Horizontal
         spacing: root.spacing
         highlight: Rectangle { color: "lightsteelblue"; radius: 1 }
-        header: RecButton {
-            width: oneRecWidth * 2 / 3
-            height: oneRecWidth
-            radius: 1
-            isEnabled: pageIndex != 0
-            Text {
-                anchors.centerIn: parent
-                text: "<"
-            }
-            onClicked: {
-                if (isEnabled) {
-                    root.pageClicked(pageIndex - 1)
-                    pageIndex -= 1
+        header: Item {
+            width: headerRecBtn.width + spacing
+            height: headerRecBtn.height
+            RecButton {
+                id: headerRecBtn
+                anchors.left: parent.left
+                width: oneRecWidth * 2 / 3
+                height: oneRecWidth
+                radius: 1
+                isEnabled: pageIndex != 0
+                Text {
+                    anchors.centerIn: parent
+                    text: "<"
+                }
+                onClicked: {
+                    if (isEnabled) {
+                        root.pageClicked(pageIndex - 1)
+                        pageIndex -= 1
+                    }
                 }
             }
         }
@@ -57,19 +63,25 @@ Item {
                 }
             }
         }
-        footer: RecButton {
-            width: oneRecWidth * 2 / 3
-            height: oneRecWidth
-            radius: 1
-            isEnabled: pageIndex != listModel.count - 1
-            Text {
-                anchors.centerIn: parent
-                text: ">"
-            }
-            onClicked: {
-                if (isEnabled) {
-                    root.pageClicked(pageIndex + 1)
-                    pageIndex += 1
+        footer: Item {
+            width: footerRecBtn.width + spacing
+            height: footerRecBtn.height
+            RecButton {
+                id: footerRecBtn
+                anchors.right: parent.right
+                width: oneRecWidth * 2 / 3
+                height: oneRecWidth
+                radius: 1
+                isEnabled: pageIndex != listModel.count - 1
+                Text {
+                    anchors.centerIn: parent
+                    text: ">"
+                }
+                onClicked: {
+                    if (isEnabled) {
+                        root.pageClicked(pageIndex + 1)
+                        pageIndex += 1
+                    }
                 }
             }
         }
