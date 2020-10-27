@@ -10,7 +10,7 @@ import PyPay 1.0
 PyPayPage {
     id: root
     isShowHeader: true
-    title: qsTr("Bank > <b>Borrow</b>")
+    title: qsTr("Bank > <b>Borrow Orders</b>")
 
     Component.onCompleted: {
         startBusy()
