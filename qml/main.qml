@@ -30,6 +30,7 @@ ApplicationWindow {
         walletStack.visible = true
         marketStack.visible = false
         bankStack.visible = false
+        bankPage.source = ""
     }
 
     function showMarketPage() {
@@ -39,6 +40,7 @@ ApplicationWindow {
         walletStack.visible = false
         marketStack.visible = true
         bankStack.visible = false
+        bankPage.source = ""
     }
 
     function showBankPage() {
@@ -48,6 +50,7 @@ ApplicationWindow {
         walletStack.visible = false
         marketStack.visible = false
         bankStack.visible = true
+        bankPage.source = "pages/BankPage.qml"
     }
 
     function showCreatePage(b) {
@@ -84,9 +87,6 @@ ApplicationWindow {
             var params = {"address": payController.addr}
             server.getViolasCurrency()
             server.getTokenPublished(params)
-            server.getBankAccountInfo(params)
-            server.getDeposit()
-            server.getBorrow()
         }
     }
 
@@ -382,33 +382,32 @@ ApplicationWindow {
             }
 
             // Bank page
-            Component {
+            Loader {
                 id: bankPage
-                BankPage {
-                    onShowDepositPage: {
-                        depositPage.source = ""
-                        depositPage.source = "pages/BusyPage.qml"
-                        server.getDepositInfo({"id": id, "address": payController.addr}, function() { 
-                            depositPage.source = "pages/DepositPage.qml"
-                        })
-                        bankStack.push(depositPage)
-                    }
-                    onShowBorrowPage: {
-                        borrowPage.source = ""
-                        borrowPage.source = "pages/BusyPage.qml"
-                        server.getBorrowInfo({"id": id, "address": payController.addr}, function() {
-                            borrowPage.source = "pages/BorrowPage.qml"  
-                        })
-                        bankStack.push(borrowPage)
-                    }
-                    onShowDepositOrderPage: {
-                        depositOrderPage.source = "pages/DepositOrderPage.qml"
-                        bankStack.push(depositOrderPage)
-                    }
-                    onShowBorrowOrderPage: {
-                        borrowOrderPage.source = "pages/BorrowOrderPage.qml"
-                        bankStack.push(borrowOrderPage)
-                    }
+            }
+            Connections {
+                target: bankPage.item
+                function onShowDepositPage() {
+                    server.getDepositInfo({"id": id, "address": payController.addr}, function() { 
+                        depositPage.source = "pages/DepositPage.qml"
+                    })
+                    bankStack.push(depositPage)
+                }
+                function onShowBorrowPage() {
+                    borrowPage.source = ""
+                    borrowPage.source = "pages/BusyPage.qml"
+                    server.getBorrowInfo({"id": id, "address": payController.addr}, function() {
+                        borrowPage.source = "pages/BorrowPage.qml"  
+                    })
+                    bankStack.push(borrowPage)
+                }
+                function onShowDepositOrderPage() {
+                    depositOrderPage.source = "pages/DepositOrderPage.qml"
+                    bankStack.push(depositOrderPage)
+                }
+                function onShowBorrowOrderPage() {
+                    borrowOrderPage.source = "pages/BorrowOrderPage.qml"
+                    bankStack.push(borrowOrderPage)
                 }
             }
 

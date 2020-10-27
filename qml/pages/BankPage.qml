@@ -14,6 +14,16 @@ PyPayPage {
     signal showDepositOrderPage
     signal showBorrowOrderPage
 
+    Component.onCompleted: {
+        startBusy()
+        var params = { "address": payController.addr }
+        server.getViolasBankProductDeposit()
+        server.getViolasBankProductBorrow()
+        server.getViolasBankAccountInfo(params, function() {
+            stopBusy()
+        })
+    }
+
     Rectangle {
         id: bankRec
         anchors.left: parent.left
@@ -312,16 +322,15 @@ PyPayPage {
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
                 delegate: Rectangle {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    width: depositProductView.width
                     height: 60
                     color: "#EBEBF1"
                     radius: 14
                     MyImage {
                         id: itemImage
                         source: logo
-                        radius: 14
-                        width: 41
+                        radius: 20
+                        width: 40
                         anchors.left: parent.left
                         anchors.leftMargin: 8
                         anchors.verticalCenter: parent.verticalCenter
@@ -349,7 +358,7 @@ PyPayPage {
                         anchors.verticalCenter: parent.verticalCenter
                         Text {
                             id: rateText
-                            text: appSettings.eyeIsOpen ? rate: "******"
+                            text: rate
                             color: "#13B788"
                             font.pointSize: 18
                             anchors.right: parent.right
@@ -377,16 +386,15 @@ PyPayPage {
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
                 delegate: Rectangle {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    width: borrowProductView.width
                     height: 60
                     color: "#EBEBF1"
                     radius: 14
                     MyImage {
                         id: itemImage
                         source: logo
-                        radius: 14
-                        width: 41
+                        radius: 20
+                        width: 40
                         anchors.left: parent.left
                         anchors.leftMargin: 8
                         anchors.verticalCenter: parent.verticalCenter
@@ -414,7 +422,7 @@ PyPayPage {
                         anchors.verticalCenter: parent.verticalCenter
                         Text {
                             id: rateText
-                            text: appSettings.eyeIsOpen ? rate: "******"
+                            text: rate
                             color: "#13B788"
                             font.pointSize: 18
                             anchors.right: parent.right

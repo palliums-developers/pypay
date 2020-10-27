@@ -97,26 +97,37 @@ Item {
 
     // Bank
 
-    function getBankAccountInfo(params) {
+    function getViolasBankAccountInfo(params, cb) {
         API.request('GET', API.violasURL + '/1.0/violas/bank/account/info' + API.formatParams(params), null, function(resp) {
                 bankAccountInfo = resp.data;
-            });
-    }
-
-    function getDeposit() {
-        API.request('GET', API.violasURL + '/1.0/violas/bank/product/deposit', null, function(resp) {
-                var entries = resp.data;
-                for (var i=0; i<entries.length; i++) {
-                    depositModel.append(entries[i])
+                if (cb) {
+                    cb()
                 }
             });
     }
 
-    function getBorrow() {
+    function getViolasBankProductDeposit(cb) {
+        API.request('GET', API.violasURL + '/1.0/violas/bank/product/deposit', null, function(resp) {
+                var entries = resp.data;
+                depositModel.clear()
+                for (var i=0; i<entries.length; i++) {
+                    depositModel.append(entries[i])
+                }
+                if (cb) {
+                    cb()
+                }
+            });
+    }
+
+    function getViolasBankProductBorrow(cb) {
         API.request('GET', API.violasURL + '/1.0/violas/bank/product/borrow', null, function(resp) {
                 var entries = resp.data;
+                borrowModel.clear()
                 for (var i=0; i<entries.length; i++) {
                     borrowModel.append(entries[i])
+                }
+                if (cb) {
+                    cb()
                 }
             });
     }
