@@ -348,7 +348,7 @@ PyPayPage {
                         anchors.verticalCenter: parent.verticalCenter
                         Text {
                             id: rateText
-                            text: rate
+                            text: (rate * 100).toFixed(2) + "%"
                             color: "#13B788"
                             font.pointSize: 18
                             anchors.right: parent.right
@@ -412,7 +412,7 @@ PyPayPage {
                         anchors.verticalCenter: parent.verticalCenter
                         Text {
                             id: rateText
-                            text: rate
+                            text: (rate * 100).toFixed(2) + "%"
                             color: "#13B788"
                             font.pointSize: 18
                             anchors.right: parent.right
