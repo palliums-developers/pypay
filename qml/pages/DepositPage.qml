@@ -83,7 +83,7 @@ PyPayPage {
                         color: "#5C5C5C"
                         anchors.verticalCenter: avaImage.verticalCenter
                     }
-                    Text {
+                    TextButton {
                         text: qsTr("All")
                         color: "#7038FD"
                         font.pointSize: 12
@@ -125,7 +125,7 @@ PyPayPage {
                 color: "#FFFFFF"
                 Text {
                     id: rateText
-                    text: qsTr("Rate")
+                    text: qsTr("Year Rate")
                     color: "#5C5C5C"
                     font.pointSize: 12
                     anchors.left: parent.left
@@ -148,7 +148,7 @@ PyPayPage {
                     anchors.left: rateText.left
                     anchors.right: rateText2.right
                     height: 1
-                    color: "#DEDEDE"
+                    color: "#F1F1F1"
                 }
                 Column {
                     id: con2Column
@@ -160,7 +160,7 @@ PyPayPage {
                         color: "#5C5C5C"
                     }
                     Text {
-                        text: qsTr("pledge rate = deposit amount / borrow amount")
+                        text: qsTr("pledge rate = borrow amount / deposit amount")
                         color: "#5C5C5C"
                     }
                 }
@@ -176,7 +176,7 @@ PyPayPage {
                     anchors.left: rateText.left
                     anchors.right: rateText2.right
                     height: 1
-                    color: "#DEDEDE"
+                    color: "#F1F1F1"
                 }
                 Text {
                     id: payTypeText
@@ -192,6 +192,7 @@ PyPayPage {
                     text: qsTr("Wallet")
                     anchors.verticalCenter: payTypeText.verticalCenter
                     anchors.right: rateText2.right
+                    color: "#333333"
                 }
             }
         }
@@ -204,6 +205,35 @@ PyPayPage {
             text: qsTr("Deposit Now")
             width: 200
             height: 40
+            onClicked: {
+                if (inputLine.text.length == 0) {
+                    tip.visible = true
+                    tipTimer.running = true
+                }
+                tip.visible = false
+                tipTimer.running = false
+            }
+        }
+
+        Text {
+            id: tip
+            anchors.horizontalCenter: depositBtn.horizontalCenter
+            anchors.top: depositBtn.bottom
+            anchors.topMargin: 8
+            color: "#E54040"
+            font.pointSize: 12
+            text: qsTr("Input store amount")
+            visible: false
+        }
+        
+        Timer {
+            id: tipTimer
+            interval: 3000
+            repeat: false
+            running: false
+            onTriggered: {
+                tip.visible = false
+            }
         }
 
         Column {
