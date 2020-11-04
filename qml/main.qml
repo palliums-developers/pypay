@@ -87,6 +87,7 @@ ApplicationWindow {
             var params = {"address": payController.addr}
             server.getTokenPublished(params)
             server.getViolasBankAccountInfo(params)
+            server.getViolasBalance(params)
         }
     }
 
@@ -105,6 +106,7 @@ ApplicationWindow {
             walletPage.getTokenBalance()
             var params = { "address": payController.addr }
             server.getViolasBankAccountInfo(params)
+            server.getViolasBalance(params)
         }
     }
 

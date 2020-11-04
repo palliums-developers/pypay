@@ -11,11 +11,17 @@ PyPayPage {
     id: root
     isShowHeader: true
     title: qsTr("Bank > <b>Deposit</b>")
+    property int tokenBalance: 0
 
     Component.onCompleted: {
         startBusy()
         var params = { "id": server.requestID, "address": payController.addr }
         server.getViolasBankDepositInfo(params, function() { 
+            for (var i = 0; i < server.balances.length; i++) {
+                if (server.bankDepositInfo.token_show_name == server.balances[i].show_name) {
+                    tokenBalance = server.balances[i][server.bankDepositInfo.token_show_name]
+                }
+            }
             stopBusy()
         })
     }
@@ -78,7 +84,7 @@ PyPayPage {
                         source: "../icons/availablebank.svg"
                     }
                     Text {
-                        text: qsTr("avaliable balance: ")
+                        text: qsTr("avaliable balance: ") + (tokenBalance / 1000000).toFixed(6)
                         font.pointSize: 12
                         color: "#5C5C5C"
                         anchors.verticalCenter: avaImage.verticalCenter
@@ -91,6 +97,7 @@ PyPayPage {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
+                                inputLine.text = (tokenBalance/1000000).toFixed(6);
                             }
                         }
                     }

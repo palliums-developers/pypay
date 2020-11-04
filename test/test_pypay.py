@@ -7,6 +7,30 @@ app = Flask(__name__)
 def index():
     return 'Bank api!'
 
+# curl -i http://localhost:5000/1.0/violas/balance
+@app.route('/1.0/violas/balance', methods=['GET'])
+def violas_balance():
+    address = request.args.get("address")
+    data = {
+        "balances": [
+            {
+                "LBR": 1000073043000,
+                "name": "LBR",
+                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
+                "show_name": "LBR",
+                "address": ""
+            },
+            {
+                "USD": 1000,
+                "name": "USD",
+                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
+                "show_name": "USD",
+                "address": ""
+            },
+        ]
+    }
+    return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
+
 # curl -i http://localhost:5000/1.0/violas/bank/account/info
 @app.route('/1.0/violas/bank/account/info', methods=['GET'])
 def bank_account_info():

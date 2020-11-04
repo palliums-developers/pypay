@@ -104,6 +104,18 @@ Item {
             });
     }
 
+    function getViolasBalance(params, cb) {
+        API.request('GET', API.violasURL + '/1.0/violas/balance' + API.formatParams(params), null, 
+            function(resp) {
+                if (resp.code == 2000) {
+                    balances = resp.data["balances"]
+                    if (cb) {
+                        cb()
+                    }
+                }
+        });
+    }
+
     function getTokenPublished(params) {
         API.request('GET', API.violasURL + '/1.0/violas/currency/published' + API.formatParams(params), null, function(resp) {
             if (resp.code == 2000) {
