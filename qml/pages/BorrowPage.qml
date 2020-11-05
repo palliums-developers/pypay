@@ -132,7 +132,7 @@ PyPayPage {
                     anchors.left: rateText.left
                     anchors.right: rateText2.right
                     height: 1
-                    color: "#DEDEDE"
+                    color: "#F1F1F1"
                 }
                 Column {
                     id: con2Column
@@ -160,7 +160,7 @@ PyPayPage {
                     anchors.left: rateText.left
                     anchors.right: rateText2.right
                     height: 1
-                    color: "#DEDEDE"
+                    color: "#F1F1F1"
                 }
                 Column {
                     id: con2Column2
