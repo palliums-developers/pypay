@@ -149,3 +149,14 @@ class Violas(QObject):
             self.get_bank_borrow_orders_result.emit(r.json())
         else:
             print("request error")
+
+
+    get_bank_max_borrow_amount_result = pyqtSignal(int)
+
+    @pyqtSlot(str)
+    def get_bank_max_borrow_amount(self, coin):
+        try:
+            amount = self._client.bank_get_max_borrow_amount(self._accounts[0].address, coin)
+            self.get_bank_max_borrow_amount_result.emit(amount)
+        except Exception as result:
+            print(result)

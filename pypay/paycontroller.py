@@ -51,6 +51,7 @@ class PayController(QObject):
         self._swap_to_addr = {}
         self._datadir = self.get_datadir() / "pypay"
         self.datadirChanged.emit()
+        self._violas_bank_max_borrow_amount = 0
         try:
             self._datadir.mkdir(parents = True)
         except FileExistsError:
@@ -77,6 +78,7 @@ class PayController(QObject):
     requestActiveViolasAccount = pyqtSignal()
     requestLBRAddCurOfAccount = pyqtSignal(str, bool)
     requestVLSAddCurOfAccount = pyqtSignal(str, bool)
+    request_violas_bank_max_borrow_amount = pyqtSignal(str)
 
     # 钱包
     @pyqtSlot()
@@ -132,6 +134,8 @@ class PayController(QObject):
         self._vlsThread.finished.connect(self._vls.deleteLater)
         self.requestActiveViolasAccount.connect(self._vls.requestActiveAccount) # active account
         self.requestVLSAddCurOfAccount.connect(self._vls.requestAddCurOfAccount)
+        self.request_violas_bank_max_borrow_amount.connect(self._vls.get_bank_max_borrow_amount)
+        self._vls.get_bank_max_borrow_amount_result.connect(self.get_violas_bank_max_borrow_amount)
         self._vls.moveToThread(self._vlsThread)
         self._vlsThread.start()
 
@@ -344,3 +348,13 @@ class PayController(QObject):
         #type = 
         #if chain_name_out == 'violas':
         #    if coin_name_out == 'VLSUSD':
+
+    @pyqtSlot(int)
+    def get_violas_bank_max_borrow_amount(self, amount):
+        self._violas_bank_max_borrow_amount = amount
+        self.violas_bank_max_borrow_amount_changed.emit()
+
+    violas_bank_max_borrow_amount_changed = pyqtSignal()
+    @pyqtProperty(int, notify=violas_bank_max_borrow_amount_changed)
+    def violas_bank_max_borrow_amount(self):
+        return self._violas_bank_max_borrow_amount

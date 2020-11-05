@@ -16,6 +16,7 @@ PyPayPage {
         startBusy()
         var params = { "id": server.requestID, "address": payController.addr }
         server.getViolasBankBorrowInfo(params, function() { 
+            payController.request_violas_bank_max_borrow_amount(server.bankBorrowInfo.token_module)
             stopBusy()
         })
     }
@@ -82,7 +83,7 @@ PyPayPage {
                         source: "../icons/availablebank.svg"
                     }
                     Text {
-                        text: qsTr("avaliable borrow: ")
+                        text: qsTr("avaliable borrow: ") + (payController.violas_bank_max_borrow_amount / 1000000).toFixed(6)
                         font.pointSize: 12
                         color: "#5C5C5C"
                         anchors.verticalCenter: avaImage.verticalCenter
@@ -191,14 +192,16 @@ PyPayPage {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 5
             Image {
+                id: selImage
+                property bool isSelected: false
                 anchors.verticalCenter: checkText.verticalCenter
                 width: 14
                 height: 14
-                source: root.isSelected ? "../icons/xuanze-2.svg" : "../icons/xuanze.svg"
+                source: selImage.isSelected ? "../icons/xuanze-2.svg" : "../icons/xuanze.svg"
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        root.isSelected = !root.isSelected
+                        selImage.isSelected = !selImage.isSelected
                     }
                 }
             }
@@ -222,6 +225,40 @@ PyPayPage {
             text: qsTr("Borrow Now")
             width: 200
             height: 40
+            onClicked: {
+                if (inputLine.text.length == 0) {
+                    tip.text = qsTr("Input borrow amount")
+                    tip.visible = true
+                    tipTimer.running = true
+                } else if (!selImage.isSelected) {
+                    tip.text = qsTr("Agree borrow agreement")
+                    tip.visible = true
+                    tipTimer.running = true
+                } else {
+                    tip.visible = false
+                    tipTimer.running = false
+                }
+            }
+        }
+
+        Text {
+            id: tip
+            anchors.horizontalCenter: borrowBtn.horizontalCenter
+            anchors.top: borrowBtn.bottom
+            anchors.topMargin: 8
+            color: "#E54040"
+            font.pointSize: 12
+            visible: false
+        }
+        
+        Timer {
+            id: tipTimer
+            interval: 3000
+            repeat: false
+            running: false
+            onTriggered: {
+                tip.visible = false
+            }
         }
 
         Column {
