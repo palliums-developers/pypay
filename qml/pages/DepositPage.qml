@@ -216,9 +216,10 @@ PyPayPage {
                 if (inputLine.text.length == 0) {
                     tip.visible = true
                     tipTimer.running = true
+                } else {
+                    tip.visible = false
+                    tipTimer.running = false
                 }
-                tip.visible = false
-                tipTimer.running = false
             }
         }
 
