@@ -16,11 +16,15 @@ Page {
     signal receiveClicked
     signal exchangeClicked
 
-    function getRate(token) {
-        if (token.includes('VLS')) {
-            return rates[token.substr(3)]
-        } else {
+    function getRate(chain, token) {
+        if (chain == "bitcoin") {
+            return server.btcValue
+        } else if (chain == 'libra') {
             return 0
+        } else if (token == "VLS" || token == "LBR") {
+            return 0
+        } else {
+            return server.violasValue[token]
         }
     }
 
@@ -29,15 +33,6 @@ Page {
             var msg = {'action':'getBalances', 'model':tokenModel, 'libraAddr': payController.libra_addr, 'violasAddr': payController.addr};
             worker.sendMessage(msg);
         }
-    }
-
-    WorkerScript {
-        id: worker
-        source: "../models/DataLoader.mjs"
-    }
-
-    Component.onCompleted: {
-        server.getRate()
     }
 
     background: Rectangle {
@@ -214,9 +209,10 @@ Page {
             ScrollIndicator.vertical: ScrollIndicator { }
             delegate: Rectangle {
                 width: walletListView.width
-                height: 60
+                height: server.localPublished.includes(show_name) ? 60 : -12
                 color: "#EBEBF1"
                 radius: 14
+                visible: server.localPublished.includes(show_name)
                 MyImage {
                     id: itemImage
                     source: show_icon
@@ -240,14 +236,13 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         id: amountText
-                        text: appSettings.eyeIsOpen ? (balance / 1000000).toFixed(6) : "******"
+                        text: appSettings.eyeIsOpen ? chain == 'bitcoin' ? (balance / 100000000).toFixed(8) : (balance / 1000000).toFixed(6) : "******"
                         color: "#333333"
                         font.pointSize: 16
                         anchors.right: parent.right
                     }
                     Text {
-                        //text: appSettings.eyeIsOpen ? "≈$" + getRate(show_name) * (balance / 1000000) : "******"
-                        text: appSettings.eyeIsOpen ? "≈$" + getRate('USD') * (balance / 1000000) : "******"
+                        text: appSettings.eyeIsOpen ? "≈$" + getRate(chain, show_name) * (chain == 'bitcoin' ? balance / 100000000 : balance / 1000000) : "******"
                         color: "#ADADAD"
                         font.pointSize: 12
                         anchors.right: amountText.right

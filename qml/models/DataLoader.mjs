@@ -26,24 +26,55 @@ function request(verb, URL, obj, cb, async=true) {
 }
 
 WorkerScript.onMessage = function(msg) {
-//    if (msg.action = 'getBalances') {
-//        msg.model.clear();
-//        request('GET', violasURL + '/1.0/violas/balance?addr=' + msg.violasAddr, null, function(resp) {
-//            if (resp.code == 2000) {
-//                var entries = resp.data.balances;
-//                for (var i=0; i<entries.length; i++) {
-//                    msg.model.append(entries[i]);
-//                }
-//            }
-//        }, false);
-//        request('GET', violasURL + '/1.0/libra/balance?addr=' + msg.libraAddr, null, function(resp) {
-//            if (resp.code == 2000) {
-//                var entries = resp.data.balances;
-//                for (var i=0; i<entries.length; i++) {
-//                    msg.model.append(entries[i]);
-//                }
-//            }
-//        }, false);
-//        msg.model.sync();
-//    }
+    if (msg.action = 'getBalances') {
+        msg.model.clear();
+        // bitcoin
+        msg.model.append(
+            {
+                'chain': 'bitcoin',
+                'show_icon': "../icons/bitcoin.svg",
+                'show_name': "BTC",
+                'balance': 0
+            }
+        )
+        
+        // libra
+        request('GET', violasURL + '/1.0/libra/balance?addr=' + msg.libraAddr, null, function(resp) {
+            if (resp.code == 2000) {
+                var entries = resp.data.balances;
+                for (var i=0; i<entries.length; i++) {
+                    var d = entries[i]
+                    if (d.name != 'Coin1' && d.name != 'Coin2') {
+                        msg.model.append(
+                            {
+                                'chain': 'libra',
+                                'show_icon': "../icons/libra.svg",
+                                'show_name': d.show_name,
+                                'balance': d[d.name]
+                            }
+                        );
+                    }
+                }
+            }
+        }, false);
+
+        // violas
+        request('GET', violasURL + '/1.0/violas/balance?addr=' + msg.violasAddr, null, function(resp) {
+            if (resp.code == 2000) {
+                var entries = resp.data.balances;
+                for (var i=0; i<entries.length; i++) {
+                    var d = entries[i]
+                    msg.model.append(
+                        {
+                            'chain': 'violas',
+                            'show_icon': "../icons/violas.svg",
+                            'show_name': d.show_name,
+                            'balance': d[d.name]
+                        }
+                    );
+                }
+            }
+        }, false);
+        msg.model.sync();
+    }
 }

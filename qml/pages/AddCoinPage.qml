@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import "../controls"
+import "../models"
 
 import PyPay 1.0
 
@@ -73,10 +74,16 @@ Control {
                 MySwitch {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
+                    visible: show_name != "BTC" && show_name != "LBR" && show_name != "VLS"
                     checkable: true
-                    checked: published.includes(show_name)
+                    checked: server.localPublished.includes(show_name)
                     onClicked: {
                         //payController.updateTokenShow(tokenEntry.chain, tokenEntry.name, tokenEntry.isShow)
+                        if (server.localPublished.includes(show_name)) {
+                            server.localPublished.splice(server.localPublished.indexOf(show_name), 1)
+                        } else {
+                            server.localPublished.push(show_name)
+                        }
                     }
                 }
             }

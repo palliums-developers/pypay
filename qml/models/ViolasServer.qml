@@ -1,13 +1,16 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import "../models/API.js" as API
 
 import PyPay 1.0
 
 Item {
-    property var rates: ({})
+    property var btcValue: 0
+    property var violasValue: {}
+    property var rates: {}
     property var balances: []
     property var published: []
+    property var localPublished: ["BTC","LBR","VLS"]
     property var bankAccountInfo: {
         "amount": 0.0,
         "borrow": 0.0,
@@ -64,6 +67,27 @@ Item {
 
     ListModel {
         id: tokenModel
+        ListElement {
+            address: ""
+            module: ""
+            name: "BTC"
+            show_icon: "../icons/bitcoin.svg"
+            show_name: "BTC"
+        }
+        ListElement {
+            address: ""
+            module: ""
+            name: "LBR"
+            show_icon: "../icons/libra.svg"
+            show_name: "LBR"
+        }
+        ListElement {
+            address: ""
+            module: ""
+            name: "VLS"
+            show_icon: "../icons/violas.svg"
+            show_name: "VLS"
+        }
     }
 
     ListModel {
@@ -98,10 +122,40 @@ Item {
         id: borrowDetailModel
     }
 
-    function getRate() {
-        API.request('GET', 'https://api.exchangeratesapi.io/latest?base=USD', null, function(resp) {
-                rates = resp.rates;
+    //function getRateBaseUSD() {
+    //    API.request('GET', 'https://api.exchangeratesapi.io/latest?base=USD', null, function(resp) {
+    //            rates = resp.rates;
+    //        });
+    //}
+
+    function getViolasValueBTC() {
+        API.request('GET', API.violasURL + '/1.0/violas/value/btc', null, 
+            function(resp) {
+                if (resp.code == 2000) {
+                    btcValue = resp.data["BTC"]
+                }
             });
+    }
+
+    function getViolasValueViolas(params) {
+        API.request('GET', API.violasURL + '/1.0/violas/value/violas' + API.formatParams(params), null, 
+            function(resp) {
+                if (resp.code == 2000) {
+                    violasValue = resp.data
+                }
+            });
+    }
+
+    function getLibraBalance(params, cb) {
+        API.request('GET', API.violasURL + '/1.0/libra/balance' + API.formatParams(params), null, 
+            function(resp) {
+                if (resp.code == 2000) {
+                    balances = resp.data["balances"]
+                    if (cb) {
+                        cb()
+                    }
+                }
+        });
     }
 
     function getViolasBalance(params, cb) {
@@ -116,21 +170,10 @@ Item {
         });
     }
 
-    function getTokenPublished(params) {
+    function getViolasCurrencyPublished(params) {
         API.request('GET', API.violasURL + '/1.0/violas/currency/published' + API.formatParams(params), null, function(resp) {
             if (resp.code == 2000) {
                 published = resp.data.published
-            }
-        });
-    }
-
-    function getViolasCurrency() {
-        API.request('GET', API.violasURL + '/1.0/violas/currency', null, function(resp) {
-            if (resp.code == 2000) {
-                var entries = resp.data.currencies;
-                for (var i=0; i<entries.length; i++) {
-                    tokenModel.append(entries[i])
-                }
             }
         });
     }
@@ -140,7 +183,38 @@ Item {
             if (resp.code == 2000) {
                 var entries = resp.data.currencies;
                 for (var i=0; i<entries.length; i++) {
-                    tokenModel.append(entries[i])
+                    if (entries[i].show_name != "LBR" && entries[i].name != "Coin1" && entries[i].name != "Coin2") {
+                        var d = entries[i]
+                        tokenModel.append(
+                            {
+                                "chain": "libra",
+                                "name": d.name,
+                                "show_name": d.show_name,
+                                "show_icon": "../icons/libra.svg"
+                            }
+                        )
+                    }
+                }
+            }
+        });
+    }
+
+    function getViolasCurrency() {
+        API.request('GET', API.violasURL + '/1.0/violas/currency', null, function(resp) {
+            if (resp.code == 2000) {
+                var entries = resp.data.currencies;
+                for (var i=0; i<entries.length; i++) {
+                    if (entries[i].show_name != "VLS") {
+                        var d = entries[i]
+                        tokenModel.append(
+                            {
+                                "chain": "violas",
+                                "name": d.name,
+                                "show_name": d.show_name,
+                                "show_icon": "../icons/violas.svg"
+                            }
+                        )
+                    }
                 }
             }
         });

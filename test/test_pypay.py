@@ -7,6 +7,35 @@ app = Flask(__name__)
 def index():
     return 'Bank api!'
 
+@app.route('/1.0/libra/balance', methods=['GET'])
+def libra_balance():
+    data = {
+        "balances": [
+            {
+                "LBR": 10000000,
+                "name": "LBR",
+                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
+                "show_name": "LBR",
+                "address": ""
+            },
+            {
+                "Coin1": 1000,
+                "name": "Coin1",
+                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
+                "show_name": "Coin1",
+                "address": ""
+            },
+            {
+                "Coin2": 1000,
+                "name": "Coin2",
+                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
+                "show_name": "Coin2",
+                "address": ""
+            }
+        ]
+    }
+    return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
+
 # curl -i http://localhost:5000/1.0/violas/balance
 @app.route('/1.0/violas/balance', methods=['GET'])
 def violas_balance():
@@ -14,19 +43,110 @@ def violas_balance():
     data = {
         "balances": [
             {
-                "LBR": 1000073043000,
+                "LBR": 10000,
                 "name": "LBR",
                 "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
-                "show_name": "LBR",
+                "show_name": "VLS",
                 "address": ""
             },
             {
-                "USD": 1000,
-                "name": "USD",
+                "VLSGBP": 1000,
+                "name": "VLSGBP",
                 "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
-                "show_name": "USD",
+                "show_name": "VLSGBP",
                 "address": ""
             },
+            {
+                "VLSUSD": 1000,
+                "name": "VLSUSD",
+                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
+                "show_name": "VLSUSD",
+                "address": ""
+            },
+        ]
+    }
+    return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
+
+@app.route('/1.0/violas/value/btc', methods=['GET'])
+def violas_value_btc():
+    data = {
+        "BTC": 9823
+    }
+    return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
+
+@app.route('/1.0/violas/value/violas', methods=['GET'])
+def violas_value_violas():
+    data = {
+        "LBR": 0,
+        "VLSUSD": 1,
+        "VLSGBP": 0.79
+    }
+    return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
+
+@app.route('/1.0/libra/currency', methods=['GET'])
+def libra_currency():
+    data = {
+        "currencies": [
+            {
+                "address": "",
+                "module": "Coin1",
+                "name": "Coin1",
+                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
+                "show_name": "n1"
+            },
+            {
+                "address": "",
+                "module": "Coin2",
+                "name": "Coin2",
+                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
+                "show_name": "n2"
+            },
+            {
+                "address": "",
+                "module": "LBR",
+                "name": "LBR",
+                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
+                "show_name": "LBR"
+            }
+        ]
+    }
+    return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
+
+@app.route('/1.0/violas/currency', methods=['GET'])
+def violas_currency():
+    data = {
+        "currencies": [
+            {
+                "address": "",
+                "module": "VLSGBP",
+                "name": "VLSGBP",
+                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
+                "show_name": "VLSGBP"
+            },
+            {
+                "address": "",
+                "module": "VLSUSD",
+                "name": "VLSUSD",
+                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
+                "show_name": "VLSUSD"
+            },
+            {
+                "address": "",
+                "module": "LBR",
+                "name": "LBR",
+                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
+                "show_name": "VLS"
+            }
+        ]
+    }
+    return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
+
+@app.route('/1.0/violas/currency/published', methods=['GET'])
+def violas_currency_published():
+    data = {
+        "published": [
+            "LBR",
+            "VLSUSD"
         ]
     }
     return jsonify({'code': 2000, 'data': data, 'message': 'ok'})

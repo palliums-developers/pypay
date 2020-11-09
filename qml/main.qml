@@ -69,45 +69,55 @@ ApplicationWindow {
         property bool walletIsCreate: false
         property bool mnemonicIsBackup: false
         property string password: ""
+        property string localPublished: server.localPublished.join(",")
     }
 
     Component.onCompleted: {
         if (appSettings.walletIsCreate) {
             payController.createWallet()
+            server.getViolasValueBTC()
+            server.localPublished = appSettings.localPublished.split(",")
+            server.getLibraCurrency()
+            server.getViolasCurrency()
+            server.getViolasBankProductDeposit()
+            server.getViolasBankProductBorrow()
         }
         //console.log(payController.datadir)
-        server.getViolasCurrency()
-        server.getViolasBankProductDeposit()
-        server.getViolasBankProductBorrow()
     }
 
     Connections {
         target: payController
         function onAddr_changed() {
             var params = {"address": payController.addr}
-            server.getTokenPublished(params)
+            server.getViolasValueViolas(params)
+            server.getViolasCurrencyPublished(params)
             server.getViolasBankAccountInfo(params)
-            server.getViolasBalance(params)
         }
     }
 
     onClosing: {
+        appSettings.localPublished = server.localPublished.join(",")
         payController.shutdown()
         timer.running = false
     }
 
     Timer {
         id: timer
-        interval: 10000
+        interval: 5000
         running: true
         repeat: true
         triggeredOnStart: true
         onTriggered: {
             walletPage.getTokenBalance()
             var params = { "address": payController.addr }
+            server.getViolasCurrencyPublished(params)
             server.getViolasBankAccountInfo(params)
-            server.getViolasBalance(params)
         }
+    }
+
+    WorkerScript {
+        id: worker
+        source: "models/DataLoader.mjs"
     }
 
     ViolasServer {
