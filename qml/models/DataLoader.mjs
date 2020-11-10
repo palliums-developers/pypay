@@ -8,7 +8,7 @@ function request(verb, URL, obj, cb, async=true) {
             if(cb) {
                 try {
                     print('request: ' + verb + ' ' + URL)
-                    print(xhr.responseText.toString())
+                    //print(xhr.responseText.toString())
                     var res = JSON.parse(xhr.responseText.toString())
                     cb(res);
                 } catch(err) {
@@ -32,6 +32,7 @@ WorkerScript.onMessage = function(msg) {
         msg.model.append(
             {
                 'chain': 'bitcoin',
+                'name': 'BTC',
                 'show_icon': "../icons/bitcoin.svg",
                 'show_name': "BTC",
                 'balance': 0
@@ -48,6 +49,7 @@ WorkerScript.onMessage = function(msg) {
                         msg.model.append(
                             {
                                 'chain': 'libra',
+                                'name': d.name,
                                 'show_icon': "../icons/libra.svg",
                                 'show_name': d.show_name,
                                 'balance': d[d.name]
@@ -67,6 +69,7 @@ WorkerScript.onMessage = function(msg) {
                     msg.model.append(
                         {
                             'chain': 'violas',
+                            'name': d.name,
                             'show_icon': "../icons/violas.svg",
                             'show_name': d.show_name,
                             'balance': d[d.name]

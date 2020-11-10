@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import "../controls"
 
@@ -29,7 +29,7 @@ Control {
         }
         Text {
             id: titleText
-            text: qsTr("币种详情")
+            text: qsTr("Token Detail")
             color: "#333333"
             font.pointSize: 16
             font.weight: Font.Medium
@@ -55,17 +55,7 @@ Control {
                     Row {
                         spacing: 8
                         MyImage {
-                            source: {
-                                if (payController.currentTokenEntry.chain == "bitcoin") {
-                                    return "../icons/bitcoin.svg"
-                                } else if (payController.currentTokenEntry.chain == "violas") {
-                                    return "../icons/violas.svg"
-                                } else if (payController.currentTokenEntry.chain == "libra") {
-                                    return "../icons/libra.svg"
-                                } else {
-                                    return ""
-                                }
-                            }
+                            source: server.request_token.show_icon
                             width: height
                             height: 14
                             radius: 0.5 * width
@@ -73,20 +63,20 @@ Control {
                         }
                         Text {
                             id: nameText
-                            text: payController.currentTokenEntry.name
+                            text: server.request_token.show_name
                             color: "#999999"
                             font.weight: Font.Normal
                             font.pointSize: 12
                         }
                     }
                     Text {
-                        text: appSettings.eyeIsOpen ? payController.currentTokenEntry.amount : "******"
+                        text: appSettings.eyeIsOpen ? server.format_balance(server.request_token.balance) : "******"
                         color: "#333333"
                         font.weight: Font.Bold
                         font.pointSize: 18
                     }
                     Text {
-                        text: appSettings.eyeIsOpen ? "≈$" + payController.currentTokenEntry.totalPrice : "******"
+                        text: appSettings.eyeIsOpen ? "≈$" + server.format_balance(server.request_token.balance) * server.format_balance(server.reqeust_token.chain, server.request_token.name) : "******"
                         color: "#999999"
                         font.weight: Font.Normal
                         font.pointSize: 12
@@ -95,7 +85,16 @@ Control {
                         spacing: 4
                         Text {
                             id: addrText
-                            text: payController.currentTokenEntry.addr
+                            text: {
+                                if (server.request_token.chain == 'bitcoin')
+                                    return server.address_bitcoin
+                                else if (server.request_token_chain == 'libra')
+                                    return server.address_libra
+                                else if (server.request_token_chain == 'violas')
+                                    return server.address_violas
+                                else
+                                    return 'noknown'
+                            }
                             color: "#5C5C5C"
                             font.weight: Font.Medium
                             font.pointSize: 14
@@ -111,7 +110,7 @@ Control {
                             anchors.verticalCenter: addrText.verticalCenter
                             MouseArea {
                                 anchors.fill: parent
-                                onClicked: payController.copy(payController.currentTokenEntry.addr)
+                                onClicked: payController.copy(addrText.text)
                             }
                         }
                     }

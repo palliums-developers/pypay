@@ -5,6 +5,9 @@ import "../models/API.js" as API
 import PyPay 1.0
 
 Item {
+    property string address_bitcoin: ""
+    property string address_libra: ""
+    property string address_violas: ""
     property var btcValue: 0
     property var violasValue: {}
     property var rates: {}
@@ -54,6 +57,13 @@ Item {
     }
 
     property string requestID: ""
+    property var request_token: {
+        'chain': 'bitcoin',
+        'name': 'BTC',
+        'show_icon': "../icons/bitcoin.svg",
+        'show_name': 'BTC',
+        'balance': 0
+    }
 
     property alias token_balance_model: token_balance_model
     property alias tokenModel: tokenModel
@@ -65,6 +75,11 @@ Item {
     property alias depositDetailModel: depositDetailModel
     property alias currentBorrowModel: currentBorrowModel
     property alias borrowDetailModel: borrowDetailModel
+
+    WorkerScript {
+        id: worker
+        source: "models/DataLoader.mjs"
+    }
 
     ListModel {
         id: token_balance_model
@@ -122,6 +137,24 @@ Item {
 
     ListModel {
         id: borrowDetailModel
+    }
+
+    Connections {
+        target: payController
+        function onChanged_address_bitcoin() {
+            address_bitcoin = payController.address_bitcoin
+        }
+        function onChanged_address_libra() {
+            address_libra = payController.address_libra
+        }
+        function onChanged_address_violas() {
+            address_violas = payController.address_violas
+            get_token_blanace()
+            var params = {"address": address_violas}
+            getViolasValueViolas(params)
+            getViolasCurrencyPublished(params)
+            getViolasBankAccountInfo(params)
+        }
     }
 
     //function getRateBaseUSD() {
@@ -387,5 +420,27 @@ Item {
     function get_token_blanace() {
         var msg = {'action':'getBalances', 'model':server.token_balance_model, 'libraAddr': payController.libra_addr, 'violasAddr': payController.addr};
         worker.sendMessage(msg);
+    }
+
+    function get_rate(chain, token) {
+        if (chain == "bitcoin") {
+            return btcValue
+        } else if (chain == 'libra') {
+            return 0
+        } else if (token == "VLS" || token == "LBR") {
+            return 0
+        } else {
+            return violasValue[token]
+        }
+    }
+
+    function format_balance(chain, balance) {
+        if (chain == 'bitcoin') {
+            return (balance / 100000000).toFixed(8)
+        } else if (chain == libra || chain == violas) {
+            return (balance / 1000000).toFixed(6)
+        } else {
+            return balance
+        }
     }
 }

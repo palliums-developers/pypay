@@ -9,7 +9,7 @@ function request(verb, URL, obj, cb, async=true) {
                 try {
                     print('request: ' + verb + ' ' + URL)
                     if (xhr.status == 200) {
-                        print(xhr.responseText.toString())
+                        //print(xhr.responseText.toString())
                         var res = JSON.parse(xhr.responseText.toString())
                         cb(res);
                     } else {

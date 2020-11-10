@@ -43,10 +43,10 @@ class PayController(QObject):
         self._mnemonicRandom = ''
         self._mnemonicConfirm = ''
         self._isConfirming = False
-        self._addr = ''
-        self._libra_addr = ''
+        self._address_violas = ''
+        self._address_libra = ''
         self._bitKey = None
-        self._bitAddr = ''
+        self._address_bitcoin = ''
         self._isImportWallet = False
         self._swap_to_addr = {}
         self._datadir = self.get_datadir() / "pypay"
@@ -92,9 +92,9 @@ class PayController(QObject):
             self._wallet = Wallet.new()
             account = self._wallet.new_account()
             account1 = self._wallet.new_account()
-        self._addr = self._wallet.accounts[0].address_hex
+        self._address_violas = self._wallet.accounts[0].address_hex
         self.addr_changed.emit()
-        self._libra_addr = self._wallet.accounts[1].address_hex
+        self._address_libra = self._wallet.accounts[1].address_hex
         self.libra_addr_changed.emit()
         self._mnemonic = self._wallet.mnemonic
         self.mnemonic_changed.emit()
@@ -105,7 +105,7 @@ class PayController(QObject):
         m = BIP32Key.fromEntropy(entropy, False, True)
         wif = m.WalletImportFormat()
         self._bitKey = wif_to_key(wif)
-        self._bitAddr = self._bitKey.segwit_address
+        self._address_bitcoin = self._bitKey.segwit_address
 
         self._wallet.write_recovery(fileName)
 
@@ -193,22 +193,22 @@ class PayController(QObject):
         self.mnemonicConfirmChanged.emit()
 
     # 地址
-    addr_changed = pyqtSignal()
-    @pyqtProperty(str, notify=addr_changed)
-    def addr(self):
-        return self._addr
+    changed_address_violas = pyqtSignal()
+    @pyqtProperty(str, notify=changed_address_violas)
+    def address_violas(self):
+        return self._address_violas
 
     # libra地址
-    libra_addr_changed = pyqtSignal()
-    @pyqtProperty(str, notify=libra_addr_changed)
-    def libra_addr(self):
-        return self._libra_addr
+    changed_address_libra = pyqtSignal()
+    @pyqtProperty(str, notify=changed_address_libra)
+    def address_libra(self):
+        return self._address_libra
 
     # btc地址
-    btcAddrChanged = pyqtSignal()
-    @pyqtProperty(str, notify=btcAddrChanged)
-    def btcAddr(self):
-        return self._bitAddr
+    changed_address_bitcoin = pyqtSignal()
+    @pyqtProperty(str, notify=changed_address_bitcoin)
+    def address_bitcoin(self):
+        return self._address_bitcoin
         
     # 拷贝
     @pyqtSlot(str)
@@ -249,7 +249,7 @@ class PayController(QObject):
         qrURL = 'noknown'
         token = ''
         if chain == 'bitcoin':
-            qrURL = 'bitcoin' + ':' + self._bitAddr
+            qrURL = 'bitcoin' + ':' + self._address_bitcoin
             token = 'bitcoin-BTC'
         elif chain == 'libra' or chain == 'violas':
             qrURL = chain + '-' + name + ':' + self._addr

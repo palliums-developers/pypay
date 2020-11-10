@@ -17,18 +17,6 @@ Page {
     signal receiveClicked
     signal exchangeClicked
 
-    function getRate(chain, token) {
-        if (chain == "bitcoin") {
-            return server.btcValue
-        } else if (chain == 'libra') {
-            return 0
-        } else if (token == "VLS" || token == "LBR") {
-            return 0
-        } else {
-            return server.violasValue[token]
-        }
-    }
-
     background: Rectangle {
         color: "#F7F7F9"
     }
@@ -232,7 +220,7 @@ Page {
                         anchors.right: parent.right
                     }
                     Text {
-                        text: appSettings.eyeIsOpen ? "≈$" + getRate(chain, show_name) * (chain == 'bitcoin' ? balance / 100000000 : balance / 1000000) : "******"
+                        text: appSettings.eyeIsOpen ? "≈$" + server.get_rate(chain, show_name) * (chain == 'bitcoin' ? balance / 100000000 : balance / 1000000) : "******"
                         color: "#ADADAD"
                         font.pointSize: 12
                         anchors.right: amountText.right
@@ -241,13 +229,12 @@ Page {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        payController.currentTokenEntry = tokenEntry
-                        if (tokenEntry.chain == 'libra') {
-                            payController.requestLBRHistory(tokenEntry.addr, tokenEntry.name, -1, 0, 100)
-                        } else if (tokenEntry.chain == 'violas') {
-                            payController.requestVLSHistory(tokenEntry.addr, tokenEntry.name, -1, 0, 100)
-                        } else {
-                            console.log("invalid")
+                        server.request_token = {
+                            'chain': chain,
+                            'name': name,
+                            'show_icon': show_icon,
+                            'show_name': show_name,
+                            'balance': balance
                         }
                         coinDetailPage.open()
                     }

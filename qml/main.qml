@@ -85,17 +85,6 @@ ApplicationWindow {
         //console.log(payController.datadir)
     }
 
-    Connections {
-        target: payController
-        function onAddr_changed() {
-            server.get_token_blanace()
-            var params = {"address": payController.addr}
-            server.getViolasValueViolas(params)
-            server.getViolasCurrencyPublished(params)
-            server.getViolasBankAccountInfo(params)
-        }
-    }
-
     onClosing: {
         appSettings.localPublished = server.localPublished.join(",")
         payController.shutdown()
@@ -114,11 +103,6 @@ ApplicationWindow {
             server.getViolasCurrencyPublished(params)
             server.getViolasBankAccountInfo(params)
         }
-    }
-
-    WorkerScript {
-        id: worker
-        source: "models/DataLoader.mjs"
     }
 
     ViolasServer {
