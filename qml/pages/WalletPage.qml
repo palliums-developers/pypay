@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import "../controls"
+import "../models"
 
 import PyPay 1.0
 
@@ -25,13 +26,6 @@ Page {
             return 0
         } else {
             return server.violasValue[token]
-        }
-    }
-
-    function getTokenBalance() {
-        if (payController.addr) {
-            var msg = {'action':'getBalances', 'model':tokenModel, 'libraAddr': payController.libra_addr, 'violasAddr': payController.addr};
-            worker.sendMessage(msg);
         }
     }
 
@@ -188,10 +182,6 @@ Page {
             visible: !appSettings.walletIsCreate
         }
 
-        ListModel {
-            id: tokenModel
-        }
-
         // Token list
         ListView {
             id: walletListView
@@ -202,8 +192,8 @@ Page {
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.bottom: parent.bottom
-            model: tokenModel
-            visible: tokenModel.count
+            model: server.token_balance_model
+            visible: server.token_balance_model.count
             spacing: 12
             clip: true
             ScrollIndicator.vertical: ScrollIndicator { }

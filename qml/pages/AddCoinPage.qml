@@ -78,12 +78,15 @@ Control {
                     checkable: true
                     checked: server.localPublished.includes(show_name)
                     onClicked: {
-                        //payController.updateTokenShow(tokenEntry.chain, tokenEntry.name, tokenEntry.isShow)
                         if (server.localPublished.includes(show_name)) {
                             server.localPublished.splice(server.localPublished.indexOf(show_name), 1)
                         } else {
                             server.localPublished.push(show_name)
+                            if (!server.published.includes(show_name)) {
+                                //payController.publish_currency(chain, name)
+                            }
                         }
+                        server.get_token_blanace()
                     }
                 }
             }

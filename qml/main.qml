@@ -88,6 +88,7 @@ ApplicationWindow {
     Connections {
         target: payController
         function onAddr_changed() {
+            server.get_token_blanace()
             var params = {"address": payController.addr}
             server.getViolasValueViolas(params)
             server.getViolasCurrencyPublished(params)
@@ -108,7 +109,7 @@ ApplicationWindow {
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            walletPage.getTokenBalance()
+            server.get_token_blanace()
             var params = { "address": payController.addr }
             server.getViolasCurrencyPublished(params)
             server.getViolasBankAccountInfo(params)

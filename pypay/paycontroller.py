@@ -358,3 +358,14 @@ class PayController(QObject):
     @pyqtProperty(int, notify=violas_bank_max_borrow_amount_changed)
     def violas_bank_max_borrow_amount(self):
         return self._violas_bank_max_borrow_amount
+
+    @pyqtSlot(str, str)
+    def publish_currency(self, chain, currency):
+        print("chain: ", chain)
+        print("currency: ", currency)
+        thread = threading.Thread(target = violas_publish_currency, args=(currency,))
+        thread.start()
+
+def violas_publish_currency(*currency):
+    for cur in currency:
+        print(threading.current_thread().getName() + " " + cur)

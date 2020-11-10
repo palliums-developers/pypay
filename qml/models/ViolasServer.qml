@@ -55,6 +55,7 @@ Item {
 
     property string requestID: ""
 
+    property alias token_balance_model: token_balance_model
     property alias tokenModel: tokenModel
     property alias depositModel: depositModel
     property alias borrowModel: borrowModel
@@ -66,27 +67,28 @@ Item {
     property alias borrowDetailModel: borrowDetailModel
 
     ListModel {
+        id: token_balance_model
+    }
+
+    ListModel {
         id: tokenModel
         ListElement {
-            address: ""
-            module: ""
+            chain: "bitcoin"
             name: "BTC"
-            show_icon: "../icons/bitcoin.svg"
             show_name: "BTC"
+            show_icon: "../icons/bitcoin.svg"
         }
         ListElement {
-            address: ""
-            module: ""
+            chain: "libra"
             name: "LBR"
-            show_icon: "../icons/libra.svg"
             show_name: "LBR"
+            show_icon: "../icons/libra.svg"
         }
         ListElement {
-            address: ""
-            module: ""
+            chain: "violas"
             name: "VLS"
-            show_icon: "../icons/violas.svg"
             show_name: "VLS"
+            show_icon: "../icons/violas.svg"
         }
     }
 
@@ -204,7 +206,7 @@ Item {
             if (resp.code == 2000) {
                 var entries = resp.data.currencies;
                 for (var i=0; i<entries.length; i++) {
-                    if (entries[i].show_name != "VLS") {
+                    if (entries[i].show_name != "VLS" || entries[i].name != "LBR") {
                         var d = entries[i]
                         tokenModel.append(
                             {
@@ -380,5 +382,10 @@ Item {
                 cb()
             }
         });
+    }
+
+    function get_token_blanace() {
+        var msg = {'action':'getBalances', 'model':server.token_balance_model, 'libraAddr': payController.libra_addr, 'violasAddr': payController.addr};
+        worker.sendMessage(msg);
     }
 }
