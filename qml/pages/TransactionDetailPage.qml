@@ -1,10 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.5
+import QtQuick.Layouts 1.15
 
 import "../controls"
-
-import PyPay 1.0
 
 Control {
     padding: 40
@@ -40,11 +38,11 @@ Control {
             anchors.top: titleText.bottom
             anchors.topMargin: 200
             anchors.horizontalCenter: parent.horizontalCenter
-            text: payController.currentBitTransactionEntry.txid
+            //text: payController.currentBitTransactionEntry.txid
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    payController.copy(txidText.text)
+                    server.copy(txidText.text)
                 }
             }
         }
@@ -59,7 +57,7 @@ Control {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    payController.openUrl("https://testnet.violas.io/app/tBTC")
+                    server.open_url("https://testnet.violas.io/app/tBTC")
                 }
             }
         }

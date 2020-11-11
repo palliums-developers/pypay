@@ -1,5 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.5
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
 import "../controls"
 
 Page {
@@ -67,7 +69,7 @@ Page {
             columns: 3
             spacing: 8
             Repeater {
-                model: payController.mnemonicRandom.split(" ")
+                //model: payController.mnemonicRandom.split(" ")
                 Rectangle {
                     id: mneRec
                     border.color: "#3C3848"
@@ -85,7 +87,7 @@ Page {
                         property bool isClicked: false
                         onClicked: {
                             if (!isClicked) {
-                                payController.addMnemonicWord(modelData)
+                                //payController.addMnemonicWord(modelData)
                                 mneRec.border.color = "#FFFFFF"
                                 mneText.color = "#FFFFFF"
                                 isClicked = true
@@ -103,9 +105,9 @@ Page {
         anchors.top: gridRow.top
         columns: 3
         spacing: 8
-        visible: payController.mnemonicConfirm.length != 0
+        //visible: payController.mnemonicConfirm.length != 0
         Repeater {
-            model: payController.mnemonicConfirm.split(" ")
+            //model: payController.mnemonicConfirm.split(" ")
             Rectangle {
                 color: "#504ACB"
                 width: 90

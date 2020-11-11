@@ -1,5 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.5
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
 import "../controls"
 
 Page {
@@ -49,7 +51,7 @@ Page {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 16
         Repeater {
-            model: payController.mnemonic.split(" ")
+            //model: payController.mnemonic.split(" ")
             Rectangle {
                 border.color: "#3C3848"
                 width: 90
@@ -98,7 +100,7 @@ Page {
         width: 200
         height: 40
         onClicked: {
-            payController.genMnemonicRandom()
+            //payController.genMnemonicRandom()
             root.nextBtnClicked()
         }
     }

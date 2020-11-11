@@ -4,8 +4,6 @@ import QtQuick.Layouts 1.15
 
 import "../controls"
 
-import PyPay 1.0
-
 Page {
     id: root
     property bool isShowHeader: false

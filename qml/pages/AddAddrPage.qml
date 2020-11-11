@@ -1,11 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import "../controls"
-import "../models"
-
-import PyPay 1.0
 
 Control {
     id: root
@@ -85,7 +82,7 @@ Control {
             width: 200
             height: 40
             onClicked: {
-                payController.addAddrBook(commentTextField.text, addrTextField.text)
+                //payController.addAddrBook(commentTextField.text, addrTextField.text)
                 goBack()
             }
         }

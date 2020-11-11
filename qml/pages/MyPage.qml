@@ -1,10 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import "../controls"
-
-import PyPay 1.0
 
 Control {
     signal goBack
@@ -42,7 +40,7 @@ Control {
                     color: "#999999"
                 }
                 Text {
-                    text: appSettings.eyeIsOpen ? qsTr("$ ") + payController.totalBalance : "******"
+                    text: appSettings.eyeIsOpen ? qsTr("$ ") + server.value_total : "******"
                     font.pointSize: 18
                 }
             }
@@ -64,7 +62,6 @@ Control {
                     anchors.fill: parent
                     onClicked: {
                         sendClicked()
-                        payController.currentSelectedAddr = ""
                     }
                 }
             }
@@ -131,7 +128,7 @@ Control {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        payController.openUrl("https://violas.io")
+                        server.open_url("https://violas.io")
                     }
                 }
             }
@@ -143,7 +140,7 @@ Control {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        payController.openUrl("https://violas.io")
+                        server.open_url("https://violas.io")
                     }
                 }
             }

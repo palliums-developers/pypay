@@ -5,6 +5,8 @@ import PyPay 1.0
 Item {
     //property var url_violas: "https://api4.violas.io"
     property var url_violas: "http://localhost:5000"
+    property var data_dir: ""
+    property var mnemonic: ""
     property var address_bitcoin: ""
     property var address_libra: ""
     property var address_violas: ""
@@ -164,6 +166,9 @@ Item {
 
     Connections {
         target: payController
+        function onChanged_data_dir() {
+            data_dir = payController.data_dir
+        }
         function onChanged_address_bitcoin() {
             address_bitcoin = payController.address_bitcoin
         }
@@ -487,5 +492,25 @@ Item {
         } else {
             return balance
         }
+    }
+
+    function open_url(url) {
+        payController.open_url(url)
+    }
+
+    function copy_text(text) {
+        payController.copy_text(text)
+    }
+
+    function create_wallet() {
+        payController.create_wallet()
+    }
+
+    function create_wallet_from_mnemonic(mnemonic) {
+        payController.create_wallet_from_mnemonic(mnemonic)
+    }
+    
+    function gen_qr(chain, show_name) {
+        payController.gen_qr(chain, show_name)
     }
 }

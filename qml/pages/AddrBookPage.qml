@@ -1,10 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import "../controls"
-
-import PyPay 1.0
 
 Control {
     padding: 40
@@ -59,7 +57,7 @@ Control {
             anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.bottom: parent.bottom
-            model: payController.addrBookModel
+            //model: payController.addrBookModel
             spacing: 2
             clip: true
             ScrollIndicator.vertical: ScrollIndicator { }
@@ -108,7 +106,7 @@ Control {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        payController.currentSelectedAddr = addrBookEntry.addr
+                        //payController.currentSelectedAddr = addrBookEntry.addr
                         goBack()                       
                     }
                 }

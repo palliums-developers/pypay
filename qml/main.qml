@@ -3,8 +3,8 @@ import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import Qt.labs.settings 1.0
 
-import "controls"
 import "models"
+import "controls"
 import "pages"
 
 ApplicationWindow {
@@ -61,7 +61,7 @@ ApplicationWindow {
 
     Settings {
         id: appSettings
-        fileName: payController.datadir + "/pypay.ini"
+        fileName: server.data_dir + "/pypay.ini"
         property alias x: appWindow.x
         property alias y: appWindow.y
         property alias width: appWindow.width
@@ -75,15 +75,14 @@ ApplicationWindow {
 
     Component.onCompleted: {
         if (appSettings.walletIsCreate) {
-            payController.createWallet()
+            server.create_wallet()
             currencies_show = appSettings.currencies.split(",")
         }
-        //console.log(payController.datadir)
+        console.log(server.data_dir)
     }
 
     onClosing: {
         appSettings.currencies = currencies_show.join(",")
-        payController.shutdown()
     }
 
     ViolasServer {

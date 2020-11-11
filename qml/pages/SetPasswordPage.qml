@@ -1,5 +1,7 @@
-import QtQuick 2.14
+import QtQuick 2.15
 import QtQuick.Controls 2.5
+import QtQuick.Layouts 1.15
+
 import "../controls"
 
 Page {
@@ -78,7 +80,7 @@ Page {
             //    } else {
                 appSettings.password = passwordText.text    // TODO
                 root.createClicked()
-                payController.createWallet()
+                server.create_wallet()
                 appSettings.walletIsCreate = true
             //}
         }
@@ -124,7 +126,7 @@ Page {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    payController.openUrl("https://violas.io")
+                    server.open_url("https://violas.io")
                 }
             }
         }

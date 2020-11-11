@@ -1,5 +1,7 @@
-import QtQuick 2.14
+import QtQuick 2.15
 import QtQuick.Controls 2.5
+import QtQuick.Layouts 1.15
+
 import "../controls"
 
 Page {
@@ -49,7 +51,7 @@ Page {
         }
         Text {
             id: mneText
-            text: root.isShowMne ? payController.mnemonic : "******"
+            text: root.isShowMne ? server.mnemonic : "******"
             anchors.verticalCenter: tMneText.verticalCenter
         }
         ImageButton {
@@ -61,7 +63,7 @@ Page {
             anchors.verticalCenter: tMneText.verticalCenter
             MouseArea {
                 anchors.fill: parent
-                onClicked: payController.copy(mneText.text)
+                onClicked: server.copy(mneText.text)
             }
         }
     }

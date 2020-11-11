@@ -1,5 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.5
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
 import "../controls"
 
 Page {
@@ -92,7 +94,7 @@ Page {
             //} else {
                 appSettings.password = passwordText.text    // TODO
                 root.importClicked()
-                payController.createWalletFromMnemonic(textArea.text)
+                server.create_wallet_from_mnemonic(textArea.text)
                 appSettings.walletIsCreate = true
                 appSettings.mnemonicIsBackup = true
             //}

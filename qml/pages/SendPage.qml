@@ -1,7 +1,8 @@
-import QtQuick 2.14
+import QtQuick 2.15
 import QtQuick.Controls 2.5
+import QtQuick.Layouts 1.15
+
 import "../controls"
-import PyPay 1.0
 
 Page {
     id: root
@@ -10,7 +11,7 @@ Page {
 
     function getBalnace(chain, name) {
         console.log("chain: ", chain, "name: ", name)
-        payController.getCurBalance(chain, name)
+        //payController.getCurBalance(chain, name)
     }
 
     ImageButton {
@@ -47,7 +48,7 @@ Page {
         TextFieldAddr {
             id: addrTextField
             placeholderText: qsTr("输入地址")
-            text: payController.currentSelectedAddr
+            //text: payController.currentSelectedAddr
             onAddrClicked: {
                 addrBookPage.open()
             }
@@ -67,7 +68,7 @@ Page {
     // 余额
     Text {
         id: balanceText
-        text: qsTr("余额: ") + payController.curBalance
+        //text: qsTr("余额: ") + payController.curBalance
         anchors.left: inputColumn.left
         anchors.leftMargin: 10
         anchors.top: inputColumn.bottom
@@ -159,7 +160,7 @@ Page {
                 tipText.visible = true
                 tipTimer.running = true
             } else {
-                payController.sendCoin(addrTextField.text, amountTextField.text,  amountTextField.chain, amountTextField.name)
+                //payController.sendCoin(addrTextField.text, amountTextField.text,  amountTextField.chain, amountTextField.name)
                 backArrowClicked()
             }
         }

@@ -36,6 +36,9 @@ from pypay.historymodel import HistoryEntry, HistoryModel
 class PayController(QObject):
     def __init__(self, parent = None):
         QObject.__init__(self, parent)
+        self._bitThread = QThread(parent=self)
+        self._lbrThread = QThread(parent=self)
+        self._vlsThread = QThread(parent=self)
         self._wallet = None
         self._client = None
         self._libraClient = None
@@ -49,17 +52,13 @@ class PayController(QObject):
         self._address_bitcoin = ''
         self._isImportWallet = False
         self._swap_to_addr = {}
-        self._datadir = self.get_datadir() / "pypay"
-        self.datadirChanged.emit()
+        self._data_dir = self.get_data_dir() / "pypay"
+        self.changed_data_dir.emit()
         self._violas_bank_max_borrow_amount = 0
         try:
-            self._datadir.mkdir(parents = True)
+            self._data_dir.mkdir(parents = True)
         except FileExistsError:
             pass
-
-    @pyqtSlot()
-    def shutdown(self):
-        pass
 
     def __del__(self):
         if self._bitThread is not None:
@@ -82,8 +81,8 @@ class PayController(QObject):
 
     # 钱包
     @pyqtSlot()
-    def createWallet(self):
-        fileName = self._datadir / "pypay.wallet"
+    def create_wallet(self):
+        fileName = self._data_dir / "pypay.wallet"
         isFirstCreateWallet = True
         if os.path.exists(fileName):
             self._wallet = Wallet.recover(fileName)
@@ -109,7 +108,6 @@ class PayController(QObject):
 
         self._wallet.write_recovery(fileName)
 
-        self._bitThread = QThread(parent=self)
         self._bit = Bit(self._bitKey)
         self._bitThread.finished.connect(self._bit.deleteLater)
         self._bit.moveToThread(self._bitThread)
@@ -120,7 +118,6 @@ class PayController(QObject):
         self._libraClient = LibraClient("libra_testnet")
 
         # libra相关操作
-        self._lbrThread = QThread(parent=self)
         self._lbr = Libra(self._libraClient, self._wallet.accounts)
         self._lbrThread.finished.connect(self._lbr.deleteLater)
         self.requestActiveLibraAccount.connect(self._lbr.requestActiveAccount)  # active account
@@ -129,7 +126,6 @@ class PayController(QObject):
         self._lbrThread.start()
 
         # violas相关操作
-        self._vlsThread = QThread(parent=self)
         self._vls = Violas(self._client, self._wallet.accounts)
         self._vlsThread.finished.connect(self._vls.deleteLater)
         self.requestActiveViolasAccount.connect(self._vls.requestActiveAccount) # active account
@@ -144,12 +140,12 @@ class PayController(QObject):
             self.requestActiveViolasAccount.emit()
 
     @pyqtSlot(str)
-    def createWalletFromMnemonic(self, mnemonic):
+    def create_wallet_from_mnemonic(self, mnemonic):
         self._isImportWallet = True
-        fileName = self._datadir / "pypay.wallet"
+        fileName = self._data_dir / "pypay.wallet"
         with open(fileName, 'w') as f:
             f.write(mnemonic + ';2')
-        self.createWallet()
+        self.create_wallet()
 
     # 助记词
     mnemonic_changed = pyqtSignal()
@@ -212,13 +208,13 @@ class PayController(QObject):
         
     # 拷贝
     @pyqtSlot(str)
-    def copy(self, str):
+    def copy_text(self, str):
         cb = QGuiApplication.clipboard()
         cb.setText(str)
 
     # 打开网页
     @pyqtSlot(str)
-    def openUrl(self, url):
+    def open_url(self, url):
         QDesktopServices.openUrl(QUrl(url))
 
     # 发送
@@ -239,7 +235,7 @@ class PayController(QObject):
 
     # 二维码
     @pyqtSlot(str, str)
-    def genQR(self, chain, name):
+    def gen_qr(self, chain, name):
         qr = qrcode.QRCode(
                 version = 7,
                 error_correction = qrcode.constants.ERROR_CORRECT_L,
@@ -258,10 +254,10 @@ class PayController(QObject):
         qr.make(fit=True)
 
         img = qr.make_image(fill_color="black", back_color="white")
-        imgFile = str(self._datadir) + '/qr_{}.png'
+        imgFile = str(self._data_dir) + '/qr_{}.png'
         img.save(imgFile.format(token))
 
-    def get_datadir(self) -> pathlib.Path:
+    def get_data_dir(self) -> pathlib.Path:
         """
         Returns a parent directory path
         where persistent application data can be stored.
@@ -280,10 +276,10 @@ class PayController(QObject):
         elif sys.platform == "darwin":
             return home / "Library/Application Support"
 
-    datadirChanged = pyqtSignal()
-    @pyqtProperty(str, notify=datadirChanged)
-    def datadir(self):
-        return str(self._datadir)
+    changed_data_dir = pyqtSignal()
+    @pyqtProperty(str, notify=changed_data_dir)
+    def data_dir(self):
+        return str(self._data_dir)
 
     @pyqtSlot(str, str, float, str, str, float)
     def swap_from_violas_or_libra(self, chain_name_in, coin_name_in, coin_amount_in, chain_name_out, coin_name_out, coin_amount_out):

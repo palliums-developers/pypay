@@ -3,9 +3,6 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import "../controls"
-import "../pages"
-
-import PyPay 1.0
 
 PyPayPage {
     id: root
@@ -14,9 +11,9 @@ PyPayPage {
 
     Component.onCompleted: {
         startBusy()
-        var params = { "id": server.id_requested_bank, "address": payController.addr }
+        var params = { "id": server.id_requested_bank, "address": server.address_violas }
         server.get_borrow_bank(params, function() { 
-            payController.request_violas_bank_max_borrow_amount(server.borrow_bank.token_module)
+            //payController.request_violas_bank_max_borrow_amount(server.borrow_bank.token_module)
             stopBusy()
         })
     }
@@ -83,7 +80,7 @@ PyPayPage {
                         source: "../icons/availablebank.svg"
                     }
                     Text {
-                        text: qsTr("avaliable borrow: ") + (payController.violas_bank_max_borrow_amount / 1000000).toFixed(6)
+                        //text: qsTr("avaliable borrow: ") + (payController.violas_bank_max_borrow_amount / 1000000).toFixed(6)
                         font.pointSize: 12
                         color: "#5C5C5C"
                         anchors.verticalCenter: avaImage.verticalCenter
@@ -211,7 +208,7 @@ PyPayPage {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        payController.openUrl("https://violas.io")
+                        server.openUrl("https://violas.io")
                     }
                 }
             }

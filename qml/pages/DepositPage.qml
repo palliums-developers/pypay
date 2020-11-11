@@ -3,9 +3,6 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import "../controls"
-import "../pages"
-
-import PyPay 1.0
 
 PyPayPage {
     id: root
@@ -15,7 +12,7 @@ PyPayPage {
 
     Component.onCompleted: {
         startBusy()
-        var params = { "id": server.id_requested_bank, "address": payController.addr }
+        var params = { "id": server.id_requested_bank, "address": server.address_violas }
         server.get_deposit_bank(params, function() { 
             for (var i = 0; i < server.balances_violas.length; i++) {
                 if (server.deposit_bank.token_show_name == server.balances_violas[i].show_name) {

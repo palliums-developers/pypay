@@ -4,8 +4,6 @@ import QtQuick.Layouts 1.15
 
 import "../controls"
 
-import PyPay 1.0
-
 Control {
     id: root
     padding: 8
@@ -110,7 +108,7 @@ Control {
                             anchors.verticalCenter: addrText.verticalCenter
                             MouseArea {
                                 anchors.fill: parent
-                                onClicked: payController.copy(addrText.text)
+                                onClicked: server.copy_text(addrText.text)
                             }
                         }
                     }

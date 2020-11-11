@@ -3,9 +3,6 @@ import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.15
 
 import "../controls"
-import "../pages"
-
-import PyPay 1.0
 
 PyPayPage {
     id: root
@@ -14,7 +11,7 @@ PyPayPage {
 
     Component.onCompleted: {
         startBusy()
-        var params = { "address": payController.addr, "offset": 0, "limit": 10 }
+        var params = { "address": server.address_violas, "offset": 0, "limit": 10 }
         server.get_orders_borrow(params, function() {
             var count =  server.model_orders_borrow.count == 0 ? 0 : server.model_orders_borrow.get(0).total_count
             var numOfPerPage = currentBorrowSwitchPage.numOfPerPage
@@ -80,7 +77,7 @@ PyPayPage {
                 onToggled: {
                     if (server.model_details_order_borrow.count == 0) {
                         startBusy()
-                        var params = { "address": payController.addr, "offset": 0, "limit": 10 }
+                        var params = { "address": server.address_violas, "offset": 0, "limit": 10 }
                         server.get_details_order_borrow(params, function() {
                             var count =  server.model_details_order_borrow.count == 0 ? 0 : server.model_details_order_borrow.get(0).total_count
                             var numOfPerPage = borrowDetailSwitchPage.numOfPerPage
@@ -422,7 +419,7 @@ PyPayPage {
             visible: tabBar.currentIndex == 0 && listModel.count != 0
             onPageClicked: {
                 startBusy()
-                var params = { "address": payController.addr, "offset": index * numOfPerPage, "limit": numOfPerPage }
+                var params = { "address": server.address_violas, "offset": index * numOfPerPage, "limit": numOfPerPage }
                 server.get_orders_borrow(params, function() {
                     var count =  server.model_orders_borrow.count == 0 ? 0 : server.model_orders_borrow.get(0).total_count
                     listModel.clear()
@@ -442,7 +439,7 @@ PyPayPage {
             visible: tabBar.currentIndex == 1 && listModel.count != 0
             onPageClicked: {
                 startBusy()
-                var params = { "address": payController.addr, "offset": index * numOfPerPage, "limit": numOfPerPage }
+                var params = { "address": server.address_violas, "offset": index * numOfPerPage, "limit": numOfPerPage }
                 server.get_details_order_borrow(params, function() {
                     var count =  server.model_details_order_borrow.count == 0 ? 0 : server.model_details_order_borrow.get(0).total_count;
                     listModel.clear()

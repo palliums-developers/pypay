@@ -1,5 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.5
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
 import "../controls"
 
 Page {
@@ -8,7 +10,7 @@ Page {
     property string chain: "bitcoin"
 
     function getBalance(chain, name) {
-        payController.getCurBalance(chain, name)
+        //payController.getCurBalance(chain, name)
     }
 
     ImageButton {
@@ -52,7 +54,7 @@ Page {
         }
         Text {
             anchors.verticalCenter: tipImage.verticalCenter
-            text: qsTr("可用余额: ") + payController.curBalance
+            //text: qsTr("可用余额: ") + payController.curBalance
             font.pointSize: 12
             color: "#5C5C5C"
         }

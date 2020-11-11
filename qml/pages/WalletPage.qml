@@ -1,10 +1,8 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick.Controls 2.5
+import QtQuick.Layouts 1.15
 
 import "../controls"
-import "../models"
-
-import PyPay 1.0
 
 Page {
     id: root
@@ -77,7 +75,7 @@ Page {
                 anchors.fill: parent
                 onClicked: {
                     sendClicked()
-                    payController.currentSelectedAddr = ""
+                    //payController.currentSelectedAddr = ""
                 }
             }
         }

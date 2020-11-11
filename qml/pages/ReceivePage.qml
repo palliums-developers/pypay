@@ -1,5 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.5
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
 import "../controls"
 
 Page {
@@ -8,7 +10,7 @@ Page {
     property string chain: "bitcoin"
 
     function getImageSource() {
-        var src = payController.datadir + "/qr_%1-%2.png"
+        var src = server.data_dir + "/qr_%1-%2.png"
         return src.arg(tokenComboBox.chain).arg(tokenComboBox.name)
     }
 
@@ -45,12 +47,12 @@ Page {
         width: 100
         height: 33
         onTokenSelected: {
-            payController.genQR(chain, name)
+            server.gen_qr(chain, name)
             qrImage.source = getImageSource()
             root.chain = chain
         }
         Component.onCompleted: {
-            payController.genQR(chain, name)
+            server.gen_qr(chain, name)
             qrImage.source = getImageSource()
             root.chain = chain
         }
@@ -74,7 +76,7 @@ Page {
         spacing: 16
         Text {
             id: addrText
-            text: root.chain == "bitcoin" ? payController.btcAddr : payController.addr
+            text: root.chain == "bitcoin" ? server.address_bitcoin : server.address_violas      // TODO
             color: "#382F44"
             font.weight: Font.Medium
             font.pointSize: 18
@@ -87,7 +89,7 @@ Page {
             height: 23
             MouseArea {
                 anchors.fill: parent
-                onClicked: payController.copy(payController.addr)
+                onClicked: server.copy(addrText.text)
             }
         }
     }

@@ -1,9 +1,11 @@
+#! python3
+
 import sys
 import os
 
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PyQt5.QtGui import QGuiApplication, QIcon
-from PyQt5.QtCore import QUrl, Qt
+from PyQt5.QtCore import QUrl, Qt, QCoreApplication
 
 from pypay.paycontroller import PayController
 from pypay.tokenmodel import TokenEntry, TokenModel
@@ -23,7 +25,12 @@ application_path = (
 if __name__ == '__main__':
     print("starting pypay ...")
 
-    QGuiApplication.setAttribute(Qt.AA_EnableHighDpiScaling);
+    QCoreApplication.setApplicationName("PyPay")
+    QCoreApplication.setOrganizationName("Palliums")
+    QCoreApplication.setOrganizationDomain("palliums.org")
+    QCoreApplication.setApplicationVersion("0.0.1")
+
+    QGuiApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 
     app = QGuiApplication(sys.argv)
 
