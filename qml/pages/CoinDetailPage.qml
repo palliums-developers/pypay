@@ -55,7 +55,7 @@ Control {
                     Row {
                         spacing: 8
                         MyImage {
-                            source: server.request_token.show_icon
+                            source: server.token_requested_wallet.show_icon
                             width: height
                             height: 14
                             radius: 0.5 * width
@@ -63,20 +63,20 @@ Control {
                         }
                         Text {
                             id: nameText
-                            text: server.request_token.show_name
+                            text: server.token_requested_wallet.show_name
                             color: "#999999"
                             font.weight: Font.Normal
                             font.pointSize: 12
                         }
                     }
                     Text {
-                        text: appSettings.eyeIsOpen ? server.format_balance(server.request_token.balance) : "******"
+                        text: appSettings.eyeIsOpen ? server.format_balance(server.token_requested_wallet.balance) : "******"
                         color: "#333333"
                         font.weight: Font.Bold
                         font.pointSize: 18
                     }
                     Text {
-                        text: appSettings.eyeIsOpen ? "≈$" + server.format_balance(server.request_token.balance) * server.format_balance(server.reqeust_token.chain, server.request_token.name) : "******"
+                        text: appSettings.eyeIsOpen ? "≈$" + server.format_balance(server.token_requested_wallet.balance) * server.format_balance(server.reqeust_token.chain, server.token_requested_wallet.name) : "******"
                         color: "#999999"
                         font.weight: Font.Normal
                         font.pointSize: 12
@@ -86,11 +86,11 @@ Control {
                         Text {
                             id: addrText
                             text: {
-                                if (server.request_token.chain == 'bitcoin')
+                                if (server.token_requested_wallet.chain == 'bitcoin')
                                     return server.address_bitcoin
-                                else if (server.request_token_chain == 'libra')
+                                else if (server.token_requested_wallet_chain == 'libra')
                                     return server.address_libra
-                                else if (server.request_token_chain == 'violas')
+                                else if (server.token_requested_wallet_chain == 'violas')
                                     return server.address_violas
                                 else
                                     return 'noknown'

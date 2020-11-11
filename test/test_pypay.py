@@ -57,7 +57,7 @@ def violas_balance():
                 "address": ""
             },
             {
-                "VLSUSD": 1000,
+                "VLSUSD": 3000,
                 "name": "VLSUSD",
                 "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
                 "show_name": "VLSUSD",

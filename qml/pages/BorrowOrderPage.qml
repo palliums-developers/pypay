@@ -15,8 +15,8 @@ PyPayPage {
     Component.onCompleted: {
         startBusy()
         var params = { "address": payController.addr, "offset": 0, "limit": 10 }
-        server.getViolasBankBorrowOrders(params, function() {
-            var count =  server.currentBorrowModel.count == 0 ? 0 : server.currentBorrowModel.get(0).total_count
+        server.get_orders_borrow(params, function() {
+            var count =  server.model_orders_borrow.count == 0 ? 0 : server.model_orders_borrow.get(0).total_count
             var numOfPerPage = currentBorrowSwitchPage.numOfPerPage
             for (var i = 0; i <  count / numOfPerPage; i++) {
                 currentBorrowSwitchPage.listModel.append({index: i})
@@ -58,7 +58,7 @@ PyPayPage {
                     color: "#FFFFFF"
                 }
                 onToggled: {
-                    if (server.currentBorrowModel.count == 0) {
+                    if (server.model_orders_borrow.count == 0) {
                     }
                 }
             }
@@ -78,11 +78,11 @@ PyPayPage {
                     color: "#FFFFFF"
                 }
                 onToggled: {
-                    if (server.borrowDetailModel.count == 0) {
+                    if (server.model_details_order_borrow.count == 0) {
                         startBusy()
                         var params = { "address": payController.addr, "offset": 0, "limit": 10 }
-                        server.getViolasBankBorrowOrderList(params, function() {
-                            var count =  server.borrowDetailModel.count == 0 ? 0 : server.borrowDetailModel.get(0).total_count
+                        server.get_details_order_borrow(params, function() {
+                            var count =  server.model_details_order_borrow.count == 0 ? 0 : server.model_details_order_borrow.get(0).total_count
                             var numOfPerPage = borrowDetailSwitchPage.numOfPerPage
                             for (var i = 0; i <  count / numOfPerPage; i++) {
                                 borrowDetailSwitchPage.listModel.append({index: i})
@@ -115,7 +115,7 @@ PyPayPage {
 
             ListView {
                 id: currentBorrowView
-                model: server.currentBorrowModel
+                model: server.model_orders_borrow
                 spacing: 12
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
@@ -257,7 +257,7 @@ PyPayPage {
 
             ListView {
                 id: borrowDetailView
-                model: server.borrowDetailModel
+                model: server.model_details_order_borrow
                 spacing: 12
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
@@ -423,8 +423,8 @@ PyPayPage {
             onPageClicked: {
                 startBusy()
                 var params = { "address": payController.addr, "offset": index * numOfPerPage, "limit": numOfPerPage }
-                server.getViolasBankBorrowOrders(params, function() {
-                    var count =  server.currentBorrowModel.count == 0 ? 0 : server.currentBorrowModel.get(0).total_count
+                server.get_orders_borrow(params, function() {
+                    var count =  server.model_orders_borrow.count == 0 ? 0 : server.model_orders_borrow.get(0).total_count
                     listModel.clear()
                     for (var i = 0; i <  count / numOfPerPage; i++) {
                         listModel.append({index: i})
@@ -443,8 +443,8 @@ PyPayPage {
             onPageClicked: {
                 startBusy()
                 var params = { "address": payController.addr, "offset": index * numOfPerPage, "limit": numOfPerPage }
-                server.getViolasBankBorrowOrderList(params, function() {
-                    var count =  server.borrowDetailModel.count == 0 ? 0 : server.borrowDetailModel.get(0).total_count;
+                server.get_details_order_borrow(params, function() {
+                    var count =  server.model_details_order_borrow.count == 0 ? 0 : server.model_details_order_borrow.get(0).total_count;
                     listModel.clear()
                     for (var i = listModel.count; i <  count / numOfPerPage; i++) {
                         listModel.append({index: i})
@@ -455,7 +455,7 @@ PyPayPage {
         }
 
         Column {
-            visible: tabBar.currentIndex == 0 ? server.currentBorrowModel.count == 0 : server.borrowDetailModel.count == 0
+            visible: tabBar.currentIndex == 0 ? server.model_orders_borrow.count == 0 : server.model_details_order_borrow.count == 0
             anchors.centerIn: parent
             spacing: 8
             Image {

@@ -1,26 +1,28 @@
 import QtQuick 2.15
 
-import "../models/API.js" as API
-
 import PyPay 1.0
 
 Item {
-    property string address_bitcoin: ""
-    property string address_libra: ""
-    property string address_violas: ""
-    property var btcValue: 0
-    property var violasValue: {}
+    //property var url_violas: "https://api4.violas.io"
+    property var url_violas: "http://localhost:5000"
+    property var address_bitcoin: ""
+    property var address_libra: ""
+    property var address_violas: ""
+    property var balance_bitcoin: 0 // BTC
+    property var balances_libra: []
+    property var balances_violas: []
+    property var value_bitcoin: 0
+    property var values_violas: {}
+    property var value_total: 0
     property var rates: {}
-    property var balances: []
-    property var published: []
-    property var localPublished: ["BTC","LBR","VLS"]
-    property var bankAccountInfo: {
+    property var currencies_published: []
+    property var account_bank: {
         "amount": 0.0,
         "borrow": 0.0,
         "total": 0.0,
         "yesterday": 0.0
     }
-    property var bankDepositInfo: {
+    property var deposit_bank: {
         "id": "",
         "intor": [],
         "logo": "",
@@ -38,7 +40,7 @@ Item {
         "token_name": "",
         "token_show_name": ""
     }
-    property var bankBorrowInfo: {
+    property var borrow_bank: {
         "id": "",
         "intor": [],
         "logo": "",
@@ -55,54 +57,30 @@ Item {
         "token_name": "",
         "token_show_name": ""
     }
-
-    property string requestID: ""
-    property var request_token: {
+    property string id_requested_bank: ""
+    property var token_requested_wallet: {
         'chain': 'bitcoin',
         'name': 'BTC',
         'show_icon': "../icons/bitcoin.svg",
         'show_name': 'BTC',
         'balance': 0
     }
-
-    property alias token_balance_model: token_balance_model
-    property alias tokenModel: tokenModel
-    property alias depositModel: depositModel
-    property alias borrowModel: borrowModel
-    property alias intorModel: intorModel
-    property alias questionModel: questionModel
-    property alias currentDepositModel: currentDepositModel
-    property alias depositDetailModel: depositDetailModel
-    property alias currentBorrowModel: currentBorrowModel
-    property alias borrowDetailModel: borrowDetailModel
-
-    Timer {
-        id: timer
-        interval: 5000
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            if (address_violas.length != 0) {
-                get_token_blanace()
-                var params = { "address": address_violas }
-                getViolasCurrencyPublished(params)
-                getViolasBankAccountInfo(params)
-            }
-        }
-    }
-
-    WorkerScript {
-        id: worker
-        source: "DataLoader.mjs"
-    }
+    property alias model_tokens: model_tokens
+    property alias model_currencies: model_currencies
+    property alias model_products_deposit: model_products_deposit
+    property alias model_products_borrow: model_products_borrow
+    property alias model_intors: model_intors
+    property alias model_questions: model_questions
+    property alias model_orders_deposit: model_orders_deposit
+    property alias model_details_order_deposit: model_details_order_deposit
+    property alias model_orders_borrow: model_orders_borrow
+    property alias model_details_order_borrow: model_details_order_borrow
 
     ListModel {
-        id: token_balance_model
+        id: model_tokens
     }
-
     ListModel {
-        id: tokenModel
+        id: model_currencies
         ListElement {
             chain: "bitcoin"
             name: "BTC"
@@ -122,37 +100,66 @@ Item {
             show_icon: "../icons/violas.svg"
         }
     }
-
     ListModel {
-        id: depositModel
+        id: model_products_deposit
+    }
+    ListModel {
+        id: model_products_borrow
+    }
+    ListModel {
+        id: model_intors
+    }
+    ListModel {
+        id: model_questions
+    }
+    ListModel {
+        id: model_orders_deposit
+    }
+    ListModel {
+        id: model_details_order_deposit
+    }
+    ListModel {
+        id: model_orders_borrow
+    }
+    ListModel {
+        id: model_details_order_borrow
     }
 
-    ListModel {
-        id: borrowModel
+    Timer {
+        id: timer
+        interval: 5000
+        running: false
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            var params_libra = { "address": address_libra }
+            var params_violas = { "address": address_violas }
+            get_currencies_published(params_violas)
+            get_balance_libra(params_libra)
+            get_balance_violas(params_violas, function() {
+                update_model_tokens()
+            })
+            get_account_bank(params_violas)
+        }
     }
 
-    ListModel {
-        id: intorModel
-    }
-
-    ListModel {
-        id: questionModel
-    }
-
-    ListModel {
-        id: currentDepositModel
-    }
-
-    ListModel {
-        id: depositDetailModel
-    }
-
-    ListModel {
-        id: currentBorrowModel
-    }
-
-    ListModel {
-        id: borrowDetailModel
+    WorkerScript {
+        id: worker
+        source: "ViolasWorkerScript.mjs"
+        onMessage: {
+            if (messageObject.action == 'update_model_tokens') {
+                var value_tmp = 0
+                for (var i = 0; i < model_tokens.count; i++) {
+                    var chain = model_tokens.get(i).chain
+                    var show_name = model_tokens.get(i).show_name
+                    var balance = model_tokens.get(i).balance
+                    if (appWindow.currencies_show.includes(show_name)) {
+                        value_tmp += get_rate(chain, show_name) * format_balance(chain, balance)
+                    }
+                }
+                value_total = value_tmp
+            }
+        }
     }
 
     Connections {
@@ -162,86 +169,116 @@ Item {
         }
         function onChanged_address_libra() {
             address_libra = payController.address_libra
-            if (address_violas.length != 0 && address_libra.length != 0) {
-                get_token_blanace()
-            }
+            timer.running = true
         }
         function onChanged_address_violas() {
             address_violas = payController.address_violas
-            if (address_violas.length != 0 && address_libra.length != 0) {
-                get_token_blanace()
-            }
-            var params = {"address": address_violas}
-            getViolasValueViolas(params)
-            getViolasCurrencyPublished(params)
-            getViolasBankAccountInfo(params)
+            var params = { "address": address_violas }
+            get_value_violas(params)
         }
     }
 
-    //function getRateBaseUSD() {
-    //    API.request('GET', 'https://api.exchangeratesapi.io/latest?base=USD', null, function(resp) {
-    //            rates = resp.rates;
-    //        });
-    //}
+    Component.onCompleted: {
+        get_value_bitcoin()
+        get_currencies_libra()
+        get_currencies_violas()
+        get_products_deposit()
+        get_products_borrow()
+    }
 
-    function getViolasValueBTC() {
-        API.request('GET', API.violasURL + '/1.0/violas/value/btc', null, 
+    function formatParams(params) {
+        return "?" + Object.keys(params).map(function(key) {
+            return key + "=" + params[key]
+        }).join("&")
+    }
+
+    function request(verb, url, obj, cb, async=true) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if(xhr.readyState === XMLHttpRequest.DONE) {
+                if(cb) {
+                    try {
+                        print('request: ' + verb + ' ' + url)
+                        if (xhr.status == 200) {
+                            //print(xhr.responseText.toString())
+                            var res = JSON.parse(xhr.responseText.toString())
+                            cb(res);
+                        } else {
+                            print(xhr.statusText)
+                        }
+                    } catch(err) {
+                        print(url + ' : ' + err.message)
+                    }
+                }
+            }
+        }
+        xhr.open(verb, url, async);
+        xhr.timeout = 3000
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('Accept', 'application/json');
+        var data = obj?JSON.stringify(obj):''
+        xhr.send(data)
+    }
+
+    function get_rates() {
+        request('GET', 'https://api.exchangeratesapi.io/latest?base=USD', null, function(resp) {
+            rates = resp.rates;
+        });
+    }
+
+    function get_value_bitcoin() {
+        request('GET', url_violas + '/1.0/violas/value/btc', null, 
             function(resp) {
                 if (resp.code == 2000) {
-                    btcValue = resp.data["BTC"]
+                    value_bitcoin = resp.data["BTC"]
                 }
             });
     }
 
-    function getViolasValueViolas(params) {
-        API.request('GET', API.violasURL + '/1.0/violas/value/violas' + API.formatParams(params), null, 
+    function get_value_violas(params) {
+        request('GET', url_violas + '/1.0/violas/value/violas' + formatParams(params), null, 
             function(resp) {
                 if (resp.code == 2000) {
-                    violasValue = resp.data
+                    values_violas = resp.data
                 }
             });
     }
 
-    function getLibraBalance(params, cb) {
-        API.request('GET', API.violasURL + '/1.0/libra/balance' + API.formatParams(params), null, 
-            function(resp) {
-                if (resp.code == 2000) {
-                    balances = resp.data["balances"]
-                    if (cb) {
-                        cb()
-                    }
-                }
-        });
-    }
-
-    function getViolasBalance(params, cb) {
-        API.request('GET', API.violasURL + '/1.0/violas/balance' + API.formatParams(params), null, 
-            function(resp) {
-                if (resp.code == 2000) {
-                    balances = resp.data["balances"]
-                    if (cb) {
-                        cb()
-                    }
-                }
-        });
-    }
-
-    function getViolasCurrencyPublished(params) {
-        API.request('GET', API.violasURL + '/1.0/violas/currency/published' + API.formatParams(params), null, function(resp) {
+    function get_balance_libra(params) {
+        request('GET', url_violas + '/1.0/libra/balance' + formatParams(params), null, function(resp) {
             if (resp.code == 2000) {
-                published = resp.data.published
+                balances_libra = resp.data["balances"]
             }
         });
     }
 
-    function getLibraCurrency() {
-        API.request('GET', API.violasURL + '/1.0/libra/currency', null, function(resp) {
+    function get_balance_violas(params, cb) {
+        request('GET', url_violas + '/1.0/violas/balance' + formatParams(params), null, function(resp) {
+            if (resp.code == 2000) {
+                balances_violas = resp.data["balances"]
+            }
+            if (cb) {
+                cb()
+            }
+        });
+    }
+
+    function get_currencies_published(params) {
+        request('GET', url_violas + '/1.0/violas/currency/published' + formatParams(params), null, function(resp) {
+            if (resp.code == 2000) {
+                currencies_published = resp.data.published
+            }
+        });
+    }
+
+    function get_currencies_libra() {
+        request('GET', url_violas + '/1.0/libra/currency', null, function(resp) {
             if (resp.code == 2000) {
                 var entries = resp.data.currencies;
                 for (var i=0; i<entries.length; i++) {
                     if (entries[i].show_name != "LBR" && entries[i].name != "Coin1" && entries[i].name != "Coin2") {
                         var d = entries[i]
-                        tokenModel.append(
+                        model_currencies.append(
                             {
                                 "chain": "libra",
                                 "name": d.name,
@@ -255,14 +292,14 @@ Item {
         });
     }
 
-    function getViolasCurrency() {
-        API.request('GET', API.violasURL + '/1.0/violas/currency', null, function(resp) {
+    function get_currencies_violas() {
+        request('GET', url_violas + '/1.0/violas/currency', null, function(resp) {
             if (resp.code == 2000) {
                 var entries = resp.data.currencies;
                 for (var i=0; i<entries.length; i++) {
                     if (entries[i].show_name != "VLS" || entries[i].name != "LBR") {
                         var d = entries[i]
-                        tokenModel.append(
+                        model_currencies.append(
                             {
                                 "chain": "violas",
                                 "name": d.name,
@@ -276,87 +313,72 @@ Item {
         });
     }
 
-
-    // Bank
-
-    function getViolasBankAccountInfo(params, cb) {
-        API.request('GET', API.violasURL + '/1.0/violas/bank/account/info' + API.formatParams(params), null, function(resp) {
-                bankAccountInfo = resp.data;
-                if (cb) {
-                    cb()
-                }
-            });
+    function get_account_bank(params) {
+        request('GET', url_violas + '/1.0/violas/bank/account/info' + formatParams(params), null, function(resp) {
+            account_bank = resp.data;
+        });
     }
 
-    function getViolasBankProductDeposit(cb) {
-        API.request('GET', API.violasURL + '/1.0/violas/bank/product/deposit', null, function(resp) {
-                var entries = resp.data;
-                depositModel.clear()
-                for (var i=0; i<entries.length; i++) {
-                    depositModel.append(entries[i])
-                }
-                if (cb) {
-                    cb()
-                }
-            });
+    function get_products_deposit() {
+        request('GET', url_violas + '/1.0/violas/bank/product/deposit', null, function(resp) {
+            var entries = resp.data;
+            model_products_deposit.clear()
+            for (var i=0; i<entries.length; i++) {
+                model_products_deposit.append(entries[i])
+            }
+        });
     }
 
-    function getViolasBankProductBorrow(cb) {
-        API.request('GET', API.violasURL + '/1.0/violas/bank/product/borrow', null, function(resp) {
-                var entries = resp.data;
-                borrowModel.clear()
-                for (var i=0; i<entries.length; i++) {
-                    borrowModel.append(entries[i])
-                }
-                if (cb) {
-                    cb()
-                }
-            });
+    function get_products_borrow() {
+        request('GET', url_violas + '/1.0/violas/bank/product/borrow', null, function(resp) {
+            var entries = resp.data;
+            model_products_borrow.clear()
+            for (var i=0; i<entries.length; i++) {
+                model_products_borrow.append(entries[i])
+            }
+       });
     }
 
-    function getViolasBankDepositInfo(params, cb) {
-        API.request('GET', API.violasURL + '/1.0/violas/bank/deposit/info' + API.formatParams(params),
-            null, function(resp) {
-                bankDepositInfo = resp.data;
-                intorModel.clear()
-                for (var i=0; i<resp.data.intor.length; i++) {
-                    intorModel.append({"title":resp.data.intor[i].title, "content":resp.data.intor[i].text})
-                }
-                questionModel.clear()
-                for (var i=0; i<resp.data.question.length; i++) {
-                    questionModel.append({"title":resp.data.question[i].title, "content":resp.data.question[i].text})
-                }
-                if (cb) {
-                    cb()
-                }
-            });
+    function get_deposit_bank(params, cb) {
+        request('GET', url_violas + '/1.0/violas/bank/deposit/info' + formatParams(params), null, function(resp) {
+            deposit_bank = resp.data;
+            model_intors.clear()
+            for (var i=0; i<resp.data.intor.length; i++) {
+                model_intors.append({"title":resp.data.intor[i].title, "content":resp.data.intor[i].text})
+            }
+            model_questions.clear()
+            for (var i=0; i<resp.data.question.length; i++) {
+                model_questions.append({"title":resp.data.question[i].title, "content":resp.data.question[i].text})
+            }
+            if (cb) {
+                cb()
+            }
+        });
     }
 
-    function getViolasBankBorrowInfo(params, cb) {
-        API.request('GET', API.violasURL + '/1.0/violas/bank/borrow/info' + API.formatParams(params),
-            null, function(resp) {
-                bankBorrowInfo = resp.data;
-                intorModel.clear()
-                for (var i=0; i<resp.data.intor.length; i++) {
-                    intorModel.append({"title":resp.data.intor[i].title, "content":resp.data.intor[i].text})
-                }
-                questionModel.clear()
-                for (var i=0; i<resp.data.question.length; i++) {
-                    questionModel.append({"title":resp.data.question[i].title, "content":resp.data.question[i].text})
-                }
-                if (cb) {
-                    cb()
-                }
-            });
+    function get_borrow_bank(params, cb) {
+        request('GET', url_violas + '/1.0/violas/bank/borrow/info' + formatParams(params), null, function(resp) {
+            borrow_bank = resp.data;
+            model_intors.clear()
+            for (var i=0; i<resp.data.intor.length; i++) {
+                model_intors.append({"title":resp.data.intor[i].title, "content":resp.data.intor[i].text})
+            }
+            model_questions.clear()
+            for (var i=0; i<resp.data.question.length; i++) {
+                model_questions.append({"title":resp.data.question[i].title, "content":resp.data.question[i].text})
+            }
+            if (cb) {
+                cb()
+            }
+        });
     }
 
-    function getViolasBankDepositOrders(params, cb) {
-        API.request('GET', API.violasURL + '/1.0/violas/bank/deposit/orders' + API.formatParams(params), null,
-            function(resp) {
-            currentDepositModel.clear()
+    function get_orders_deposit(params, cb) {
+        request('GET', url_violas + '/1.0/violas/bank/deposit/orders' + formatParams(params), null, function(resp) {
+            model_orders_deposit.clear()
             for (var i=0; i<resp.data.length;i++) {
                 var d = resp.data[i]
-                currentDepositModel.append({
+                model_orders_deposit.append({
                     "currency": d.currency,
                     "earnings": d.earnings,
                     "orderId": d.id,
@@ -373,13 +395,13 @@ Item {
         });
     }
 
-    function getViolasBankDepositOrderList(params, cb) {
-        API.request('GET', API.violasURL + '/1.0/violas/bank/deposit/order/list' + API.formatParams(params), null, 
+    function get_details_order_deposit(params, cb) {
+        request('GET', url_violas + '/1.0/violas/bank/deposit/order/list' + formatParams(params), null, 
             function(resp) {
-            depositDetailModel.clear()
+            model_details_order_deposit.clear()
             for (var i=0; i<resp.data.length;i++) {
                 var d = resp.data[i]
-                depositDetailModel.append({
+                model_details_order_deposit.append({
                     'currency': d.currency,
                     'date': d.date,
                     'orderId': d.id,
@@ -395,13 +417,12 @@ Item {
         });
     }
 
-    function getViolasBankBorrowOrders(params, cb) {
-        API.request('GET', API.violasURL + '/1.0/violas/bank/borrow/orders' + API.formatParams(params), null, 
-            function(resp) {
-            currentBorrowModel.clear()
+    function get_orders_borrow(params, cb) {
+        request('GET', url_violas + '/1.0/violas/bank/borrow/orders' + formatParams(params), null, function(resp) {
+            model_orders_borrow.clear()
             for (var i=0; i<resp.data.length;i++) {
                 var d = resp.data[i]
-                currentBorrowModel.append({
+                model_orders_borrow.append({
                     'amount': d.amount,
                     'orderId': d.id,
                     'logo': d.logo,
@@ -416,13 +437,12 @@ Item {
         });
     }
 
-    function getViolasBankBorrowOrderList(params, cb) {
-        API.request('GET', API.violasURL + '/1.0/violas/bank/borrow/order/list' + API.formatParams(params), null, 
-            function(resp) {
-            borrowDetailModel.clear()
+    function get_details_order_borrow(params, cb) {
+        request('GET', url_violas + '/1.0/violas/bank/borrow/order/list' + formatParams(params), null, function(resp) {
+            model_details_order_borrow.clear()
             for (var i=0; i<resp.data.length;i++) {
                 var d = resp.data[i]
-                borrowDetailModel.append({
+                model_details_order_borrow.append({
                     'currency': d.currency,
                     'date': d.date,
                     'orderId': d.id,
@@ -438,20 +458,24 @@ Item {
         });
     }
 
-    function get_token_blanace() {
-        var msg = { 'action':'getBalances', 'model':server.token_balance_model, 'libraAddr': address_libra, 'violasAddr': address_violas };
+    function update_model_tokens() {
+        var msg = {
+            'action': 'update_model_tokens',
+            'balance_bitcoin': balance_bitcoin,
+            'balances_libra': balances_libra,
+            'balances_violas': balances_violas,
+            'model': model_tokens
+        };
         worker.sendMessage(msg);
     }
 
     function get_rate(chain, token) {
         if (chain == "bitcoin") {
-            return btcValue
-        } else if (chain == 'libra') {
-            return 0
+            return value_bitcoin
         } else if (token == "VLS" || token == "LBR") {
             return 0
         } else {
-            return violasValue[token]
+            return values_violas[token]
         }
     }
 

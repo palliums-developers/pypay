@@ -58,7 +58,7 @@ PyPayPage {
             anchors.top: totalText.bottom
             anchors.topMargin: 16
             anchors.left: totalText.left
-            text: appSettings.eyeIsOpen ? qsTr("≈") + server.bankAccountInfo.amount : "******"
+            text: appSettings.eyeIsOpen ? qsTr("≈") + server.account_bank.amount : "******"
             font.pointSize: 20
             color: "#FFFFFF"
             verticalAlignment: Text.AlignVCenter
@@ -86,7 +86,7 @@ PyPayPage {
         }
         Text {
             id: borrowValueText
-            text: appSettings.eyeIsOpen ? qsTr("≈") + server.bankAccountInfo.borrow : "******"
+            text: appSettings.eyeIsOpen ? qsTr("≈") + server.account_bank.borrow : "******"
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: borrowText.right
@@ -117,7 +117,7 @@ PyPayPage {
         }
         Text {
             id: incomeDataText
-            text: appSettings.eyeIsOpen ? qsTr("≈") + server.bankAccountInfo.total : "******"
+            text: appSettings.eyeIsOpen ? qsTr("≈") + server.account_bank.total : "******"
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: borrowValueText.left
@@ -157,7 +157,7 @@ PyPayPage {
             }
 
             Text {
-                text: (appSettings.eyeIsOpen ? server.bankAccountInfo.yesterday : "******") + qsTr(" $")
+                text: (appSettings.eyeIsOpen ? server.account_bank.yesterday : "******") + qsTr(" $")
                 color: "#FB8F0B"
                 font.pointSize: 12
                 verticalAlignment: Text.AlignVCenter
@@ -307,7 +307,7 @@ PyPayPage {
 
             ListView {
                 id: depositProductView
-                model: server.depositModel
+                model: server.model_products_deposit
                 spacing: 12
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
@@ -371,7 +371,7 @@ PyPayPage {
 
             ListView {
                 id: borrowProductView
-                model: server.borrowModel
+                model: server.model_products_borrow
                 spacing: 12
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }

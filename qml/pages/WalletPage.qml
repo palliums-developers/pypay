@@ -59,7 +59,7 @@ Page {
             anchors.top: totalText.bottom
             anchors.topMargin: 20
             anchors.left: totalText.left
-            text: appSettings.eyeIsOpen ? qsTr("$ ") + payController.totalBalance : "******"
+            text: appSettings.eyeIsOpen ? qsTr("$ ") + server.value_total : "******"
             font.pointSize: 20
             color: "#FFFFFF"
         }
@@ -180,17 +180,17 @@ Page {
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.bottom: parent.bottom
-            model: server.token_balance_model
-            visible: server.token_balance_model.count
+            model: server.model_tokens
+            visible: server.model_tokens.count
             spacing: 12
             clip: true
             ScrollIndicator.vertical: ScrollIndicator { }
             delegate: Rectangle {
                 width: walletListView.width
-                height: server.localPublished.includes(show_name) ? 60 : -12
+                height: appWindow.currencies_show.includes(show_name) ? 60 : -12
                 color: "#EBEBF1"
                 radius: 14
-                visible: server.localPublished.includes(show_name)
+                visible: appWindow.currencies_show.includes(show_name)
                 MyImage {
                     id: itemImage
                     source: show_icon
@@ -214,13 +214,13 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         id: amountText
-                        text: appSettings.eyeIsOpen ? chain == 'bitcoin' ? (balance / 100000000).toFixed(8) : (balance / 1000000).toFixed(6) : "******"
+                        text: appSettings.eyeIsOpen ? server.format_balance(chain, balance) : "******"
                         color: "#333333"
                         font.pointSize: 16
                         anchors.right: parent.right
                     }
                     Text {
-                        text: appSettings.eyeIsOpen ? "≈$" + server.get_rate(chain, show_name) * (chain == 'bitcoin' ? balance / 100000000 : balance / 1000000) : "******"
+                        text: appSettings.eyeIsOpen ? "≈$" + server.get_rate(chain, show_name) * server.format_balance(chain, balance) : "******"
                         color: "#ADADAD"
                         font.pointSize: 12
                         anchors.right: amountText.right
@@ -229,7 +229,7 @@ Page {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        server.request_token = {
+                        server.token_requested_wallet = {
                             'chain': chain,
                             'name': name,
                             'show_icon': show_icon,

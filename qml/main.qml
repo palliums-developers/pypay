@@ -17,6 +17,7 @@ ApplicationWindow {
     title: qsTr("Desktop Pay Wallet")
 
     property bool userIsLogin: false
+    property var currencies_show: ["BTC","LBR","VLS"]
 
     property double leftRecWidth1 : 200
     property double leftRecWidth2 : 300
@@ -69,24 +70,19 @@ ApplicationWindow {
         property bool walletIsCreate: false
         property bool mnemonicIsBackup: false
         property string password: ""
-        property string localPublished: server.localPublished.join(",")
+        property string currencies: currencies_show.join(",")
     }
 
     Component.onCompleted: {
         if (appSettings.walletIsCreate) {
             payController.createWallet()
-            server.getViolasValueBTC()
-            server.localPublished = appSettings.localPublished.split(",")
-            server.getLibraCurrency()
-            server.getViolasCurrency()
-            server.getViolasBankProductDeposit()
-            server.getViolasBankProductBorrow()
+            currencies_show = appSettings.currencies.split(",")
         }
         //console.log(payController.datadir)
     }
 
     onClosing: {
-        appSettings.localPublished = server.localPublished.join(",")
+        appSettings.currencies = currencies_show.join(",")
         payController.shutdown()
     }
 
@@ -373,13 +369,13 @@ ApplicationWindow {
             }
             Connections {
                 target: bankPage.item
-                function onShowDepositPage(requestID) {
-                    server.requestID = requestID
+                function onShowDepositPage(id) {
+                    server.id_requested_bank = id
                     depositPage.source = "pages/DepositPage.qml"
                     bankStack.push(depositPage)
                 }
-                function onShowBorrowPage(requestID) {
-                    server.requestID = requestID
+                function onShowBorrowPage(id) {
+                    server.id_requested_bank = id
                     borrowPage.source = "pages/BorrowPage.qml"
                     bankStack.push(borrowPage)
                 }
