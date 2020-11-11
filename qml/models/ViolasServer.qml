@@ -5,7 +5,7 @@ import PyPay 1.0
 Item {
     //property var url_violas: "https://api4.violas.io"
     property var url_violas: "http://localhost:5000"
-    property var data_dir: ""
+    property var data_dir: payController.data_dir
     property var mnemonic: ""
     property var address_bitcoin: ""
     property var address_libra: ""

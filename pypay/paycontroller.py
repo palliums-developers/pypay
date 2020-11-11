@@ -52,7 +52,7 @@ class PayController(QObject):
         self._address_bitcoin = ''
         self._isImportWallet = False
         self._swap_to_addr = {}
-        self._data_dir = self.get_data_dir() / "pypay"
+        self._data_dir = self.get_data_dir() / "PyPay"
         self.changed_data_dir.emit()
         self._violas_bank_max_borrow_amount = 0
         try:
