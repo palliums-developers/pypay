@@ -88,21 +88,6 @@ ApplicationWindow {
     onClosing: {
         appSettings.localPublished = server.localPublished.join(",")
         payController.shutdown()
-        timer.running = false
-    }
-
-    Timer {
-        id: timer
-        interval: 5000
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            server.get_token_blanace()
-            var params = { "address": payController.addr }
-            server.getViolasCurrencyPublished(params)
-            server.getViolasBankAccountInfo(params)
-        }
     }
 
     ViolasServer {

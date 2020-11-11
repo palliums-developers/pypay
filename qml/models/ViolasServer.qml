@@ -76,9 +76,25 @@ Item {
     property alias currentBorrowModel: currentBorrowModel
     property alias borrowDetailModel: borrowDetailModel
 
+    Timer {
+        id: timer
+        interval: 5000
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            if (address_violas.length != 0) {
+                get_token_blanace()
+                var params = { "address": address_violas }
+                getViolasCurrencyPublished(params)
+                getViolasBankAccountInfo(params)
+            }
+        }
+    }
+
     WorkerScript {
         id: worker
-        source: "models/DataLoader.mjs"
+        source: "DataLoader.mjs"
     }
 
     ListModel {
@@ -146,10 +162,15 @@ Item {
         }
         function onChanged_address_libra() {
             address_libra = payController.address_libra
+            if (address_violas.length != 0 && address_libra.length != 0) {
+                get_token_blanace()
+            }
         }
         function onChanged_address_violas() {
             address_violas = payController.address_violas
-            get_token_blanace()
+            if (address_violas.length != 0 && address_libra.length != 0) {
+                get_token_blanace()
+            }
             var params = {"address": address_violas}
             getViolasValueViolas(params)
             getViolasCurrencyPublished(params)
@@ -418,7 +439,7 @@ Item {
     }
 
     function get_token_blanace() {
-        var msg = {'action':'getBalances', 'model':server.token_balance_model, 'libraAddr': payController.libra_addr, 'violasAddr': payController.addr};
+        var msg = { 'action':'getBalances', 'model':server.token_balance_model, 'libraAddr': address_libra, 'violasAddr': address_violas };
         worker.sendMessage(msg);
     }
 
@@ -437,7 +458,7 @@ Item {
     function format_balance(chain, balance) {
         if (chain == 'bitcoin') {
             return (balance / 100000000).toFixed(8)
-        } else if (chain == libra || chain == violas) {
+        } else if (chain == 'libra' || chain == 'violas') {
             return (balance / 1000000).toFixed(6)
         } else {
             return balance
