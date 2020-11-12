@@ -99,12 +99,12 @@ class PayController(QObject):
         self.mnemonic_changed.emit()
 
         # bitcoin testnet
-        mnemo = Mnemonic("english")
-        entropy = mnemo.to_entropy(self._mnemonic)
-        m = BIP32Key.fromEntropy(entropy, False, True)
-        wif = m.WalletImportFormat()
-        self._bitKey = wif_to_key(wif)
-        self._address_bitcoin = self._bitKey.segwit_address
+        #mnemo = Mnemonic("english")
+        #entropy = mnemo.to_entropy(self._mnemonic)
+        #m = BIP32Key.fromEntropy(entropy, False, True)
+        #wif = m.WalletImportFormat()
+        #self._bitKey = wif_to_key(wif)
+        #self._address_bitcoin = self._bitKey.segwit_address
 
         self._wallet.write_recovery(fileName)
 
@@ -113,8 +113,7 @@ class PayController(QObject):
         self._bit.moveToThread(self._bitThread)
         self._bitThread.start()
 
-        self._client = Client("violas_testnet")
-        #self._client = Client("violas_testnet_out")
+        self._client = Client.new("http://51.140.241.96:50001")
         self._libraClient = LibraClient("libra_testnet")
 
         # libra相关操作

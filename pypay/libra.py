@@ -12,11 +12,12 @@ class Libra(QObject):
 
     @pyqtSlot()
     def requestActiveAccount(self):
-        try:
-            self._client.mint_coin(self._accounts[1].address, 500_000,
-                    auth_key_prefix=self._accounts[1].auth_key_prefix, currency_code="LBR")
-        except Exception as result:
-            print(result)
+        pass
+        #try:
+        #    self._client.mint_coin(self._accounts[1].address, 500_000,
+        #            auth_key_prefix=self._accounts[1].auth_key_prefix, currency_code="LBR")
+        #except Exception as result:
+        #    print(result)
 
     # currencies
 
