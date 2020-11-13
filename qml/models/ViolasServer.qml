@@ -184,11 +184,13 @@ Item {
     }
 
     Component.onCompleted: {
-        get_value_bitcoin()
-        get_currencies_libra()
-        get_currencies_violas()
-        get_products_deposit()
-        get_products_borrow()
+        if (appSettings.walletIsCreate) {
+            get_value_bitcoin()
+            get_currencies_libra()
+            get_currencies_violas()
+            get_products_deposit()
+            get_products_borrow()
+        }
     }
 
     function formatParams(params) {
