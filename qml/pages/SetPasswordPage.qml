@@ -27,7 +27,7 @@ Page {
 
     Text {
         id: titleText
-        text: qsTr("创建")
+        text: qsTr("Create Password")
         font.pointSize: 20
         color: "#3C3848"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -41,7 +41,7 @@ Page {
         anchors.topMargin: 56 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
         width: 0.65 * parent.width
-        placeholderText: qsTr("8-20位，大小写字母，数字")
+        placeholderText: qsTr("Input password")
         imageSource: eyeIsClose ? "../icons/eye_close.svg" : "../icons/eye_open.svg"
     }
 
@@ -51,7 +51,7 @@ Page {
         anchors.topMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
         width: 0.65 * parent.width
-        placeholderText: qsTr("重复输入密码")
+        placeholderText: qsTr("Confirm password")
         imageSource: eyeIsClose ? "../icons/eye_close.svg" : "../icons/eye_open.svg"
     }
 
@@ -60,21 +60,21 @@ Page {
         anchors.top: confirmText.bottom
         anchors.topMargin: 160 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("创建")
+        text: qsTr("Create")
         width: 200
         height: 40
         onClicked: {
             //if (passwordText.text != confirmText.text) {
             //    console.log(passwordText.text, confirmText.text)
-            //    tipText.text = qsTr("两次密码输入不一致")
+            //    tipText.text = qsTr("Password is not same")
             //    tipText.visible = true
             //    tipTimer.running = true
             //} else if (passwordText.text.length < 8) {
-            //    tipText.text = qsTr("密码长度应为8~20位")
+            //    tipText.text = qsTr("Length is less than 8")
             //    tipText.visible = true
             //    tipTimer.running = true
             //} else if (root.isSelected == false) {
-            //    tipText.text = qsTr("请勾选服务与隐私政策")
+            //    tipText.text = qsTr("Please select agreement")
             //    tipText.visible = true
             //    tipTimer.running = true
             //    } else {
@@ -121,7 +121,7 @@ Page {
         }
         Text {
             id: checkText
-            text: qsTr("我已阅读并同意<b>《服务与隐私政策》</b>")
+            text: qsTr("I agree<b>《Server and Policy》</b>")
             color: "#999999"
             MouseArea {
                 anchors.fill: parent

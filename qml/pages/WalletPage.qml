@@ -179,7 +179,7 @@ Page {
             anchors.rightMargin: 20
             anchors.bottom: parent.bottom
             model: server.model_tokens
-            visible: server.model_tokens.count
+            visible: appSettings.walletIsCreate && server.model_tokens.count
             spacing: 12
             clip: true
             ScrollIndicator.vertical: ScrollIndicator { }

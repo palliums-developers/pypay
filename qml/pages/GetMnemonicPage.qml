@@ -27,7 +27,7 @@ Page {
 
     Text {
         id: titleText
-        text: qsTr("获取助记词")
+        text: qsTr("Get mnemonic")
         font.pointSize: 20
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -36,7 +36,7 @@ Page {
     }
     Text {
         id: title2Text
-        text: qsTr("等于拥有钱包资产所有权")
+        text: qsTr("equal to have wallet control right")
         font.pointSize: 16
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -57,12 +57,11 @@ Page {
     Item {
         id: textItem
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 0.65 * parent.width
+        width: backupDetailText.width + 50
         height: backupText.height + backupDetailText.height + offlineStoreText.height + offlineStoreDetailText.height + 3 * 4
         anchors.top: mneImage.bottom    
         anchors.topMargin: 32 / 952 * parent.height
         
-        // 小圆圈
         Rectangle {
             id: backupRec
             width: 4
@@ -75,9 +74,9 @@ Page {
         Text {
             id: backupText
             anchors.left: backupRec.left
-            anchors.leftMargin: 4
+            anchors.leftMargin: 8
             anchors.verticalCenter: backupRec.verticalCenter
-            text: qsTr("备份助记词")
+            text: qsTr("Backup mnemonic")
             font.pointSize: 12
             color: "#3B3847"
         }
@@ -86,15 +85,12 @@ Page {
             id: backupDetailText
             anchors.left: backupText.left
             anchors.top: backupText.bottom
-            anchors.topMargin: 4
+            anchors.topMargin: 8
             font.pointSize: 12
             color: "#3B3847"
-            text: qsTr("使用纸和笔正确抄写助记词，如果你的手机丢失、被盗、损坏，Keystore将可以回复你的资产")
-            width: parent.width - backupRec.width - 4 - backupRec.width
-            elide: Text.ElideRight
+            text: qsTr("Write mnemonic on paper, you can use it restore wallet")
         }
 
-        // 小圆圈
         Rectangle {
             id: offlineRec
             width: 4
@@ -103,14 +99,14 @@ Page {
             color: "#3B3847"
             anchors.left: backupRec.left
             anchors.top: backupDetailText.bottom
-            anchors.topMargin: 4
+            anchors.topMargin: 16
         }
         Text {
             id: offlineStoreText
             anchors.left: offlineRec.left
-            anchors.leftMargin: 4
+            anchors.leftMargin: 8
             anchors.verticalCenter: offlineRec.verticalCenter
-            text: qsTr("离线保管")
+            text: qsTr("Offline store")
             font.pointSize: 12
             color: "#3B3847"
         }
@@ -119,22 +115,19 @@ Page {
             id: offlineStoreDetailText
             anchors.left: offlineStoreText.left
             anchors.top: offlineStoreText.bottom
-            anchors.topMargin: 4
+            anchors.topMargin: 8
             font.pointSize: 12
             color: "#3B3847"
-            text: qsTr("请妥善保管至隔离网络的安全地方，请勿将助记词在联网环境下分享和存储，比如邮件、相册、社交应用等")
-            width: parent.width - offlineRec.width - 4 - offlineRec.width
-            elide: Text.ElideRight
+            text: qsTr("Save mnemonic offline network")
         }
     }
 
-    // 按钮
     MyButton3 {
         id: backupBtn
         anchors.top: textItem.bottom
         anchors.topMargin: 56 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("开始备份")
+        text: qsTr("Backup Now")
         width: 200
         height: 40
         onClicked: {
@@ -147,7 +140,7 @@ Page {
         anchors.top: backupBtn.bottom
         anchors.topMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("稍后备份")
+        text: qsTr("Backup Later")
         width: 200
         height: 40
         onClicked: {

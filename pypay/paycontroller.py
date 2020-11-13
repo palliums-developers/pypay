@@ -43,7 +43,7 @@ class PayController(QObject):
         self._client = None
         self._libraClient = None
         self._mnemonic = ''
-        self._mnemonicRandom = ''
+        self._mnemonic_random = ''
         self._mnemonicConfirm = ''
         self._isConfirming = False
         self._address_violas = ''
@@ -73,6 +73,16 @@ class PayController(QObject):
         del self._client
         del self._libraClient
 
+    changed_mnemonic = pyqtSignal()
+    @pyqtProperty(str, notify=changed_mnemonic)
+    def mnemonic(self):
+        return self._mnemonic
+
+    changed_mnemonic_random = pyqtSignal()
+    @pyqtProperty(str, notify=changed_mnemonic_random)
+    def mnemonic_random(self):
+        return self._mnemonic_random
+
     requestActiveLibraAccount = pyqtSignal()
     requestActiveViolasAccount = pyqtSignal()
     requestLBRAddCurOfAccount = pyqtSignal(str, bool)
@@ -96,7 +106,7 @@ class PayController(QObject):
         self._address_libra = self._wallet.accounts[1].address_hex
         self.changed_address_libra.emit()
         self._mnemonic = self._wallet.mnemonic
-        self.mnemonic_changed.emit()
+        self.changed_mnemonic.emit()
 
         # bitcoin testnet
         #mnemo = Mnemonic("english")
@@ -146,34 +156,13 @@ class PayController(QObject):
             f.write(mnemonic + ';2')
         self.create_wallet()
 
-    # 助记词
-    mnemonic_changed = pyqtSignal()
-    @pyqtProperty(str, notify=mnemonic_changed)
-    def mnemonic(self):
-        return self._mnemonic
-
-    mnemonicRandomChanged = pyqtSignal()
-    @pyqtProperty(str, notify=mnemonicRandomChanged)
-    def mnemonicRandom(self):
-        return self._mnemonicRandom
-
-    mnemonicConfirmChanged = pyqtSignal()
-    @pyqtProperty(str, notify=mnemonicConfirmChanged)
-    def mnemonicConfirm(self):
-        return self._mnemonicConfirm
-
-    # 生成随机助记词
     @pyqtSlot()
-    def genMnemonicRandom(self):
-        self._mnemonicRandom = ''
+    def gen_random_mnemonic(self):
+        self._mnemonic_random = ''
         mneList = self._wallet.mnemonic.split(" ")
         random.shuffle(mneList)
-        self._mnemonicRandom = ' '.join(mneList)
-        self.mnemonicRandomChanged.emit()
-        self._isConfirming = False
-        self._mnemonicConfirm = ''
-        self.mnemonicConfirmChanged.emit()
-
+        self._mnemonic_random = ' '.join(mneList)
+        self.changed_mnemonic_random.emit()
 
     # 添加要确认的助记词
     @pyqtSlot(str)

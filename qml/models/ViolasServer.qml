@@ -7,6 +7,7 @@ Item {
     property var url_violas: "http://localhost:5000"
     property var data_dir: payController.data_dir
     property var mnemonic: ""
+    property var mnemonic_random: ""
     property var address_bitcoin: ""
     property var address_libra: ""
     property var address_violas: ""
@@ -130,18 +131,20 @@ Item {
     Timer {
         id: timer
         interval: 5000
-        running: false
+        running: true
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            var params_libra = { "address": address_libra }
-            var params_violas = { "address": address_violas }
-            get_currencies_published(params_violas)
-            get_balance_libra(params_libra)
-            get_balance_violas(params_violas, function() {
-                update_model_tokens()
-            })
-            get_account_bank(params_violas)
+            if (appSettings.walletIsCreate) {
+                var params_libra = { "address": address_libra }
+                var params_violas = { "address": address_violas }
+                get_currencies_published(params_violas)
+                get_balance_libra(params_libra)
+                get_balance_violas(params_violas, function() {
+                    update_model_tokens()
+                })
+                get_account_bank(params_violas)
+            }
         }
     }
 
@@ -174,23 +177,26 @@ Item {
         }
         function onChanged_address_libra() {
             address_libra = payController.address_libra
-            timer.running = true
         }
         function onChanged_address_violas() {
             address_violas = payController.address_violas
             var params = { "address": address_violas }
             get_value_violas(params)
         }
+        function onChanged_mnemonic() {
+            mnemonic = payController.mnemonic
+        }
+        function onChanged_mnemonic_random() {
+            mnemonic_random = payController.mnemonic_random
+        }
     }
 
     Component.onCompleted: {
-        if (appSettings.walletIsCreate) {
-            get_value_bitcoin()
-            get_currencies_libra()
-            get_currencies_violas()
-            get_products_deposit()
-            get_products_borrow()
-        }
+        get_value_bitcoin()
+        get_currencies_libra()
+        get_currencies_violas()
+        get_products_deposit()
+        get_products_borrow()
     }
 
     function formatParams(params) {
@@ -205,7 +211,7 @@ Item {
             if(xhr.readyState === XMLHttpRequest.DONE) {
                 if(cb) {
                     try {
-                        print('request: ' + verb + ' ' + url)
+                        //print('request: ' + verb + ' ' + url)
                         if (xhr.status == 200) {
                             //print(xhr.responseText.toString())
                             var res = JSON.parse(xhr.responseText.toString())
@@ -514,5 +520,9 @@ Item {
     
     function gen_qr(chain, show_name) {
         payController.gen_qr(chain, show_name)
+    }
+
+    function gen_random_mnemonic() {
+        payController.gen_random_mnemonic()
     }
 }

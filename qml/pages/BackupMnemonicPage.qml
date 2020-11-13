@@ -26,7 +26,7 @@ Page {
 
     Text {
         id: titleText
-        text: qsTr("备份助记词")
+        text: qsTr("Backup Mnemonic")
         font.pointSize: 20
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -35,7 +35,7 @@ Page {
     }
     Text {
         id: title2Text
-        text: qsTr("请将这些词按顺序写在纸上")
+        text: qsTr("Please write mnemonic words on paper")
         font.pointSize: 16
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -51,7 +51,7 @@ Page {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 16
         Repeater {
-            //model: payController.mnemonic.split(" ")
+            model: server.mnemonic.split(" ")
             Rectangle {
                 border.color: "#3C3848"
                 width: 90
@@ -80,7 +80,7 @@ Page {
         }
         Text {
             anchors.verticalCenter: noPictureImage.verticalCenter
-            text: qsTr("不要截屏或复制到剪切板，这将可能被第三方恶意软件收集，造成资产损失")
+            text: qsTr("Don't picture or copy, it will not safe")
             color: "#3B3847"
             font.pointSize: 12
             width: mnemonicGrid.width - 40 - 10
@@ -88,19 +88,16 @@ Page {
         }
     }
 
-    
-
-    // 按钮
     MyButton3 {
         id: nextBtn
         anchors.top: tipRow.bottom
         anchors.topMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("下一步")
+        text: qsTr("Next")
         width: 200
         height: 40
         onClicked: {
-            //payController.genMnemonicRandom()
+            server.gen_random_mnemonic()
             root.nextBtnClicked()
         }
     }

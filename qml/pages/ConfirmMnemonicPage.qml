@@ -8,7 +8,10 @@ Page {
     id: root
     signal backArrowClicked
     signal completeBtnClicked
-    property var mnemonicList: ["","","","","","","","","","","",""]
+
+    ListModel {
+        id: mnemonicModel
+    }
 
     ImageButton {
         anchors.top: parent.top
@@ -27,7 +30,7 @@ Page {
 
     Text {
         id: titleText
-        text: qsTr("确认助记词")
+        text: qsTr("Confirm mnemonic")
         font.pointSize: 20
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -36,7 +39,7 @@ Page {
     }
     Text {
         id: title2Text
-        text: qsTr("请顺序点击助记词，以确认您正确备份")
+        text: qsTr("Click mnemonic on order")
         font.pointSize: 16
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -56,7 +59,7 @@ Page {
             columns: 3
             spacing: 8
             Repeater {
-                model: mnemonicList
+                model: 12
                 Rectangle {
                     color: "#F6F6FC"
                     width: 90
@@ -69,7 +72,7 @@ Page {
             columns: 3
             spacing: 8
             Repeater {
-                //model: payController.mnemonicRandom.split(" ")
+                model: server.mnemonic_random.split(" ")
                 Rectangle {
                     id: mneRec
                     border.color: "#3C3848"
@@ -87,7 +90,7 @@ Page {
                         property bool isClicked: false
                         onClicked: {
                             if (!isClicked) {
-                                //payController.addMnemonicWord(modelData)
+                                mnemonicModel.append({"word": modelData})
                                 mneRec.border.color = "#FFFFFF"
                                 mneText.color = "#FFFFFF"
                                 isClicked = true
@@ -105,16 +108,16 @@ Page {
         anchors.top: gridRow.top
         columns: 3
         spacing: 8
-        //visible: payController.mnemonicConfirm.length != 0
+        visible: mnemonicModel.count != 0
         Repeater {
-            //model: payController.mnemonicConfirm.split(" ")
+            model: mnemonicModel
             Rectangle {
                 color: "#504ACB"
                 width: 90
                 height: 32
                 Text {
                     anchors.centerIn: parent
-                    text: modelData
+                    text: word
                     font.pointSize: 15
                     color: "#FFFFFF"
                 }
@@ -122,20 +125,19 @@ Page {
         }
     }
 
-    // 按钮
     MyButton3 {
         id: nextBtn
         anchors.top: gridRow.bottom
         anchors.topMargin: 82 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("完成")
+        text: qsTr("Complited")
         width: 200
         height: 40
         onClicked: {
             //if (payController.mnemonic != payController.mnemonicConfirm) {
             //    tipText.visible = true
             //    tipTimer.running = true
-            //    payController.genMnemonicRandom()
+            //    server.gen_random_mnemonic()
             //} else {
                 root.completeBtnClicked()
                 appSettings.mnemonicIsBackup = true
@@ -151,7 +153,7 @@ Page {
         visible: false
         font.pointSize: 14
         color: "#FD6565"
-        text: qsTr("助记词顺序不正确，请校对")
+        text: qsTr("Mnemonic order is not right")
     }
 
     Timer {
