@@ -197,6 +197,7 @@ Item {
         get_currencies_violas()
         get_products_deposit()
         get_products_borrow()
+        update_model_tokens()
     }
 
     function formatParams(params) {
