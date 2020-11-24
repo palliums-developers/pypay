@@ -346,14 +346,11 @@ ApplicationWindow {
             }
 
             // Market page
-            Component {
+            MarketPage {
                 id: marketPage
-                MarketPage {
-                }
             }
 
             // Bank view
-
             StackView {
                 id: bankStack
                 anchors.fill: parent
@@ -362,78 +359,63 @@ ApplicationWindow {
             }
 
             // Bank page
-            Loader {
+            BankPage {
                 id: bankPage
-                source: "pages/BankPage.qml"
-            }
-            Connections {
-                target: bankPage.item
-                function onShowDepositPage(id) {
+                onShowDepositPage: {
                     server.id_requested_bank = id
-                    depositPage.source = "pages/DepositPage.qml"
                     bankStack.push(depositPage)
                 }
-                function onShowBorrowPage(id) {
+                onShowBorrowPage: {
                     server.id_requested_bank = id
-                    borrowPage.source = "pages/BorrowPage.qml"
                     bankStack.push(borrowPage)
                 }
-                function onShowDepositOrderPage() {
-                    depositOrderPage.source = "pages/DepositOrderPage.qml"
+                onShowDepositOrderPage: {
                     bankStack.push(depositOrderPage)
                 }
-                function onShowBorrowOrderPage() {
-                    borrowOrderPage.source = "pages/BorrowOrderPage.qml"
+                onShowBorrowOrderPage: {
                     bankStack.push(borrowOrderPage)
                 }
             }
 
             // Deposit page
-            Loader {
+            Component {
                 id: depositPage
-            }
-            Connections {
-                target: depositPage.item
-                function onBackArrowClicked() {
-                    bankStack.pop()
-                    depositPage.source = ""
+                DepositPage {
+                    onBackArrowClicked: {
+                        bankStack.pop()
+                    }
                 }
             }
 
             // Borrow page
-            Loader {
+            Component {
                 id: borrowPage
-            }
-            Connections {
-                target: borrowPage.item
-                function onBackArrowClicked() {
-                    bankStack.pop()
-                    borrowPage.source = ""
+                BorrowPage {
+                    onBackArrowClicked: {
+                        bankStack.pop()
+                    }
                 }
             }
 
-            Loader {
+            Component {
                 id: depositOrderPage
-            }
-            Connections {
-                target: depositOrderPage.item
-                function onBackArrowClicked() {
-                    bankStack.pop()
-                    depositOrderPage.source = ""
+                DepositOrderPage {
+                    onBackArrowClicked: {
+                        bankStack.pop()
+                    }
                 }
             }
 
-            Loader {
+            Component {
                 id: borrowOrderPage
-            }
-            Connections {
-                target: borrowOrderPage.item
-                function onBackArrowClicked() {
-                    bankStack.pop()
-                    borrowOrderPage.source = ""
+                BorrowOrderPage {
+                    onBackArrowClicked: {
+                        bankStack.pop()
+                    }
                 }
             }
 
+            // Password page
             EnterPasswordPage {
                 id: enterPasswordPage
                 anchors.fill: parent
@@ -452,15 +434,13 @@ ApplicationWindow {
             }
 
             // Set password
-            Component {
+            SetPasswordPage {
                 id: setPasswordPage
-                SetPasswordPage {
-                    onBackArrowClicked: {
-                        showCreatePage(false)
-                    }
-                    onCreateClicked: {
-                        createStack.push(getMnemonic)
-                    }
+                onBackArrowClicked: {
+                    showCreatePage(false)
+                }
+                onCreateClicked: {
+                    createStack.push(getMnemonic)
                 }
             }
 
@@ -519,17 +499,15 @@ ApplicationWindow {
             }
 
             // Import
-            Component {
+            ImportPage {
                 id: importPage
-                ImportPage {
-                    onBackArrowClicked: {
-                        showImportPage(false)
-                    }
-                    onImportClicked: {
-                        showImportPage(false)
-                        enterPasswordPage.visible = false
-                        appWindow.userIsLogin = true
-                    }
+                onBackArrowClicked: {
+                    showImportPage(false)
+                }
+                onImportClicked: {
+                    showImportPage(false)
+                    enterPasswordPage.visible = false
+                    appWindow.userIsLogin = true
                 }
             }
         }
