@@ -2,7 +2,7 @@
 
 ```
 pip3 install -r requirements.txt
-python3 run_pypay.py
+python3 PyPay.py
 ```
 
 ## [client](https://github.com/palliums-developers/libra-client.git)
