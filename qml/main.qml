@@ -174,10 +174,60 @@ ApplicationWindow {
                 anchors.right: parent.right
                 anchors.rightMargin: 43
                 anchors.verticalCenter: parent.verticalCenter
+
+                // Import button
+                MyButton {
+                    id: importBtn
+                    text: qsTr("Import")
+                    anchors.verticalCenter: parent.verticalCenter
+                    background.implicitWidth: 29
+                    background.implicitHeight: 14
+                    visible: !appSettings.walletIsCreate
+                    onClicked: {
+                        showImportPage(true)
+                    }
+                }
+
+                // Create button
+                MyButton {
+                    id: createBtn
+                    text: qsTr("Create")
+                    anchors.verticalCenter: parent.verticalCenter
+                    background.implicitWidth: 29
+                    background.implicitHeight: 14
+                    visible: !appSettings.walletIsCreate
+                    onClicked: {
+                        showCreatePage(true)
+                    }
+                }
+
+                ImageButton {
+                    id: notifyButton
+                    source: "./icons/notify.svg"
+                    height: 24
+                    anchors.verticalCenter: parent.verticalCenter
+                    fillMode: Image.PreserveAspectFit
+                    visible: appSettings.walletIsCreate
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                        }
+                    }
+                }
+
+                // Download button
+                MyButton {
+                    id: downloadBtn
+                    text: qsTr("Download")
+                    anchors.verticalCenter: parent.verticalCenter
+                    background.implicitWidth: 29
+                    background.implicitHeight: 14
+                }
+
                 ImageButton {
                     id: myButton
                     source: "./icons/me.svg"
-                    height: 24
+                    height: 22
                     anchors.verticalCenter: parent.verticalCenter
                     fillMode: Image.PreserveAspectFit
                     visible: appSettings.walletIsCreate
@@ -216,41 +266,6 @@ ApplicationWindow {
                         }
                     }
                 }
-
-                // Import button
-                MyButton {
-                    id: importBtn
-                    text: qsTr("Import")
-                    anchors.verticalCenter: parent.verticalCenter
-                    background.implicitWidth: 29
-                    background.implicitHeight: 14
-                    visible: !appSettings.walletIsCreate
-                    onClicked: {
-                        showImportPage(true)
-                    }
-                }
-
-                // Create button
-                MyButton {
-                    id: createBtn
-                    text: qsTr("Create")
-                    anchors.verticalCenter: parent.verticalCenter
-                    background.implicitWidth: 29
-                    background.implicitHeight: 14
-                    visible: !appSettings.walletIsCreate
-                    onClicked: {
-                        showCreatePage(true)
-                    }
-                }
-
-                //// Download button
-                //MyButton {
-                //    id: downloadBtn
-                //    text: qsTr("下载")
-                //    anchors.verticalCenter: parent.verticalCenter
-                //    background.implicitWidth: 29
-                //    background.implicitHeight: 14
-                //}
 
                 // i18n MyComboBox
                 MyComboBox {
