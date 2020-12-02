@@ -17,6 +17,7 @@ Control {
     
     contentItem: Rectangle {
         color: "#501BA2"
+        radius: 4
 
         Rectangle {
             id: totalRec

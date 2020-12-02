@@ -241,12 +241,13 @@ ApplicationWindow {
                     }
                     Popup {
                         id: myPopupPage
-                        x: parent.x
-                        y: parent.y + parent.height + 5
+                        x: 0
+                        y: parent.height + 4
                         width: 170
                         height: 250
                         background: Rectangle {
                             border.color: "lightsteelblue"
+                            radius: 4
                         }
                         contentItem: MyPage {
                             id: myPage
