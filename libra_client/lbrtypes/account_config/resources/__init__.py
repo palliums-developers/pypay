@@ -4,4 +4,6 @@ from .withdraw_capability import WithdrawCapabilityResource, WithdrawCapabilityR
 from .account import AccountResource
 from .balance import BalanceResource
 from .currency_info import CurrencyInfoResource
-from .vasp import ParentVASP, ChildVASP
+from .dual_attestation import CredentialResource
+from .vasp import ChildVASP, ParentVASP
+from .designated_dealer import DesignatedDealer

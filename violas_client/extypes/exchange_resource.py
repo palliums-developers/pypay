@@ -1,13 +1,18 @@
 from violas_client.canoser import Struct, Uint64
 from violas_client.lbrtypes.account_config import MoveResource
+from violas_client.move_core_types.language_storage import StructTag, TypeTag
 
 EXCHANGE_MODULE_NAME = "Exchange"
 
-class TokenResource(Struct):
+class TokenResource(Struct, MoveResource):
+    MODULE_NAME = EXCHANGE_MODULE_NAME
+    STRUCT_NAME = "Token"
+
     _fields = [
         ("index", Uint64),
         ("value", Uint64)
     ]
+
 
 class ReserveResource(Struct):
     _fields = [

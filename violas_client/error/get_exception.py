@@ -5,6 +5,7 @@ def get_exception(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
+            return None
             raise LibraError(message=str(e))
     return catch_execption_func
 

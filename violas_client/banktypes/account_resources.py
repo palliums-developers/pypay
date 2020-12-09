@@ -2,10 +2,10 @@ from violas_client.canoser import Struct, Uint64
 from violas_client.lbrtypes.event import EventHandle
 from violas_client.move_core_types.account_address import AccountAddress
 from violas_client.move_core_types.move_resource import MoveResource
-from violas_client.lbrtypes.account_config.resources import WithdrawCapabilityResource
+from violas_client.lbrtypes.account_config.resources import WithdrawCapabilityResourceOption
 
 class LibraTokenResource(Struct, MoveResource):
-    MODULE_NAME = "ViolasBank2"
+    MODULE_NAME = "ViolasBank"
     STRUCT_NAME = "LibraToken"
 
     _fields = [
@@ -45,13 +45,16 @@ class BorrowInfoResource(Struct):
         return self.interest_index
 
 class TokensResource(Struct, MoveResource):
-    MODULE_NAME = "ViolasBank2"
+    MODULE_NAME = "ViolasBank"
     STRUCT_NAME = "Tokens"
 
     _fields = [
         # index 代表进入银行的钱. index+1代表存入银行的钱
         ("ts", [BankResource]),
-        ("borrows", [BorrowInfoResource])
+        ("borrows", [BorrowInfoResource]),
+        ("last_exchange_rates", [Uint64]),
+        ("incentive_supply_indexes", [Uint64]),
+        ("incentive_borrow_indexes", [Uint64]),
     ]
 
 
@@ -64,7 +67,7 @@ class OrderResource(Struct):
     ]
 
 class UserInfoResource(Struct, MoveResource):
-    MODULE_NAME = "ViolasBank2"
+    MODULE_NAME = "ViolasBank"
     STRUCT_NAME = "UserInfo"
 
     _fields = [
@@ -91,19 +94,32 @@ class TokenInfoResource(Struct):
         ("rate_jump_multiplier", Uint64),
         ("rate_kink", Uint64),
         ("last_minute", Uint64),
+
+        ("incentive_supply_index", Uint64),
+        ("incentive_supply_timestamp", Uint64),
+        ("incentive_speed", Uint64),
+        ("incentive_borrow_index", Uint64),
+        ("incentive_borrow_timestamp", Uint64),
+
         ("data", str),
         ("bulletin_first", str),
         ("bulletins", [str]),
     ]
 
 class TokenInfoStoreResource(Struct, MoveResource):
-    MODULE_NAME = "ViolasBank2"
+    MODULE_NAME = "ViolasBank"
     STRUCT_NAME = "TokenInfoStore"
 
     _fields = [
         ("supervisor", AccountAddress),
         ("tokens", [TokenInfoResource]),
-        ("withdraw_capability", WithdrawCapabilityResource)
+        ("withdraw_capability", WithdrawCapabilityResourceOption),
+        ("disabled", bool),
+        ("migrated", bool),
+        ("version", Uint64),
+        ("incentive_rate", Uint64),
+        ("incentive_refresh_speeds_last_minute", Uint64),
+        ("incentive_rate_last_minute", Uint64),
     ]
 
     def to_format(self):
@@ -164,12 +180,20 @@ class EventUpdatePrice (Struct):
         ("price", Uint64),
     ]
 
+class EventUpdatePriceFromOracle(Struct):
+    _fields = [
+        ("currency_code", str),
+        ("tokenidx", Uint64),
+        ("price", Uint64),
+    ]
+
 class EventLock(Struct):
     _fields = [
         ("currency_code", str),
         ("tokenidx", Uint64),
         ("amount", Uint64),
         ("data", bytes),
+        ("incentive", Uint64),
     ]
 
 class EventRedeem (Struct):
@@ -178,6 +202,7 @@ class EventRedeem (Struct):
         ("tokenidx", Uint64),
         ("amount", Uint64),
         ("data", bytes),
+        ("incentive", Uint64),
     ]
 
 class EventBorrow (Struct):
@@ -186,14 +211,16 @@ class EventBorrow (Struct):
         ("tokenidx", Uint64),
         ("amount", Uint64),
         ("data", bytes),
+        ("incentive", Uint64),
     ]
 
-class EventRepayBorrow (Struct):
+class EventRepayBorrow(Struct):
     _fields = [
         ("currency_code", str),
         ("tokenidx", Uint64),
         ("amount", Uint64),
         ("data", bytes),
+        ("incentive", Uint64),
     ]
 
 class EventLiquidateBorrow (Struct):
@@ -204,6 +231,7 @@ class EventLiquidateBorrow (Struct):
         ("borrower", AccountAddress),
         ("amount", Uint64),
         ("collateral_tokenidx", Uint64),
+        ("collateral_amount", Uint64),
         ("data", bytes),
     ]
 
@@ -212,6 +240,16 @@ class EventUpdateCollateralFactor (Struct):
         ("currency_code", str),
         ("tokenidx", Uint64),
         ("factor", Uint64),
+    ]
+
+class EventUpdateRateModel(Struct):
+    _fields = [
+        ("currency_code", str),
+        ("tokenidx", Uint64),
+        ("base_rate", Uint64),
+        ("rate_multiplier", Uint64),
+        ("rate_jump_multiplier", Uint64),
+        ("rate_kink", Uint64),
     ]
 
 class EventEnterBank (Struct):
@@ -228,10 +266,21 @@ class EventExitBank (Struct):
         ("amount", Uint64),
     ]
 
+class EventSetIncentiveRate(Struct):
+    _fields = [
+        ("rate", Uint64)
+    ]
+
+class EventClaimIncentive(Struct):
+    _fields = [
+        ("incentive", Uint64),
+    ]
 
 event_type_map = {
     "0": EventPublish,
     "1": EventRegisterLibraToken,
+    "2": EventMint,
+    "3": EventTransfer,
     "6": EventUpdatePrice,
     "7": EventLock,
     "8": EventRedeem,
@@ -241,12 +290,17 @@ event_type_map = {
     "12": EventUpdateCollateralFactor,
     "13": EventEnterBank,
     "14": EventExitBank,
-}
+    "15": EventUpdateRateModel,
+    "16": EventUpdatePriceFromOracle,
+    "17": EventSetIncentiveRate,
+    "18": EventClaimIncentive
 
+}
 
 class ViolasEvent(Struct):
     _fields = [
         ("etype", Uint64),
+        ("timestamp", Uint64),
         ("paras", bytes),
         ("data", bytes),
     ]
@@ -260,6 +314,8 @@ class ViolasEvent(Struct):
     def get_currency_code(self):
         if hasattr(self.get_bank_event(), "currency_code"):
             return self.get_bank_event().currency_code
+        elif hasattr(self.get_bank_event(), "currency_code1"):
+            return self.get_bank_event().currency_code1
 
     def get_amount(self):
         if hasattr(self.get_bank_event(), "amount"):
@@ -268,3 +324,42 @@ class ViolasEvent(Struct):
     def get_data(self):
         if hasattr(self.get_bank_event(), "data"):
             return self.get_bank_event().data.hex()
+
+    def payee(self):
+        if hasattr(self.get_bank_event(), "payee"):
+            return self.get_bank_event().payee
+
+    def get_tokenidx(self):
+        if hasattr(self.get_bank_event(), "tokenidx"):
+            return self.get_bank_event().tokenidx
+
+    def get_price(self):
+        if hasattr(self.get_bank_event(), "price"):
+            return self.get_bank_event().price
+
+    def get_collateral_currency(self):
+        if hasattr(self.get_bank_event(), "currency_code2"):
+            return self.get_bank_event().currency_code2
+
+    def get_collateral_amount(self):
+        if hasattr(self.get_bank_event(), "collateral_amount"):
+            return self.get_bank_event().collateral_amount
+
+    def get_borrower(self):
+        if hasattr(self.get_bank_event(), "borrower"):
+            return self.get_bank_event().borrower.hex()
+
+    def get_factor(self):
+        if hasattr(self.get_bank_event(), "factor"):
+            return self.get_bank_event().factor
+
+    def get_incentive(self):
+        if hasattr(self.get_bank_event(), "incentive"):
+            return self.get_bank_event().incentive
+
+    def get_rate(self):
+        if hasattr(self.get_bank_event(), "rate"):
+            return self.get_bank_event().rate
+
+    def get_timestamp(self):
+        return self.timestamp // 1_000_000

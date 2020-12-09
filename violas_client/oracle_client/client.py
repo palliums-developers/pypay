@@ -3,9 +3,12 @@ from violas_client.libra_client import Client as LibraClient
 from violas_client.lbrtypes.transaction.transaction_argument import TransactionArgument
 from violas_client.oracle_client.bytecodes import gen_script, CodeType
 from violas_client.oracle_client.account_state import AccountState
-from violas_client.lbrtypes.account_config.constants.addresses import association_address
+from violas_client.lbrtypes.account_config.constants.lbr import CORE_CODE_ADDRESS
 
 class Client(LibraClient):
+    ORACLE_OWNER_ADDRESS = "0000000000000000000000004f524143"
+    ORACLE_MODULE_ADDRESS = CORE_CODE_ADDRESS
+
     def update_exchange_rate(self, currency_code, numerator, denominator, is_blocking=True, **kwargs):
         args = []
         args.append(TransactionArgument.to_U64(numerator))
@@ -22,7 +25,7 @@ class Client(LibraClient):
             return state
 
     def oracle_get_exchange_rate(self, currency_code):
-        state = self.get_account_state(association_address())
+        state = self.get_account_state(self.ORACLE_OWNER_ADDRESS)
         if state is not None:
             return state.oracle_get_exchange_rate(currency_code)
 

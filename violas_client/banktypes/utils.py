@@ -1,18 +1,18 @@
 def new_mantissa(a, b):
     c = a << 64
     d = b << 32
-    return c // d
+    return int(c / d)
 
 
 def mantissa_div(a, b):
     c = a << 32
-    d = c // b
-    return d
+    d = c / b
+    return int(d)
 
 
 def mantissa_mul(a, b):
     c = a * b
-    return c >> 32
+    return int(c >> 32)
 
 
 def safe_sub(a, b):

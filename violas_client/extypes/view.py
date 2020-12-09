@@ -6,7 +6,7 @@ from violas_client.extypes.exdep_resource import Event
 
 WITH_EVENT_TYPES = [CodeType.ADD_LIQUIDITY, CodeType.REMOVE_LIQUIDITY, CodeType.SWAP]
 
-def get_swap_event(code_type, data):
+def get_swap_event(data):
     if isinstance(data, str):
         data = bytes.fromhex(data)
     return Event.deserialize(data).get_event()
@@ -27,7 +27,7 @@ class TransactionView(LibraTransactionView):
             for event in ret.events:
                 data = event.get_data()
                 if data is not None and len(data):
-                    event = get_swap_event(tx.get_code_type(), data)
+                    event = get_swap_event(data)
                     ret.swap_event = event
                     break
         return ret

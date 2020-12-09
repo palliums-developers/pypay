@@ -28,7 +28,7 @@ class AccountState(LibraAccountState):
         return UserInfoResource.deserialize(resource)
 
     @get_exception
-    def get_token_info_store_resource(self) -> Optional[TokenInfoStoreResource]:
+    def get_token_info_store_resource(self, accrue_interest=True, update_incentive_supply_index=False, update_incentive_borrow_index=False) -> Optional[TokenInfoStoreResource]:
         self.require_bank_account()
         if hasattr(self, "token_info_store"):
             return self.token_info_store
@@ -36,14 +36,28 @@ class AccountState(LibraAccountState):
             TokenInfoStoreResource.resource_path_for(module_address=self.get_bank_module_address()))
         resource = TokenInfoStoreResource.deserialize(resource)
         self.token_info_store = resource
-        for index in range(0, len(resource.tokens)):
-            self._accrue_interest(index)
+        if accrue_interest:
+            for index in range(0, len(resource.tokens), 2):
+                self._accrue_interest(index)
+        if update_incentive_supply_index:
+            for index in range(0, len(resource.tokens), 2):
+                self._update_incentive_supply_index(index)
+
+        if update_incentive_borrow_index:
+            for index in range(0, len(resource.tokens), 2):
+                self._update_incentive_borrow_index(index)
+
         return self.token_info_store
+
 
     @get_exception
     def get_token_info(self, index):
         token_info_store = self.get_token_info_store_resource()
         return token_info_store.tokens[index]
+
+    @get_exception
+    def bank_is_published(self):
+        return self.get_tokens_resource() is not None
 
     @get_exception
     def get_libra_token_resource(self, currency_code):
@@ -97,7 +111,28 @@ class AccountState(LibraAccountState):
         self.require_bank_account()
         token_infos = self.get_token_info_store_resource()
         return token_infos.tokens[index].borrow_index
-        
+
+    def get_supply_incentive(self, tokenidx, tokeninfos):
+        ti = tokeninfos[tokenidx]
+        supply = self._balance_of(tokenidx+1)
+        tokens = self.get_tokens_resource()
+        index = tokens.incentive_supply_indexes[tokenidx]
+        delta_index = safe_sub(ti.incentive_supply_index, index)
+        delta_vls = mantissa_mul(supply, delta_index)
+        return delta_vls
+
+    def get_borrow_incentive(self, tokenidx, tokeninfos):
+        borrow_balance = self._borrow_balance_of(tokenidx, tokeninfos)
+        ti = tokeninfos[tokenidx]
+
+        borrow = mantissa_div(borrow_balance, ti.borrow_index)
+        tokens = self.get_tokens_resource()
+        index = tokens.incentive_borrow_indexes[tokenidx]
+
+        delta_index = safe_sub(ti.incentive_borrow_index, index)
+        delta_vls = mantissa_mul(borrow, delta_index)
+        return delta_vls
+
 
     '''.............................called internally......................................'''
 
@@ -122,6 +157,7 @@ class AccountState(LibraAccountState):
         resource = self.ordered_map.get(
             TokenInfoStoreResource.resource_path_for(module_address=self.get_bank_module_address()))
         assert(resource is not None)
+
 
     def _exchange_rate(self, index):
         self.require_bank_account()
@@ -176,6 +212,34 @@ class AccountState(LibraAccountState):
         ti.total_reserves = ti.total_reserves + mantissa_mul(interest_accumulated, reserve_factor)
         ti.borrow_index = ti.borrow_index + mantissa_mul(ti.borrow_index, borrowrate)
 
+    def _update_incentive_supply_index(self, index):
+        token_infos = self.get_token_info_store_resource()
+        total_supply = token_infos.tokens[index+1].total_supply
+        ti = token_infos.tokens[index]
+        now = int(time.time() / 60)
+        delta_minutes = safe_sub(now, ti.incentive_supply_timestamp)
+        if delta_minutes > 0:
+            accured = ti.incentive_speed * delta_minutes
+            ratio = 0
+            if total_supply > 0:
+                ratio = mantissa_div(accured, total_supply)
+            ti.incentive_supply_index = ti.incentive_supply_index + ratio
+            ti.incentive_supply_timestamp = now
+
+    def _update_incentive_borrow_index(self, index):
+        token_infos = self.get_token_info_store_resource()
+        ti = token_infos.tokens[index]
+        now = int(time.time() / 60)
+        delta_minutes = safe_sub(now, ti.incentive_borrow_timestamp)
+        if delta_minutes > 0:
+            borrow_amount = mantissa_div(ti.total_borrows, ti.borrow_index)
+            accured = ti.incentive_speed * delta_minutes
+            ratio = 0
+            if borrow_amount > 0:
+                ratio = mantissa_div(accured, borrow_amount)
+            ti.incentive_borrow_index = ti.incentive_borrow_index + ratio
+            ti.incentive_supply_timestamp = now
+
     def _bank_token_2_base(self, amount, exchange_rate, collateral_factor, price):
         value = mantissa_mul(amount, exchange_rate)
         value = mantissa_mul(value, collateral_factor)
@@ -190,8 +254,8 @@ class AccountState(LibraAccountState):
 
     def _borrow_balance_of(self, index, token_infos):
         tokens = self.get_tokens_resource()
-        borrow_info = tokens.borrors[index]
-        ti = token_infos.tokens[index]
+        borrow_info = tokens.borrows[index]
+        ti = token_infos[index]
         return mantissa_div(mantissa_mul(borrow_info.principal, ti.borrow_index), borrow_info.interest_index)
     
 
@@ -200,17 +264,17 @@ class AccountState(LibraAccountState):
         str_amap = super().__str__()
         amap = json.loads(str_amap)
         if hasattr(self, "bank_module_address"):
-            tokens_resource = self.get_tokens_resource()
-            user_info_resource = self.get_user_info_resource()
-            token_info_store_resource = self.get_token_info_store_resource()
-            if tokens_resource:
-                amap["tokens_resource"] = tokens_resource.to_json_serializable()
-            if user_info_resource:
-                amap["user_info_resource"] = user_info_resource.to_json_serializable()
-            if token_info_store_resource:
-                amap["token_info_store_resource"] = token_info_store_resource.to_json_serializable()
+            try:
+                tokens_resource = self.get_tokens_resource()
+                user_info_resource = self.get_user_info_resource()
+                token_info_store_resource = self.get_token_info_store_resource()
+                if tokens_resource:
+                    amap["tokens_resource"] = tokens_resource.to_json_serializable()
+                if user_info_resource:
+                    amap["user_info_resource"] = user_info_resource.to_json_serializable()
+                if token_info_store_resource:
+                    amap["token_info_store_resource"] = token_info_store_resource.to_json_serializable()
+            except:
+                pass
         return json.dumps(amap, sort_keys=False, indent=2)
-
-
-
 

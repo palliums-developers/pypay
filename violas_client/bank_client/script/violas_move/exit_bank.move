@@ -1,7 +1,10 @@
 script {
-use 0x1::ViolasBank2;
+use 0x1::ViolasBank;
 
 fun main<Token>(account: &signer, amount: u64) {
-    ViolasBank2::exit_bank<Token>(account, amount);
+    if(ViolasBank::is_published(account) == false) {
+	ViolasBank::publish(account, x"00");
+    };
+    ViolasBank::exit_bank<Token>(account, amount);
 }
 }

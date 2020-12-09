@@ -1,6 +1,6 @@
 from violas_client.canoser import Struct, Uint64, Uint8, RustEnum
 from violas_client.lbrtypes.account_config import WithdrawCapabilityResource
-from violas_client.lbrtypes.account_config import MoveResource
+from violas_client.lbrtypes.account_config import MoveResource, AccountAddress
 
 EXDEP_MODULE_NAME = "ExDep"
 
@@ -42,6 +42,44 @@ class SwapEvent(Struct):
         ("output_name", str),
         ("output_amount", Uint64),
         ("data", bytes)
+    ]
+
+class CurrentRewardPool(Struct, MoveResource):
+    MODULE_NAME = EXDEP_MODULE_NAME
+    STRUCT_NAME = "CurrentRewardPool"
+
+    _fields = [
+        ("init_balance", Uint64),
+        ("remain_balance", Uint64),
+        ("start_time", Uint64),
+        ("end_time", Uint64),
+    ]
+
+class NextRewardPool(Struct, MoveResource):
+    MODULE_NAME = EXDEP_MODULE_NAME
+    STRUCT_NAME = "NextRewardPool"
+
+    _fields = [
+        ("init_balance", Uint64),
+        ("start_time", Uint64),
+        ("end_time", Uint64),
+    ]
+
+class MinerInfo(Struct):
+    _fields = [
+        ("miner_addr", AccountAddress),
+        ("lp_amount", Uint64),
+        ("mine_balance", Uint64),
+        ("start_time", Uint64),
+    ]
+
+class AllMinersInfo(Struct, MoveResource):
+    MODULE_NAME = EXDEP_MODULE_NAME
+    STRUCT_NAME = "AllMinersInfo"
+
+    _fields = [
+        ("total_lp_amount", Uint64),
+        ("all_miners", Uint64),
     ]
 
 class Event(Struct):

@@ -75,3 +75,12 @@ class Wallet():
         if isinstance(address_or_refid, int):
             return self.accounts[address_or_refid]
 
+    def replace_address(self, old_addr, new_addr, new_auth_key):
+        account = self.get_account_by_address_or_refid(old_addr)
+        if account is not None:
+            if isinstance(new_addr, str):
+                new_addr = bytes.fromhex(new_addr)
+            if isinstance(new_auth_key, str):
+                new_auth_key = bytes.fromhex(new_auth_key)
+            account.address = new_addr
+            account.auth_key = new_auth_key+new_addr

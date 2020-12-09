@@ -3,7 +3,7 @@ import requests
 from violas_client.json_rpc.views import TransactionView
 from typing import Optional, Union
 
-from violas_client.lbrtypes.account_config.constants.lbr import LBR_NAME, CORE_CODE_ADDRESS
+from violas_client.lbrtypes.account_config.constants.lbr import DEFAULT_COIN_NAME, CORE_CODE_ADDRESS
 from violas_client.move_core_types.language_storage import TypeTag, StructTag
 from violas_client.move_core_types.account_address import AccountAddress as Address
 from violas_client.libra_client.methods import LibraClient
@@ -19,7 +19,7 @@ from violas_client.lbrtypes.account_config import  association_address, treasury
 from violas_client.lbrtypes.transaction.helper import create_user_txn
 from violas_client.lbrtypes.account_state import AccountState
 from violas_client.lbrtypes.account_config import config_address
-from violas_client.lbrtypes.account_config import LBR_NAME
+from violas_client.lbrtypes.account_config import DEFAULT_COIN_NAME
 from violas_client.lbrtypes.event import EventKey
 from violas_client.lbrtypes import NamedChain
 
@@ -68,7 +68,7 @@ class Client():
     WAIT_TRANSACTION_COUNT = 1000
     WAIT_TRANSACTION_INTERVAL = 0.1
 
-    def __init__(self, network="violas_testnet", waypoint: Optional[Waypoint]=None):
+    def __init__(self, network="bj_testnet", waypoint: Optional[Waypoint]=None):
         ensure(network in NETWORKS, "The specified chain does not exist")
         chain = NETWORKS[network]
         ensure("url" in chain, "The specified chain has no url")
@@ -117,12 +117,8 @@ class Client():
         address = Address.normalize_to_bytes(account_address)
         state = self.client.get_account_state(address, True)
         if state:
-            return { balance.currency: balance.amount for balance in state.balances}
+            return {balance.currency: balance.amount for balance in state.balances}
         return {}
-
-    def has_register_currency(self, account_address, currency_code):
-        balances = self.get_balances(account_address)
-        return balances.get(currency_code) is not None
 
     def get_sequence_number(self, account_address: Union[bytes, str]) -> Optional[int]:
         account_state = self.get_account_blob(account_address)
@@ -167,12 +163,12 @@ class Client():
 
     def get_sent_events(self, address: Union[bytes, str], start: int, limit: int):
         address = Address.normalize_to_bytes(address)
-        event_key = EventKey.new_from_address(address, 1)
+        event_key = EventKey.new_from_address(address, 3)
         return self.client.get_events_by_access_path(event_key, start, limit)
 
     def get_received_events(self, address: Union[bytes, str], start: int, limit: int):
         address = Address.normalize_to_bytes(address)
-        event_key = EventKey.new_from_address(address, 0)
+        event_key = EventKey.new_from_address(address, 2)
         return self.client.get_events_by_access_path(event_key, start, limit)
 
     def get_specific_events(self, address: Union[bytes, str], id, start: int, limit: int):
@@ -191,10 +187,10 @@ class Client():
     def mint_coin(self, receiver_address, micro_coins, auth_key_prefix=None, human_name="", data="", add_all_currencies=False, is_blocking=True, currency_module_address=None,
                   currency_code=None,
                   max_gas_amount=MAX_GAS_AMOUNT, gas_unit_price=GAS_UNIT_PRICE, txn_expiration=TXN_EXPIRATION, gas_currency_code=None):
-        from violas_client.lbrtypes.account_config import LBR_NAME
+        from violas_client.lbrtypes.account_config import DEFAULT_COIN_NAME
         if currency_code is None:
-            currency_code = LBR_NAME
-        if self.get_account_state(receiver_address) is None and hasattr(self, "associate_account"):
+            currency_code = DEFAULT_COIN_NAME
+        if self.get_account_state(receiver_address) is None and self.treasury_compliance_account is not None:
             args = []
             args.append(TransactionArgument.to_U64(0))
             args.append(TransactionArgument.to_address(receiver_address))
@@ -203,7 +199,7 @@ class Client():
             args.append(TransactionArgument.to_bool(add_all_currencies))
             ty_args = self.get_type_args(currency_code, currency_module_address)
             script = Script.gen_script(CodeType.CREATE_PARENT_VASP_ACCOUNT, *args, ty_args=ty_args, currency_module_address=currency_module_address)
-            self.submit_script(self.associate_account, script, is_blocking, gas_currency_code, max_gas_amount, gas_unit_price, txn_expiration)
+            self.submit_script(self.treasury_compliance_account, script, is_blocking, gas_currency_code, max_gas_amount, gas_unit_price, txn_expiration)
         if hasattr(self, "testnet_dd_account"):
             args = []
             args.append(TransactionArgument.to_address(receiver_address))
@@ -219,17 +215,30 @@ class Client():
             return self.mint_coin_with_faucet_service(receiver_address, auth_key_prefix, micro_coins, currency_code, is_blocking)
 
     def transfer_coin(self, sender_account, receiver_address, micro_coins, currency_module_address=None,
-                      currency_code=None, is_blocking=True, data=None,
+                      currency_code=None, is_blocking=True, data=None, metadata_signature=None,
                       gas_currency_code=None, max_gas_amount=MAX_GAS_AMOUNT, gas_unit_price=GAS_UNIT_PRICE, txn_expiration=TXN_EXPIRATION):
+        if metadata_signature is None:
+            metadata_signature = ""
         args = []
         args.append(TransactionArgument.to_address(receiver_address))
         args.append(TransactionArgument.to_U64(micro_coins))
         args.append(TransactionArgument.to_U8Vector(data, hex=False))
-        args.append(TransactionArgument.to_U8Vector(""))
+        args.append(TransactionArgument.to_U8Vector(metadata_signature))
 
         ty_args = self.get_type_args(currency_code, currency_module_address)
         script = Script.gen_script(CodeType.PEER_TO_PEER_WITH_METADATA, *args, ty_args=ty_args, currency_module_address=currency_module_address)
         return self.submit_script(sender_account, script, is_blocking,self.get_gas_currency_code(currency_code, gas_currency_code), max_gas_amount, gas_unit_price, txn_expiration)
+
+    def tiered_mint(self, amount, currency_code=None, gas_currency_code=None, is_blocking=True, **kwargs):
+        args = []
+        args.append(TransactionArgument.to_U64(0))
+        args.append(TransactionArgument.to_address(self.testnet_dd_account.address))
+        args.append(TransactionArgument.to_U64(amount))
+        args.append(TransactionArgument.to_U64(3))
+
+        ty_args = self.get_type_args(currency_code)
+        script = Script.gen_script(CodeType.TIERED_MINT, *args, ty_args=ty_args)
+        return self.submit_script(self.treasury_compliance_account, script, is_blocking, self.get_gas_currency_code(currency_code, gas_currency_code), **kwargs)
 
     def modify_publishing_option(self, option, is_blocking=True, gas_currency_code=None, max_gas_amount=MAX_GAS_AMOUNT, gas_unit_price=GAS_UNIT_PRICE, txn_expiration=TXN_EXPIRATION):
         args = []
@@ -273,6 +282,17 @@ class Client():
         script = Script.gen_script(CodeType.CREATE_DESIGNATED_DEALER, *args, ty_args=ty_args)
         return self.submit_script(self.associate_account, script, gas_currency_code=self.get_gas_currency_code(currency_code, gas_currency_code), **kwargs)
 
+    def rotate_dual_attestation_info(self, sender_account, new_url, new_key=None, gas_currency_code=None, **kwargs):
+        if new_key is None:
+            new_key = sender_account.public_key
+        args = []
+        args.append(TransactionArgument.to_U8Vector(new_url, hex=False))
+        args.append(TransactionArgument.to_U8Vector(new_key))
+
+        ty_args = []
+        script = Script.gen_script(CodeType.ROTATE_DUAL_ATTESTATION_INFO, *args, ty_args=ty_args)
+        return self.submit_script(sender_account, script, gas_currency_code=self.get_gas_currency_code(currency_code=gas_currency_code), **kwargs)
+
     def get_account_registered_currencies(self, account_address):
         return self.get_balances(account_address).keys()
 
@@ -282,6 +302,19 @@ class Client():
         for currency in list(set(currencies)-set(has_currencies)):
             self.add_currency_to_account(sender_account, currency_code=currency, gas_currency_code=gas_currency_code, **kwargs)
 
+    def create_child_vasp_account(self, parent_vasp_account, child_address, auth_key_prefix, currency_code=None, add_all_currency=False,
+                                  child_initial_balance=0, gas_currency_code=None, **kwargs):
+        args = []
+        args.append(TransactionArgument.to_address(child_address))
+        args.append(TransactionArgument.to_U8Vector(auth_key_prefix))
+        args.append(TransactionArgument.to_bool(add_all_currency))
+        args.append(TransactionArgument.to_U64(child_initial_balance))
+
+        ty_args = self.get_type_args(currency_code)
+        script = Script.gen_script(CodeType.CREATE_CHILD_VASP_ACCOUNT, *args, ty_args=ty_args)
+        return self.submit_script(parent_vasp_account, script,
+                                  gas_currency_code=self.get_gas_currency_code(currency_code, gas_currency_code),
+                                  **kwargs)
 
     '''...........................................Called internal.....................................'''
     def require_faucet_account(self):
@@ -329,7 +362,7 @@ class Client():
         if currency_module_address is None:
             currency_module_address = CORE_CODE_ADDRESS
         if currency_code is None:
-            currency_code = LBR_NAME
+            currency_code = DEFAULT_COIN_NAME
         if struct_name is None:
             struct_name = currency_code
         currency_module_address = Address.normalize_to_bytes(currency_module_address)
@@ -388,7 +421,7 @@ class Client():
             return gas_currency_code
         if currency_code:
             return currency_code
-        return LBR_NAME
+        return DEFAULT_COIN_NAME
 
     def return_when_error(value):
         def get_exception(func):

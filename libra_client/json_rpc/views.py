@@ -509,6 +509,7 @@ class UserTransaction(Struct):
 class BlockMetadataView(Struct):
     _fields = [
         ("version", Uint64),
+        ("accumulator_root_hash", StrT),
         ("timestamp", Uint64),
         ("chain_id", Uint8),
         ("script_hash_allow_list", [StrT]),

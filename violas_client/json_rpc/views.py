@@ -2,6 +2,8 @@ from typing import List
 from violas_client.canoser import Struct, Uint64, BoolT, StrT, RustEnum, Uint8, Uint16
 from violas_client.lbrtypes.account_state import AccountState
 from violas_client.lbrtypes.bytecode import get_code_type, CodeType
+from violas_client.canoser import RustOptional
+
 
 class AmountView(Struct):
     _fields = [
@@ -17,7 +19,8 @@ class DesignatedDealerView(Struct):
         ("compliance_key", str),
         ("preburn_balances", [AmountView]),
         ("received_mint_events_key", str),
-
+        ("compliance_key_rotation_events_key", str),
+        ("base_url_rotation_events_key", str),
     ]
 
 class ParentVASPView(Struct):
@@ -27,6 +30,8 @@ class ParentVASPView(Struct):
         ("expiration_time", Uint64),
         ("compliance_key", str),
         ("num_children", Uint64),
+        ("compliance_key_rotation_events_key", str),
+        ("base_url_rotation_events_key", str)
     ]
 
 class AccountRoleView(RustEnum):
@@ -51,6 +56,7 @@ class AccountRoleView(RustEnum):
 
 class AccountView(Struct):
     _fields = [
+        ("address", StrT),
         ("balances", [AmountView]),
         ("sequence_number", Uint64),
         ("authentication_key", StrT),
@@ -244,6 +250,31 @@ class UnknownEvent(Struct):
     def get_data(self):
         return self.raw
 
+
+class ReceivedMint(Struct):
+    _fields = [
+        ("amount", AmountView),
+        ("destination_address", str)
+    ]
+
+class ComplianceKeyRotation(Struct):
+    _fields = [
+        ("new_compliance_public_key", str),
+        ("time_rotated_seconds", Uint64)
+    ]
+
+class BaseUrlRotation(Struct):
+    _fields = [
+        ("new_base_url", str),
+        ("time_rotated_seconds", Uint64),
+    ]
+
+class CreateAccount(Struct):
+    _fields = [
+        ("created_address", str),
+        ("role_id", Uint64)
+    ]
+
 class EventDataView(RustEnum):
     _enums = [
         ("Burn", BurnEvent),
@@ -256,6 +287,10 @@ class EventDataView(RustEnum):
         ("Upgrade", UpgradeEvent),
         ("NewEpoch", NewEpochEvent),
         ("NewBlock", NewBlockEvent),
+        ("ReceivedMint", ReceivedMint),
+        ("ComplianceKeyRotation", ComplianceKeyRotation),
+        ("BaseUrlRotation", BaseUrlRotation),
+        ("CreateAccount", CreateAccount),
         ("Unknown", UnknownEvent)
     ]
 
@@ -279,6 +314,14 @@ class EventDataView(RustEnum):
             return cls("NewEpoch", NewEpochEvent.from_value(value))
         if value["type"] == "newblock":
             return cls("NewBlock", NewBlockEvent.from_value(value))
+        if value["type"] == "receivedmint":
+            return cls("ReceivedMint", ReceivedMint.from_value(value))
+        if value["type"] == "compliancekeyrotation":
+            return cls("ComplianceKeyRotation", ComplianceKeyRotation.from_value(value))
+        if value["type"] == "baseurlrotation":
+            return cls("BaseUrlRotation", BaseUrlRotation.from_value(value))
+        if value["type"] == "createaccount":
+            return cls("CreateAccount", CreateAccount.from_value(value))
         if value["type"] == "unknown":
             return cls("Unknown", UnknownEvent.from_value(value))
 
@@ -370,38 +413,31 @@ class UnknownScript(Struct):
     _fields = [
     ]
 
-class ScriptView(RustEnum):
-    _enums = [
-        ("PeerToPeer", PeerToPeerScript),
-        ("Mint", MintScript),
-        ("Unknown", UnknownScript)
+
+class ScriptView(Struct):
+    _fields = [
+        ("r", StrT),
+        ("code", StrT),
+        ("arguments", [StrT]),
+        ("type_arguments", [StrT]),
+        ("receiver", StrT),
+        ("amount", Uint64),
+        ("currency", StrT),
+        ("metadata", StrT),
+        ("metadata_signature", StrT),
     ]
 
-    @classmethod
-    def from_value(cls, value):
-        type = value.get("type")
-        if type == "mint_transaction":
-            return cls("Mint", MintScript.from_value(value))
-        if type == "peer_to_peer_transaction":
-            return cls("PeerToPeer", PeerToPeerScript.from_value(value))
-        if type == "unknown_transaction":
-            return cls("Unknown", UnknownScript())
-
     def get_receiver(self):
-        if self.enum_name != "Unknown":
-            return self.value.get_receiver()
+        return self.receiver
 
     def get_amount(self):
-        if self.enum_name != "Unknown":
-            return self.value.get_amount()
+        return self.amount
 
     def get_currency_code(self):
-        if self.enum_name != "Unknown":
-            return self.value.get_currency_code()
+        return self.currency
 
     def get_data(self):
-        if self.enum_name == "PeerToPeer":
-            return self.value.get_data()
+        return self.metadata
 
 
 class UserTransaction(Struct):
@@ -473,8 +509,12 @@ class UserTransaction(Struct):
 class BlockMetadataView(Struct):
     _fields = [
         ("version", Uint64),
+        ("accumulator_root_hash", StrT),
         ("timestamp", Uint64),
-        ("chain_id", Uint8)
+        ("chain_id", Uint8),
+        ("script_hash_allow_list", [StrT]),
+        ("module_publishing_allowed", bool),
+        ("libra_version", Uint64)
     ]
 
     @classmethod
@@ -559,10 +599,29 @@ class TransactionDataView(RustEnum):
         if self.enum_name == "UnknownTransaction":
             return CodeType.UNKNOWN
 
+class MoveAbortExplanationView(Struct):
+    _fields = [
+        ("category", StrT),
+        ("category_description", StrT),
+        ("reason", StrT),
+        ("reason_description", StrT),
+    ]
+
+class OptionalMoveAbortExplanationView(RustOptional):
+    _type = MoveAbortExplanationView
+
+    @classmethod
+    def from_value(cls, value):
+        if value is None:
+            return OptionalMoveAbortExplanationView()
+        else:
+            return OptionalMoveAbortExplanationView(MoveAbortExplanationView.from_value(value))
+
 class MoveAbortView(Struct):
     _fields = [
         ("location", StrT),
         ("abort_code", Uint64),
+        ("explanation", OptionalMoveAbortExplanationView)
     ]
 
 class ExecutionFailureView(Struct):
@@ -578,9 +637,7 @@ class VMStatusView(RustEnum):
         ("OutOfGas", None),
         ("MoveAbort", MoveAbortView),
         ("ExecutionFailure", ExecutionFailureView),
-        ("VerificationError", None),
-        ("DeserializationError", None),
-        ("PublishingFailure", None),
+        ("MiscellaneousError", None),
     ]
 
     @classmethod
@@ -594,12 +651,8 @@ class VMStatusView(RustEnum):
             return cls("MoveAbort", MoveAbortView.from_value(value))
         if tp == "execution_failure":
             return cls("ExecutionFailure", ExecutionFailureView.from_value(value))
-        if tp == "verification_error":
-            return cls("VerificationError", None)
-        if tp == "deserialization_error":
-            return cls("DeserializationError", None)
-        if tp == "publishing_failure":
-            return cls("PublishingFailure", None)
+        if tp == "miscellaneous_error":
+            return cls("MiscellaneousError", None)
 
 class TransactionView(Struct):
     _fields = [

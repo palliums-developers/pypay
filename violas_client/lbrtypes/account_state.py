@@ -60,11 +60,31 @@ class AccountState(Struct):
         account_resource = self.get_account_resource()
         if account_resource:
             if currency_code is None:
-                currency_code = LBR_NAME
+                currency_code = DEFAULT_COIN_NAME
             currency_type_tag = type_tag_for_currency_code(currency_code, currency_module_address)
             resource = self.get(BalanceResource.access_path_for(currency_type_tag))
             if resource:
                 return BalanceResource.deserialize(resource)
+
+    def get_credential_resource(self) -> Optional[CredentialResource]:
+        credential = self.get(CredentialResource.resource_path())
+        if credential:
+            return CredentialResource.deserialize(credential)
+
+    def get_parentVASP_resource(self) -> Optional[ParentVASP]:
+        parent_vasp = self.get(ParentVASP.resource_path())
+        if parent_vasp:
+            return ParentVASP.deserialize(parent_vasp)
+
+    def get_childVASP_resource(self) -> Optional[ChildVASP]:
+        child_vasp = self.get(ChildVASP.resource_path())
+        if child_vasp:
+            return ParentVASP.deserialize(child_vasp)
+
+    def get_designated_dealer_resource(self) -> Optional[DesignatedDealer]:
+        designated_dealer = self.get(DesignatedDealer.resource_path())
+        if designated_dealer:
+            return DesignatedDealer.deserialize(designated_dealer)
 
     def get_configuration_resource(self) -> Optional[ConfigurationResource]:
         configuration_resource = self.get(ConfigurationResource.resource_path())

@@ -1,7 +1,10 @@
 script {
-use 0x1::ViolasBank2;
+use 0x1::ViolasBank;
 
 fun main<Token>(account: &signer, factor: u64) {
-    ViolasBank2::update_collateral_factor<Token>(account, factor);
+    if(ViolasBank::is_published(account) == false) {
+	ViolasBank::publish(account, x"00");
+    };
+    ViolasBank::update_collateral_factor<Token>(account, factor);
 }
 }

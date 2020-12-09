@@ -37,6 +37,8 @@ class ArrayT(Base):
         return arr
 
     def from_value(self, value):
+        if value is None:
+            return []
         return [self.atype.from_value(v) for v in value]
 
     def from_proto(self, proto):

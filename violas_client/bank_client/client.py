@@ -15,8 +15,33 @@ from violas_client.lbrtypes.account_config import association_address
 from violas_client.banktypes.utils import mantissa_div, mantissa_mul, new_mantissa
 
 class Client(LibraClient):
-    BANK_OWNER_ADDRESS = "00000000000000000000000042414E4B"
-    BANK_MODULE_ADDRESS = association_address()
+
+    BANK_OWNER_ADDRESS = "00000000000000000000000042414e4b"
+    BANK_MODULE_ADDRESS = core_code_address()
+
+    def bank_publish_module(self, sender_account, is_blocking=True, **kwargs):
+        module = Module.gen_module(module_address=sender_account.address)
+        return self.submit_module(sender_account, module, is_blocking, **kwargs)
+
+    def bank_update_price_from_oracle(self, sender_account, currency_code, is_blocking=True, **kwargs):
+        args = []
+        ty_args = self.get_type_args(currency_code)
+        script = Script.gen_script(CodeType.UPDATE_PRICE_FROM_ORACLE, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
+        return self.submit_script(sender_account, script, is_blocking, **kwargs)
+
+    def bank_register_token(self, sender_account, currency_code, price_oracle, collater_factor, base_rate, rate_multiplier, rate_jump_mutiplier, rate_kink, data=None, is_blocking=True, **kwargs):
+        args = []
+        args.append(TransactionArgument.to_address(price_oracle))
+        args.append(TransactionArgument.to_U64(int(collater_factor*(2**32))))
+        args.append(TransactionArgument.to_U64(int(base_rate*(2**32)*60*24*30)))
+        args.append(TransactionArgument.to_U64(int(rate_multiplier*(2**32)*60*24*30)))
+        args.append(TransactionArgument.to_U64(int(rate_jump_mutiplier*(2**32)*60*24*30)))
+        args.append(TransactionArgument.to_U64(int(rate_kink*(2**32))))
+        args.append(TransactionArgument.to_U8Vector(data, hex=False))
+
+        ty_args = self.get_type_args(currency_code)
+        script = Script.gen_script(CodeType.REGISTER_LIBRA_TOKEN, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
+        return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
     def bank_borrow(self, sender_account, amount,  currency_code, data=None, is_blocking=True, **kwargs):
         args = []
@@ -43,7 +68,7 @@ class Client(LibraClient):
         script = Script.gen_script(CodeType.PUBLISH, *args, ty_args=[], module_address=self.get_bank_module_address())
         return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
-    def bank_redeem(self, sender_account, currency_code, amount=0, data=None, is_blocking=True, **kwargs):
+    def bank_redeem(self, sender_account, amount, currency_code, data=None, is_blocking=True, **kwargs):
         args = []
         args.append(TransactionArgument.to_U64(amount))
         args.append(TransactionArgument.to_U8Vector(data, hex=False))
@@ -52,7 +77,7 @@ class Client(LibraClient):
         script = Script.gen_script(CodeType.REDEEM2, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
         return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
-    def bank_repay_borrow(self, sender_account, currency_code, amount=0, data=None, is_blocking=True, **kwargs):
+    def bank_repay_borrow(self, sender_account, amount, currency_code, data=None, is_blocking=True, **kwargs):
         args = []
         args.append(TransactionArgument.to_U64(amount))
         args.append(TransactionArgument.to_U8Vector(data, hex=False))
@@ -61,7 +86,7 @@ class Client(LibraClient):
         script = Script.gen_script(CodeType.REPAY_BORROW2, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
         return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
-    def bank_liquidate_borrow(self, sender_account, borrower, borrowed_currency, collateral_currency, amount=0, data=None, is_blocking=True, **kwargs):
+    def bank_liquidate_borrow(self, sender_account, borrower, borrowed_currency, collateral_currency, amount, data=None, is_blocking=True, **kwargs):
         args = []
         args.append(TransactionArgument.to_address(borrower))
         args.append(TransactionArgument.to_U64(amount))
@@ -72,20 +97,49 @@ class Client(LibraClient):
         script = Script.gen_script(CodeType.LIQUIDATE_BORROW, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
         return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
+    def bank_enter(self, sender_account, amount, currency_code, is_blocking=True, **kwargs):
+        args = []
+        args.append(TransactionArgument.to_U64(amount))
+
+        ty_args = self.get_type_args(currency_code)
+        script = Script.gen_script(CodeType.ENTER_BANK, *args, ty_args=ty_args,
+                                   module_address=self.get_bank_module_address())
+        return self.submit_script(sender_account, script, is_blocking, **kwargs)
+
+    def bank_update_collateral_factor(self, sender_account, currency_code, factor, is_blocking=True, **kwargs):
+        args = []
+        args.append(TransactionArgument.to_U64(int(factor*(2**32))))
+
+        ty_args = self.get_type_args(currency_code)
+        script = Script.gen_script(CodeType.UPDATE_COLLATERAL_FACTOR, *args, ty_args=ty_args,
+                                   module_address=self.get_bank_module_address())
+        return self.submit_script(sender_account, script, is_blocking, **kwargs)
+
+    def bank_update_rate_model(self, sender_account, currency_code, base_rate, rate_multiplier, rate_jump_multiplier, rate_kink, is_blocking=True, **kwargs):
+        args = []
+        args.append(TransactionArgument.to_U64(int(base_rate*(2**32)*60*24*30)))
+        args.append(TransactionArgument.to_U64(int(rate_multiplier*(2**32)*60*24*30)))
+        args.append(TransactionArgument.to_U64(int(rate_jump_multiplier*(2**32)*60*24*30)))
+        args.append(TransactionArgument.to_U64(int(rate_kink*(2**32))))
+
+        ty_args = self.get_type_args(currency_code)
+
+        script = Script.gen_script(CodeType.UPDATE_RATE_MODEL, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
+        return self.submit_script(sender_account, script, is_blocking, **kwargs)
+
+
     def get_account_blob(self, account_address) -> Optional[AccountState]:
         blob = super().get_account_blob(account_address)
         if blob:
             state = AccountState.new(blob)
-            if hasattr(self, "bank_module_address"):
-                state.set_bank_module_address(self.bank_module_address)
+            state.set_bank_module_address(self.get_bank_module_address())
             return state
 
     def get_account_state(self, account_address) -> Optional[AccountState]:
         blob = super().get_account_blob(account_address)
         if blob:
             state = AccountState.new(blob)
-            if hasattr(self, "bank_module_address"):
-                state.set_bank_module_address(self.bank_module_address)
+            state.set_bank_module_address(self.get_bank_module_address())
             return state
 
     def get_transaction(self, version, fetch_events:bool=True) -> Optional[TransactionView]:
@@ -265,6 +319,27 @@ class Client(LibraClient):
 
         return int(sum / token_info_resource.get_price(currency_code))
 
+    @LibraClient.return_when_error(None)
+    def bank_get_sum_incentive_amount(self, account_address):
+        bank_owner_address = self.get_bank_owner_address()
+        owner_state = self.get_account_state(bank_owner_address)
+        tokens = owner_state.get_token_info_store_resource(accrue_interest=False, update_incentive_supply_index=True, update_incentive_borrow_index=True).tokens
+        state = self.get_account_state(account_address)
+        sum = 0
+        for i in range(0, len(tokens), 2):
+            sum += state.get_supply_incentive(i, tokens)
+            sum += state.get_borrow_incentive(i, tokens)
+        return sum
+
+    @LibraClient.return_when_error(None)
+    def bank_get_incentive_amount(self, account_address, currency_code):
+        index = self.bank_get_currency_index(currency_code)
+        bank_owner_address = self.get_bank_owner_address()
+        owner_state = self.get_account_state(bank_owner_address)
+        tokens = owner_state.get_token_info_store_resource(accrue_interest=False, update_incentive_supply_index=True, update_incentive_borrow_index=True).tokens
+        state = self.get_account_state(account_address)
+        sum = state.get_supply_incentive(index, tokens) + state.get_borrow_incentive(index, tokens)
+        return sum
 
     def bank_get_lock_rate(self, currency_code):
         bank_owner_address = self.get_bank_owner_address()
@@ -286,6 +361,8 @@ class Client(LibraClient):
         state = self.get_account_state(self.get_bank_module_address())
         return state.get_utilization_rate(currency_code)
 
+    def bank_is_published(self, account_address):
+        return self.get_account_state(account_address).bank_is_published()
 
     '''....................................called internal.........................................'''
     def bank_update_registered_currencies(self):

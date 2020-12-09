@@ -2,7 +2,7 @@ import copy
 from typing import Optional
 from violas_client.lbrtypes.account_state import AccountState as LibraAccountState
 from violas_client.extypes.exchange_resource import ReservesResource, RegisteredCurrenciesResource, TokensResource
-from violas_client.extypes.exdep_resource import BalanceResource
+from violas_client.extypes.exdep_resource import BalanceResource, CurrentRewardPool, NextRewardPool, AllMinersInfo
 from violas_client.move_core_types.language_storage import StructTag, TypeTag
 from violas_client.error import get_exception
 
@@ -34,6 +34,11 @@ class AccountState(LibraAccountState):
         resource = self.get(RegisteredCurrenciesResource.resource_path(module_address=self.get_exchange_module_address(exchange_module_address)))
         return RegisteredCurrenciesResource.deserialize(resource)
 
+    def swap_get_current_reward_pool(self, coina, coinb):
+        tags = self.type_tags_for_pair(coina, coinb)
+        resource = self.get(CurrentRewardPool.resource_path_for(*tags))
+        return CurrentRewardPool.deserialize(resource)
+
     def set_exchange_module_address(self, address):
         if address:
             self.exchange_module_address = address
@@ -43,6 +48,14 @@ class AccountState(LibraAccountState):
             return address
         if hasattr(self, "exchange_module_address"):
             return self.exchange_module_address
+
+    def get_type_tag(self, currency_code):
+        return TypeTag.new("Struct", StructTag.new(currency_code))
+
+    def type_tags_for_pair(self, coina, coinb):
+        taga = TypeTag("Struct", StructTag.new(coina))
+        tagb= TypeTag("Struct", StructTag.new(coinb))
+        return [taga, tagb]
 
 
 

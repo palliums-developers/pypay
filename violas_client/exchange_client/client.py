@@ -12,10 +12,13 @@ from violas_client.extypes.exchange_resource import ReservesResource
 from violas_client.extypes.exchange_error import ExchangeError
 from violas_client.error import LibraError
 from violas_client.extypes.base import Base
+from violas_client.move_core_types.language_storage import core_code_address
 
 class Client(LibraClient, Base):
 
     DEAD_LINE = 7258089600
+    EXCHANGE_OWNER_ADDRESS = "00000000000000000000000045584348"
+    EXCHANGE_MODULE_ADDRESS = core_code_address()
 
     def swap_publish_contract(self, sender_account, is_blocking=True, **kwargs):
         module = Module.gen_module(CodeType.EXDEP,sender_account.address)
@@ -121,27 +124,19 @@ class Client(LibraClient, Base):
     def get_exchange_module_address(self, exchange_module_address=None):
         if exchange_module_address:
             return exchange_module_address
-        if hasattr(self, "exchange_module_address"):
-            return self.exchange_module_address
-        ensure(False, "Not set exchange module address")
+        return self.EXCHANGE_MODULE_ADDRESS
 
     def set_exchange_module_address(self, exchange_module_address):
         self.exchange_module_address = exchange_module_address
         update_hash_to_type_map(exchange_module_address)
-        # self.swap_update_registered_currencies()
 
     def get_exchange_owner_address(self, exchange_owner_address=None):
         if exchange_owner_address:
             return exchange_owner_address
-        if hasattr(self, "exchange_owner_address"):
-            return self.exchange_owner_address
-        if hasattr(self, "exchange_module_address"):
-            return self.exchange_module_address
-        ensure(False, "Not set exchange_owner_address")
+        return self.EXCHANGE_OWNER_ADDRESS
 
     def set_exchange_owner_address(self, exchange_owner_address):
         self.exchange_owner_address = exchange_owner_address
-        # self.swap_update_registered_currencies()
 
     def get_account_blob(self, account_address) -> Optional[AccountState]:
         blob = super().get_account_blob(account_address)

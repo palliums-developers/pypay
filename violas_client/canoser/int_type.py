@@ -70,6 +70,8 @@ class IntType(Base):
 
     @classmethod
     def check_value(cls, value):
+        if value is None:
+            return
         if isinstance(value, bool):
             raise TypeError(f"{value} is not a integer")
         if not isinstance(value, int):
