@@ -43,8 +43,8 @@ if __name__ == '__main__':
     try:
         exitCode = app.exec_()
 
-        #del engine
-        #del payController
+        del engine
+        del payController
         
         sys.exit(exitCode)
     except:
