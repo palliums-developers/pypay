@@ -66,6 +66,9 @@ Item {
         'show_name': 'BTC',
         'balance': 0
     }
+    
+    property var incentive_top20
+
     property alias model_tokens: model_tokens
     property alias model_currencies: model_currencies
     property alias model_products_deposit: model_products_deposit
@@ -469,6 +472,98 @@ Item {
             }
         });
     }
+
+    ///
+
+    // /1.0/violas/incentive/mobile/verify
+    function incentive_mobile_verify(params, cb) {
+        request('GET', url_violas + '/1.0/violas/incentive/mobile/verify' + formatParams(params), null, function(resp) {
+            if (cb) {
+                cb()
+            }
+        });
+    }
+
+    // /1.0/violas/incentive/inviter/info
+    function incentive_inviter_info(params, cb) {
+        request('GET', url_violas + '/1.0/violas/incentive/inviter/info' + formatParams(params), null, function(resp) {
+            
+            if (cb) {
+                cb()
+            }
+        });
+
+    // /1.0/violas/incentive/inviter/top20
+    function incentive_inviter_top20(params, cb) {
+        request('GET', url_violas + '/1.0/violas/incentive/inviter/top20' + formatParams(params), null, function(resp) {
+            
+            if (cb) {
+                cb()
+            }
+        });
+    }
+
+    // /1.0/violas/incentive/check/verified
+    function incentive_check_verified(params, cb) {
+        request('GET', url_violas + '/1.0/violas/incentive/check/verified' + formatParams(params), null, function(resp) {
+            
+            if (cb) {
+                cb()
+            }
+        });
+    }
+
+    // /1.0/violas/incentive/orders/invite
+    function incentive_orders_invite(params, cb) {
+        request('GET', url_violas + '/1.0/violas/incentive/orders/invite' + formatParams(params), null, function(resp) {
+            
+            if (cb) {
+                cb()
+            }
+        });
+    }
+
+    // /1.0/violas/incentive/orders/pool
+    function incentive_orders_pool(params, cb) {
+        request('GET', url_violas + '/1.0/violas/incentive/orders/pool' + formatParams(params), null, function(resp) {
+            
+            if (cb) {
+                cb()
+            }
+        });
+    }
+
+    // /violas/1.0/incentive/orders/bank
+    function incentive_orders_bank(params, cb) {
+        request('GET', url_violas + '/1.0/violas/incentive/orders/bank' + formatParams(params), null, function(resp) {
+            
+            if (cb) {
+                cb()
+            }
+        });
+    }
+
+    // /violas/1.0/incentive/mint/info
+    function incentive_mint_info(params, cb) {
+        request('GET', url_violas + '/1.0/violas/incentive/mint/info' + formatParams(params), null, function(resp) {
+            
+            if (cb) {
+                cb()
+            }
+        });
+    }
+
+    // /violas/1.0/incentive/top20
+    function incentive_top20(params, cb) {
+        request('GET', url_violas + '/1.0/violas/incentive/top20' + formatParams(params), null, function(resp) {
+            
+            if (cb) {
+                cb()
+            }
+        });
+    }
+
+    ////////////////////////////////
 
     function update_model_tokens() {
         var msg = {
