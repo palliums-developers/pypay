@@ -13,30 +13,19 @@ from mnemonic import Mnemonic
 from bip32utils import BIP32Key
 from bit import PrivateKeyTestnet, wif_to_key
 
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, pyqtProperty, QUrl, QThread, QTimer
-from PyQt5.QtGui import QClipboard, QGuiApplication, QDesktopServices
+from PySide6.QtCore import QObject, Property, Signal, Slot, QUrl, QThread, QTimer
+from PySide6.QtGui import QClipboard, QGuiApplication, QDesktopServices
 
 from violas_client import Wallet, Client
 from libra_client import Client as LibraClient
-from pypay.bitcoin import Bit
-from pypay.tokenmodel import TokenEntry, TokenModel
-from pypay.depositmodel import DepositEntry, DepositModel
-from pypay.depositinfo import DepositInfo
-from pypay.borrowinfo import BorrowInfo
-from pypay.borrowmodel import BorrowEntry, BorrowModel
-from pypay.borrowordermodel import BorrowOrderEntry, BorrowOrderModel
-from pypay.tokentypemodel import TokenTypeModel
-from pypay.bittransactionmodel import BitTransactionEntry, BitTransactionModel
+
 from pypay.libra import Libra
 from pypay.violas import Violas
-from pypay.addrbookmodel import AddrBookEntry, AddrBookModel
-from pypay.historymodel import HistoryEntry, HistoryModel
 
 
 class PayController(QObject):
     def __init__(self, parent = None):
-        QObject.__init__(self, parent)
-        self._bitThread = QThread(parent=self)
+        super().__init__(parent)
         self._lbrThread = QThread(parent=self)
         self._vlsThread = QThread(parent=self)
         self._wallet = None
@@ -61,9 +50,6 @@ class PayController(QObject):
             pass
 
     def __del__(self):
-        if self._bitThread is not None:
-            self._bitThread.quit()
-            self._bitThread.wait()
         if self._lbrThread is not None:
             self._lbrThread.quit()
             self._lbrThread.wait()
@@ -73,24 +59,24 @@ class PayController(QObject):
         del self._client
         del self._libraClient
 
-    changed_mnemonic = pyqtSignal()
-    @pyqtProperty(str, notify=changed_mnemonic)
+    changed_mnemonic = Signal()
+    @Property(str, notify=changed_mnemonic)
     def mnemonic(self):
         return self._mnemonic
 
-    changed_mnemonic_random = pyqtSignal()
-    @pyqtProperty(str, notify=changed_mnemonic_random)
+    changed_mnemonic_random = Signal()
+    @Property(str, notify=changed_mnemonic_random)
     def mnemonic_random(self):
         return self._mnemonic_random
 
-    requestActiveLibraAccount = pyqtSignal()
-    requestActiveViolasAccount = pyqtSignal()
-    requestLBRAddCurOfAccount = pyqtSignal(str, bool)
-    requestVLSAddCurOfAccount = pyqtSignal(str, bool)
-    request_violas_bank_max_borrow_amount = pyqtSignal(str)
+    requestActiveLibraAccount = Signal()
+    requestActiveViolasAccount = Signal()
+    requestLBRAddCurOfAccount = Signal(str, bool)
+    requestVLSAddCurOfAccount = Signal(str, bool)
+    request_violas_bank_max_borrow_amount = Signal(str)
 
     # 钱包
-    @pyqtSlot()
+    @Slot()
     def create_wallet(self):
         fileName = self._data_dir / "pypay.wallet"
         isFirstCreateWallet = True
@@ -118,11 +104,6 @@ class PayController(QObject):
 
         self._wallet.write_recovery(fileName)
 
-        self._bit = Bit(self._bitKey)
-        self._bitThread.finished.connect(self._bit.deleteLater)
-        self._bit.moveToThread(self._bitThread)
-        self._bitThread.start()
-
         self._client = Client.new("http://51.140.241.96:50001")
         self._libraClient = LibraClient("libra_testnet")
 
@@ -148,7 +129,7 @@ class PayController(QObject):
             self.requestActiveLibraAccount.emit()
             self.requestActiveViolasAccount.emit()
 
-    @pyqtSlot(str)
+    @Slot(str)
     def create_wallet_from_mnemonic(self, mnemonic):
         self._isImportWallet = True
         fileName = self._data_dir / "pypay.wallet"
@@ -156,7 +137,7 @@ class PayController(QObject):
             f.write(mnemonic + ';2')
         self.create_wallet()
 
-    @pyqtSlot()
+    @Slot()
     def gen_random_mnemonic(self):
         self._mnemonic_random = ''
         mneList = self._wallet.mnemonic.split(" ")
@@ -165,7 +146,7 @@ class PayController(QObject):
         self.changed_mnemonic_random.emit()
 
     # 添加要确认的助记词
-    @pyqtSlot(str)
+    @Slot(str)
     def addMnemonicWord(self, val):
         if self._isConfirming:
             mneList = self._mnemonicConfirm.split(" ")
@@ -177,36 +158,36 @@ class PayController(QObject):
         self.mnemonicConfirmChanged.emit()
 
     # 地址
-    changed_address_violas = pyqtSignal()
-    @pyqtProperty(str, notify=changed_address_violas)
+    changed_address_violas = Signal()
+    @Property(str, notify=changed_address_violas)
     def address_violas(self):
         return self._address_violas
 
     # libra地址
-    changed_address_libra = pyqtSignal()
-    @pyqtProperty(str, notify=changed_address_libra)
+    changed_address_libra = Signal()
+    @Property(str, notify=changed_address_libra)
     def address_libra(self):
         return self._address_libra
 
     # btc地址
-    changed_address_bitcoin = pyqtSignal()
-    @pyqtProperty(str, notify=changed_address_bitcoin)
+    changed_address_bitcoin = Signal()
+    @Property(str, notify=changed_address_bitcoin)
     def address_bitcoin(self):
         return self._address_bitcoin
         
     # 拷贝
-    @pyqtSlot(str)
+    @Slot(str)
     def copy_text(self, str):
         cb = QGuiApplication.clipboard()
         cb.setText(str)
 
     # 打开网页
-    @pyqtSlot(str)
+    @Slot(str)
     def open_url(self, url):
         QDesktopServices.openUrl(QUrl(url))
 
     # 发送
-    @pyqtSlot(str, str, str, str)
+    @Slot(str, str, str, str)
     def sendCoin(self, addr, amount, chain, name):
         amount = float(amount)
         if chain == 'bitcoin':
@@ -222,7 +203,7 @@ class PayController(QObject):
                     addr, amount, currency_code=name)
 
     # 二维码
-    @pyqtSlot(str, str)
+    @Slot(str, str)
     def gen_qr(self, chain, name):
         qr = qrcode.QRCode(
                 version = 7,
@@ -264,12 +245,12 @@ class PayController(QObject):
         elif sys.platform == "darwin":
             return home / "Library/Application Support"
 
-    changed_data_dir = pyqtSignal()
-    @pyqtProperty(str, notify=changed_data_dir)
+    changed_data_dir = Signal()
+    @Property(str, notify=changed_data_dir)
     def data_dir(self):
         return str(self._data_dir)
 
-    @pyqtSlot(str, str, float, str, str, float)
+    @Slot(str, str, float, str, str, float)
     def swap_from_violas_or_libra(self, chain_name_in, coin_name_in, coin_amount_in, chain_name_out, coin_name_out, coin_amount_out):
         flag = ''
         type = ''
@@ -323,7 +304,7 @@ class PayController(QObject):
                     to_addr, coin_amount_in * 1_000_000, currency_code=coin_name_in, data=json.dumps(payload))
 
 
-    @pyqtSlot(float, str, str, float)
+    @Slot(float, str, str, float)
     def swap_from_bitcoin(self, coin_amount_in, chain_name_out, coin_name_out, coin_amount_out):
         pass
         #mark = 0x76696f6c6173
@@ -333,17 +314,17 @@ class PayController(QObject):
         #if chain_name_out == 'violas':
         #    if coin_name_out == 'VLSUSD':
 
-    @pyqtSlot(int)
+    @Slot(int)
     def get_violas_bank_max_borrow_amount(self, amount):
         self._violas_bank_max_borrow_amount = amount
         self.violas_bank_max_borrow_amount_changed.emit()
 
-    violas_bank_max_borrow_amount_changed = pyqtSignal()
-    @pyqtProperty(int, notify=violas_bank_max_borrow_amount_changed)
+    violas_bank_max_borrow_amount_changed = Signal()
+    @Property(int, notify=violas_bank_max_borrow_amount_changed)
     def violas_bank_max_borrow_amount(self):
         return self._violas_bank_max_borrow_amount
 
-    @pyqtSlot(str, str)
+    @Slot(str, str)
     def publish_currency(self, chain, currency):
         print("chain: ", chain)
         print("currency: ", currency)

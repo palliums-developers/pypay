@@ -1,4 +1,4 @@
-PyQt5==5.15.1           # via gui
+PySide6==6.0
 pyaes>=0.1a1
 ecdsa>=0.14
 qrcode
@@ -49,7 +49,7 @@ zipp==3.1.0               # via importlib-metadata
 certifi==2019.11.28       # via requests
 cffi==1.14.0              # via pynacl
 chardet==3.0.4            # via requests
-grpcio==1.27.2            # via libra-client (setup.py), libra-core
+#grpcio==1.27.2            # via libra-client (setup.py), libra-core
 idna==2.9                 # via requests
 mnemonic==0.19            # via libra-client (setup.py)
 more-itertools==8.2.0     # via libra-client (setup.py), libra-core

@@ -1,16 +1,16 @@
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QObject
+from PySide6.QtCore import QObject, Signal, Slot
+
 from violas_client import Wallet, Client
-import requests
 
 class Libra(QObject):
     def __init__(self, client = None, accounts = None, parent=None):
-        QObject.__init__(self, parent)
+        super().__init__(parent)
         self._client = client
         self._accounts = accounts
 
     # mint
 
-    @pyqtSlot()
+    @Slot()
     def requestActiveAccount(self):
         pass
         #try:
@@ -21,9 +21,9 @@ class Libra(QObject):
 
     # currencies
 
-    currenciesChanged = pyqtSignal(list)
+    currenciesChanged = Signal(list)
 
-    @pyqtSlot()
+    @Slot()
     def requestCurrencies(self):
         try:
             currencies = self._client.get_registered_currencies()
@@ -33,9 +33,9 @@ class Libra(QObject):
 
     # balances
 
-    balancesChanged = pyqtSignal(dict)
+    balancesChanged = Signal(dict)
 
-    @pyqtSlot()
+    @Slot()
     def requestBalances(self):
         try:
             balances = self._client.get_balances(self._accounts[1].address_hex)
@@ -46,19 +46,14 @@ class Libra(QObject):
 
     # history
 
-    historyChanged = pyqtSignal(dict)
+    historyChanged = Signal(dict)
 
-    @pyqtSlot(dict)
+    @Slot(dict)
     def requestHistory(self, dt):
-        r = requests.get('https://api4.violas.io/1.0/libra/transaction', params=dt)
-        print(r.url)
-        if r.status_code == 200:
-            self.historyChanged.emit(r.json())
-        else:
-            print("request error")
+        pass
             
     # add cur of account
-    @pyqtSlot(str, bool)
+    @Slot(str, bool)
     def requestAddCurOfAccount(self, cur, isShow):
         if isShow:
             try:

@@ -2,7 +2,6 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 import "../controls"
-import PyPay 1.0
 
 Rectangle {
     id: root
@@ -11,16 +10,11 @@ Rectangle {
     radius: 16
     color: isListPopOpen ? "#6131AB" : "#d3d3d3"
     property bool isListPopOpen: false
-    property alias chain: tkEntry.chain
-    property alias name: tkEntry.name
+
+    property string chain: "bitcoin"
+    property string name: "BTC"
     signal tokenSelected
     property bool isShowViolasCoin: true
-
-    TokenEntry {
-        id: tkEntry
-        chain: "bitcoin"
-        name: "BTC"
-    }
 
     RowLayout {
         anchors.fill: parent
@@ -28,11 +22,11 @@ Rectangle {
         MyImage {
             id: itemImage
             source: {
-                if (tkEntry.chain == "bitcoin") {
+                if (chain == "bitcoin") {
                     return "../icons/bitcoin.svg"
-                } else if (tkEntry.chain == "libra") {
+                } else if (chain == "libra") {
                     return "../icons/libra.svg"
-                } else if (tkEntry.chain == "violas") {
+                } else if (chain == "violas") {
                     return "../icons/violas.svg"
                 } else {
                     return ""
@@ -48,7 +42,7 @@ Rectangle {
         Text {
             id: curName
             color: root.isListPopOpen ? "#FFFFFF" : "#7038FD" 
-            text: tkEntry.name
+            text: name
             font.pointSize: 12
             Layout.fillWidth: true
             Layout.leftMargin: 4
@@ -142,8 +136,8 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            tkEntry.chain = tokenEntry.chain
-                            tkEntry.name = tokenEntry.name
+                            chain = tokenEntry.chain
+                            name = tokenEntry.name
                             popup.close()
                             tokenSelected()
                         }

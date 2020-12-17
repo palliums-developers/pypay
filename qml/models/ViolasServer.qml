@@ -1,7 +1,5 @@
 import QtQuick 2.15
 
-import PyPay 1.0
-
 Item {
     //property var url_violas: "https://api4.violas.io"
     property var url_violas: "http://localhost:5000"
