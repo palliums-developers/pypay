@@ -3,9 +3,9 @@
 import sys
 import os
 
-from PySide6.QtQml import QQmlApplicationEngine, qmlRegisterType
-from PySide6.QtGui import QGuiApplication, QIcon
-from PySide6.QtCore import QUrl, Qt, QCoreApplication
+from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType
+from PyQt5.QtGui import QGuiApplication, QIcon
+from PyQt5.QtCore import QUrl, Qt, QCoreApplication
 
 from pypay.paycontroller import PayController
 

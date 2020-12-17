@@ -1,4 +1,4 @@
-from PySide6.QtCore import QObject, Signal, Slot
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 
 from violas_client import Wallet, Client
 
@@ -10,7 +10,7 @@ class Violas(QObject):
 
     # mint
 
-    @Slot()
+    @pyqtSlot()
     def requestActiveAccount(self):
         try:
             self._client.mint_coin(self._accounts[0].address, 500_000,
@@ -20,9 +20,9 @@ class Violas(QObject):
 
     # currencies
 
-    currenciesChanged = Signal(list)
+    currenciesChanged = pyqtSignal(list)
 
-    @Slot()
+    @pyqtSlot()
     def requestCurrencies(self):
         try:
             currencies = self._client.get_registered_currencies()
@@ -32,9 +32,9 @@ class Violas(QObject):
 
     # balances
 
-    balancesChanged = Signal(dict)
+    balancesChanged = pyqtSignal(dict)
 
-    @Slot()
+    @pyqtSlot()
     def requestBalances(self):
         try:
             balances = self._client.get_balances(self._accounts[0].address_hex)
@@ -45,14 +45,14 @@ class Violas(QObject):
 
     # history
 
-    historyChanged = Signal(dict)
+    historyChanged = pyqtSignal(dict)
 
-    @Slot(dict)
+    @pyqtSlot(dict)
     def requestHistory(self, dt):
         pass
 
     # add cur of account
-    @Slot(str, bool)
+    @pyqtSlot(str, bool)
     def requestAddCurOfAccount(self, cur, isShow):
         if isShow:
             try:
@@ -64,9 +64,9 @@ class Violas(QObject):
 
     # exchange rates
     
-    exchangeRatesChanged = Signal(dict)
+    exchangeRatesChanged = pyqtSignal(dict)
 
-    @Slot()
+    @pyqtSlot()
     def requestExchangeRates(self):
         r = requests.get('https://api.exchangeratesapi.io/latest?base=USD')
         rates = r.json()['rates']
@@ -74,9 +74,9 @@ class Violas(QObject):
 
     # bank account info
 
-    bankAccountInfoChanged = Signal(dict)
+    bankAccountInfoChanged = pyqtSignal(dict)
 
-    @Slot(dict)
+    @pyqtSlot(dict)
     def request_bank_account_info(self, dt):
         r = requests.get('https://api4.violas.io/1.0/violas/bank/account/info', params=dt)
         print(r.url)
@@ -88,9 +88,9 @@ class Violas(QObject):
 
     # bank product deposit
 
-    bankProductDepositChanged = Signal(dict)
+    bankProductDepositChanged = pyqtSignal(dict)
 
-    @Slot()
+    @pyqtSlot()
     def request_bank_product_deposit(self):
         r = requests.get('https://api4.violas.io/1.0/violas/bank/product/deposit')
         print(r.url)
@@ -100,9 +100,9 @@ class Violas(QObject):
             print("request error")
 
     # bank deposit info
-    bank_deposit_infoChanged = Signal(dict)
+    bank_deposit_infoChanged = pyqtSignal(dict)
 
-    @Slot()
+    @pyqtSlot()
     def request_bank_deposit_info(self):
         r = requests.get('https://api4.violas.io/1.0/violas/bank/deposit/info')
         print(r.url)
@@ -112,9 +112,9 @@ class Violas(QObject):
             print("request error")
 
 
-    get_bank_product_borrow_result = Signal(dict)
+    get_bank_product_borrow_result = pyqtSignal(dict)
 
-    @Slot()
+    @pyqtSlot()
     def get_bank_product_borrow(self):
         r = requests.get('https://api4.violas.io/1.0/violas/bank/product/borrow')
         print(r.url)
@@ -123,9 +123,9 @@ class Violas(QObject):
         else:
             print("request error")
 
-    get_bank_borrow_info_result = Signal(dict)
+    get_bank_borrow_info_result = pyqtSignal(dict)
 
-    @Slot()
+    @pyqtSlot()
     def get_bank_borrow_info(self):
         r = requests.get('https://api4.violas.io/1.0/violas/bank/borrow/info')
         print(r.url)
@@ -134,9 +134,9 @@ class Violas(QObject):
         else:
             print("request error")
 
-    get_bank_borrow_orders_result = Signal(dict)
+    get_bank_borrow_orders_result = pyqtSignal(dict)
 
-    @Slot(dict)
+    @pyqtSlot(dict)
     def get_bank_borrow_orders(self, dt):
         r = requests.get('https://api4.violas.io/1.0/violas/bank/borrow/orders', params=dt)
         print(r.url)
@@ -146,9 +146,9 @@ class Violas(QObject):
             print("request error")
 
 
-    get_bank_max_borrow_amount_result = Signal(int)
+    get_bank_max_borrow_amount_result = pyqtSignal(int)
 
-    @Slot(str)
+    @pyqtSlot(str)
     def get_bank_max_borrow_amount(self, coin):
         try:
             amount = self._client.bank_get_max_borrow_amount(self._accounts[0].address, coin)

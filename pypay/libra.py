@@ -1,4 +1,4 @@
-from PySide6.QtCore import QObject, Signal, Slot
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 
 from violas_client import Wallet, Client
 
@@ -10,7 +10,7 @@ class Libra(QObject):
 
     # mint
 
-    @Slot()
+    @pyqtSlot()
     def requestActiveAccount(self):
         pass
         #try:
@@ -21,9 +21,9 @@ class Libra(QObject):
 
     # currencies
 
-    currenciesChanged = Signal(list)
+    currenciesChanged = pyqtSignal(list)
 
-    @Slot()
+    @pyqtSlot()
     def requestCurrencies(self):
         try:
             currencies = self._client.get_registered_currencies()
@@ -33,9 +33,9 @@ class Libra(QObject):
 
     # balances
 
-    balancesChanged = Signal(dict)
+    balancesChanged = pyqtSignal(dict)
 
-    @Slot()
+    @pyqtSlot()
     def requestBalances(self):
         try:
             balances = self._client.get_balances(self._accounts[1].address_hex)
@@ -46,14 +46,14 @@ class Libra(QObject):
 
     # history
 
-    historyChanged = Signal(dict)
+    historyChanged = pyqtSignal(dict)
 
-    @Slot(dict)
+    @pyqtSlot(dict)
     def requestHistory(self, dt):
         pass
             
     # add cur of account
-    @Slot(str, bool)
+    @pyqtSlot(str, bool)
     def requestAddCurOfAccount(self, cur, isShow):
         if isShow:
             try:

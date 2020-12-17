@@ -1,5 +1,5 @@
 import QtQuick 2.15
-//import QtGraphicalEffects 1.15
+import QtGraphicalEffects 1.15
 
 Item {
     id: root
@@ -22,10 +22,10 @@ Item {
         radius: root.radius
         visible: false
     }
-    //OpacityMask {
-    //    anchors.fill: parent
-    //    source: image
-    //    maskSource: mask
-    //    antialiasing: true
-    //}
+    OpacityMask {
+        anchors.fill: parent
+        source: image
+        maskSource: mask
+        antialiasing: true
+    }
 } 
