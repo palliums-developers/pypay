@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.15
 import "../controls"
 
 Control {
+    id: root
     signal goBack
     topInset: 0
     leftInset: 0
@@ -26,7 +27,7 @@ Control {
             anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.top: parent.top
-            anchors.topMargin: 8
+            anchors.topMargin: 12
             color: "#FFFFFF"
             height: 57
             radius: 4
@@ -93,139 +94,144 @@ Control {
         Image {
             id: mineRewardImage
             anchors.top: sendAndReceiveRow.bottom
-            anchors.topMargin: 16
+            anchors.topMargin: 20
             anchors.left: parent.left
             anchors.leftMargin: 4
             anchors.right: parent.right
             anchors.rightMargin: 4
             source: "../icons/mine_reward.svg"
             fillMode: Image.PreserveAspectFit
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 32
+                color: "#FFFFFF"
+                font.pointSize: 16
+                text: qsTr("挖矿奖励")
+            }
         }
 
         Column {
-            spacing: 16
+            id: menuColumn
+            spacing: 24
             anchors.top: mineRewardImage.bottom
-            anchors.topMargin: 15
+            anchors.topMargin: 20
             anchors.left: parent.left
-            anchors.leftMargin: 5
-            //Row {
-            //    id: walletMgrRow
-            //    spacing: 10
-            //    Image {
-            //        source: "../icons/wallet.svg"
-            //        fillMode: Image.PreserveAspectFit
-            //        width: 16
-            //        anchors.verticalCenter: walletText.verticalCenter
-            //    }
-            //    Text {
-            //        id: walletText
-            //        text: qsTr("Wallet manage")
-            //        color: "#FFFFFF"
-            //        font.pointSize: 13
-            //    }
-            //    //MouseArea {
-            //    //    anchors.fill: parent
-            //    //    onClicked: {
-            //    //        walletManageClicked()
-            //    //    }
-            //    //}
-            //}
-            Button {
-                display: AbstractButton.TextBesideIcon
-                icon.source: "../icons/wallet.svg"
-                icon.width: 16
-                icon.height: 16
-                text: qsTr("Wallet manage")
+            anchors.leftMargin: 24
+            Row {
+                id: walletMgrRow
+                spacing: 10
+                Image {
+                    source: "../icons/wallet.svg"
+                    fillMode: Image.PreserveAspectFit
+                    width: 16
+                    anchors.verticalCenter: walletText.verticalCenter
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            walletManageClicked()
+                        }
+                    }
+                }
+                Text {
+                    id: walletText
+                    text: qsTr("Wallet manage")
+                    color: "#FFFFFF"
+                    font.pointSize: 13
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            walletManageClicked()
+                        }
+                    }
+                }
             }
 
-            //Row {
-            //    id: inviteRewardRow
-            //    spacing: 10
-            //    Image {
-            //        source: "../icons/invite_reward.svg"
-            //        fillMode: Image.PreserveAspectFit
-            //        width: 16
-            //        anchors.verticalCenter: inviteRewardText.verticalCenter
-            //    }
-            //    Text {
-            //        id: inviteRewardText
-            //        text: qsTr("Invite reward")
-            //        color: "#FFFFFF"
-            //        font.pointSize: 13
-            //    }
-            //    //MouseArea {
-            //    //    anchors.fill: parent
-            //    //    onClicked: {
-            //    //        console.log("invite reward button clicked")
-            //    //    }
-            //    //}
-            //}
-            Button {
-                display: AbstractButton.TextBesideIcon
-                icon.source: "../icons/invite_reward.svg"
-                icon.width: 16
-                icon.height: 16
-                text: qsTr("Invite reward")
+            Row {
+                id: inviteRewardRow
+                spacing: 10
+                Image {
+                    source: "../icons/invite_reward.svg"
+                    fillMode: Image.PreserveAspectFit
+                    width: 16
+                    anchors.verticalCenter: inviteRewardText.verticalCenter
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            console.log("invite reward button clicked")
+                        }
+                    }
+                }
+                Text {
+                    id: inviteRewardText
+                    text: qsTr("Invite reward")
+                    color: "#FFFFFF"
+                    font.pointSize: 13
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            console.log("invite reward button clicked")
+                        }
+                    }
+                }
             }
 
-            //Row {
-            //    id: helpRow
-            //    spacing: 10
-            //    Image {
-            //        source: "../icons/help.svg"
-            //        fillMode: Image.PreserveAspectFit
-            //        width: 16
-            //        anchors.verticalCenter: helpText.verticalCenter
-            //    }
-            //    Text {
-            //        id: helpText
-            //        text: qsTr("Help center")
-            //        color: "#FFFFFF"
-            //        font.pointSize: 13
-            //    }
-            //    //MouseArea {
-            //    //    anchors.fill: parent
-            //    //    onClicked: {
-            //    //        server.open_url("https://violas.io")
-            //    //    }
-            //    //}
-            //}
-            Button {
-                display: AbstractButton.TextBesideIcon
-                icon.source: "../icons/help.svg"
-                icon.width: 16
-                icon.height: 16
-                text: qsTr("Help center")
+            Row {
+                id: helpRow
+                spacing: 10
+                Image {
+                    source: "../icons/help.svg"
+                    fillMode: Image.PreserveAspectFit
+                    width: 16
+                    anchors.verticalCenter: helpText.verticalCenter
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            server.open_url("https://violas.io")
+                        }
+                    }
+                }
+                Text {
+                    id: helpText
+                    text: qsTr("Help center")
+                    color: "#FFFFFF"
+                    font.pointSize: 13
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            server.open_url("https://violas.io")
+                        }
+                    }
+                }
             }
 
-            //Row {
-            //    id: quitRow
-            //    spacing: 10
-            //    Image {
-            //        source: "../icons/quit.svg"
-            //        fillMode: Image.PreserveAspectFit
-            //        width: 16
-            //        anchors.verticalCenter: quitText.verticalCenter
-            //    }
-            //    Text {
-            //        id: quitText
-            //        text: qsTr("Quit")
-            //        color: "#FFFFFF"
-            //        font.pointSize: 13
-            //    }
-            //    //MouseArea {
-            //    //    anchors.fill: parent
-            //    //    onClicked: {
-            //    //        appWindow.close()
-            //    //    }
-            //    //}
-            //}
-            Button {
-                display: AbstractButton.TextBesideIcon
-                icon.source: "../icons/quit.svg"
-                icon.width: 16
-                icon.height: 16
-                text: qsTr("Quit")
+            Row {
+                id: quitRow
+                spacing: 10
+                Image {
+                    source: "../icons/quit.svg"
+                    fillMode: Image.PreserveAspectFit
+                    width: 16
+                    anchors.verticalCenter: quitText.verticalCenter
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            appWindow.close()
+                        }
+                    }
+                }
+                Text {
+                    id: quitText
+                    text: qsTr("Quit")
+                    color: "#FFFFFF"
+                    font.pointSize: 13
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            appWindow.close()
+                        }
+                    }
+                }
             }
         }
     }

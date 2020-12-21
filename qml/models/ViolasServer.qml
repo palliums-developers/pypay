@@ -492,6 +492,7 @@ Item {
                 cb()
             }
         });
+    }
 
     // /1.0/violas/incentive/inviter/top20
     function incentive_inviter_top20(params, cb) {

@@ -244,7 +244,7 @@ ApplicationWindow {
                         x: 0
                         y: parent.height + 4
                         width: 170
-                        height: 250
+                        height: 355
                         background: Rectangle {
                             border.color: "lightsteelblue"
                             radius: 4
