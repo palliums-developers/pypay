@@ -1,11 +1,11 @@
-#! python3
+#! /usr/bin/env python3
 
 import sys
 import os
 
-from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType
-from PyQt5.QtGui import QGuiApplication, QIcon
 from PyQt5.QtCore import QUrl, Qt, QCoreApplication
+from PyQt5.QtGui import QGuiApplication, QIcon
+from PyQt5.QtQml import QQmlApplicationEngine
 
 from pypay.paycontroller import PayController
 
@@ -16,8 +16,6 @@ application_path = (
 )
 
 if __name__ == '__main__':
-    print("starting pypay ...")
-
     QCoreApplication.setApplicationName("PyPay")
     QCoreApplication.setOrganizationName("Palliums")
     QCoreApplication.setOrganizationDomain("palliums.org")
@@ -38,14 +36,11 @@ if __name__ == '__main__':
     engine.load(QUrl.fromLocalFile(file))
     if not engine.rootObjects():
         print("not engine.rootObjects()")
-        sys.exit(-1)
+        sys.exit(1)
 
-    try:
-        exitCode = app.exec_()
+    exitCode = app.exec_()
 
-        del engine
-        del payController
-        
-        sys.exit(exitCode)
-    except:
-        print("exiting")
+    del engine
+    del payController
+    
+    sys.exit(exitCode)
