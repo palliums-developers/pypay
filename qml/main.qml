@@ -24,6 +24,12 @@ ApplicationWindow {
     property double topRecHeight : 64
     property double fMargin: 8
 
+    function popStackView() {
+        walletStack.pop(null)
+        marketStack.pop(null)
+        bankStack.pop(null)
+    }
+
     function showWalletPage() {
         walletMenuBtn.selected = true
         marketMenuBtn.selected = false
@@ -264,6 +270,15 @@ ApplicationWindow {
                                 walletStack.push(walletManagePage)
                                 myPopupPage.close()
                             }
+                            onShowWalletHomeClicked: {
+                                popStackView()
+                                showWalletPage()
+                                myPopupPage.close()
+                            }
+                            onMineRewardClicked: {
+                                walletStack.push(mineRewardPage)
+                                myPopupPage.close()
+                            }
                         }
                     }
                 }
@@ -350,6 +365,16 @@ ApplicationWindow {
                     onBackArrowClicked: {
                         walletStack.pop()
                     }
+                }
+            }
+
+            // MineReward
+            Component {
+                id: mineRewardPage
+                MineRewardPage {
+                    //onBackArrowClicked: {
+                    //    walletStack.pop()
+                    //}
                 }
             }
 

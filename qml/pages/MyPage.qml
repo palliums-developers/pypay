@@ -15,6 +15,8 @@ Control {
     signal sendClicked
     signal receiveClicked
     signal walletManageClicked
+    signal showWalletHomeClicked
+    signal mineRewardClicked
     
     contentItem: Rectangle {
         color: "#501BA2"
@@ -37,7 +39,7 @@ Control {
                 anchors.leftMargin: 12
                 spacing: 5
                 Text {
-                    text: qsTr("Total balance($)")
+                    text: qsTr("总资产之和($)")
                     font.pointSize: 10
                     color: "#999999"
                 }
@@ -53,6 +55,12 @@ Control {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: 12
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        showWalletHomeClicked()
+                    }
+                }
             }
         }
 
@@ -100,7 +108,8 @@ Control {
             anchors.right: parent.right
             anchors.rightMargin: 4
             source: "../icons/mine_reward.svg"
-            fillMode: Image.PreserveAspectFit
+            //fillMode: Image.PreserveAspectFit
+            height: 35
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
@@ -108,6 +117,12 @@ Control {
                 color: "#FFFFFF"
                 font.pointSize: 16
                 text: qsTr("挖矿奖励")
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    mineRewardClicked()
+                }
             }
         }
 
