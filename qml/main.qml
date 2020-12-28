@@ -279,6 +279,10 @@ ApplicationWindow {
                                 walletStack.push(mineRewardPage)
                                 myPopupPage.close()
                             }
+                            onInviteRewardClicked: {
+                                walletStack.push(inviteRewardPage)
+                                myPopupPage.close()
+                            }
                         }
                     }
                 }
@@ -375,6 +379,14 @@ ApplicationWindow {
                     //onBackArrowClicked: {
                     //    walletStack.pop()
                     //}
+                }
+            }
+
+            // InviteRewardPage
+            Component {
+                id: inviteRewardPage
+                InviteRewardPage {
+                    
                 }
             }
 

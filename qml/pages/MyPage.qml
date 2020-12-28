@@ -17,6 +17,7 @@ Control {
     signal walletManageClicked
     signal showWalletHomeClicked
     signal mineRewardClicked
+    signal inviteRewardClicked
     
     contentItem: Rectangle {
         color: "#501BA2"
@@ -73,7 +74,7 @@ Control {
             // Send
             MyButton4 {
                 icon.source: "../icons/send.svg"
-                text: qsTr("Send")
+                text: qsTr("转账")
                 width: 69
                 height: 26
                 MouseArea {
@@ -87,7 +88,7 @@ Control {
             MyButton4 {
                 id: receiveBtn
                 icon.source: "../icons/receive.svg"
-                text: qsTr("Receive")
+                text: qsTr("收款")
                 width: 69
                 height: 26
                 MouseArea {
@@ -107,7 +108,7 @@ Control {
             anchors.leftMargin: 4
             anchors.right: parent.right
             anchors.rightMargin: 4
-            source: "../icons/mine_reward.svg"
+            source: "../icons/mineReward.png"
             //fillMode: Image.PreserveAspectFit
             height: 35
             Text {
@@ -150,7 +151,7 @@ Control {
                 }
                 Text {
                     id: walletText
-                    text: qsTr("Wallet manage")
+                    text: qsTr("钱包管理")
                     color: "#FFFFFF"
                     font.pointSize: 13
                     MouseArea {
@@ -173,19 +174,19 @@ Control {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            console.log("invite reward button clicked")
+                            inviteRewardClicked()
                         }
                     }
                 }
                 Text {
                     id: inviteRewardText
-                    text: qsTr("Invite reward")
+                    text: qsTr("邀请奖励")
                     color: "#FFFFFF"
                     font.pointSize: 13
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            console.log("invite reward button clicked")
+                            inviteRewardClicked()
                         }
                     }
                 }
@@ -208,7 +209,7 @@ Control {
                 }
                 Text {
                     id: helpText
-                    text: qsTr("Help center")
+                    text: qsTr("帮助中心")
                     color: "#FFFFFF"
                     font.pointSize: 13
                     MouseArea {
@@ -237,7 +238,7 @@ Control {
                 }
                 Text {
                     id: quitText
-                    text: qsTr("Quit")
+                    text: qsTr("退出")
                     color: "#FFFFFF"
                     font.pointSize: 13
                     MouseArea {
