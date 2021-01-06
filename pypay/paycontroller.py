@@ -334,3 +334,6 @@ class PayController(QObject):
 def violas_publish_currency(*currency):
     for cur in currency:
         print(threading.current_thread().getName() + " " + cur)
+
+def func_test():
+    pass
