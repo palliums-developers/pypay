@@ -18,3 +18,5 @@ pypay.addrbookmodel
 pypay/qml/icons/qr_*.png
 .idea/
 *.spec
+
+qml/.DS_Store
