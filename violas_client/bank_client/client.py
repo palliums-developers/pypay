@@ -127,6 +127,11 @@ class Client(LibraClient):
         script = Script.gen_script(CodeType.UPDATE_RATE_MODEL, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
         return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
+    def claim_incentive(self, sender_account, is_blocking=True, **kwargs):
+        args = []
+        ty_args = []
+        script = Script.gen_script(CodeType.CLAIM_INCENTIVE, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
+        return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
     def get_account_blob(self, account_address) -> Optional[AccountState]:
         blob = super().get_account_blob(account_address)

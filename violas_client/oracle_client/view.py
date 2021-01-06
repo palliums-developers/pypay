@@ -34,6 +34,11 @@ class TransactionView(LibraTransactionView):
         if event is not None:
             return event.get_currency_code()
 
+    def get_oracle_time(self):
+        event = self.get_oracle_event()
+        if event is not None:
+            return event.get_timestamp()
+
 
 
 

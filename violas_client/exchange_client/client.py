@@ -1,3 +1,4 @@
+import time
 from typing import Optional, Union
 from violas_client.libra_client import Client as LibraClient
 from violas_client.extypes.transaction.module import Module
@@ -17,6 +18,7 @@ from violas_client.move_core_types.language_storage import core_code_address
 class Client(LibraClient, Base):
 
     DEAD_LINE = 7258089600
+    MULT_FACTOR = 1000000000
     EXCHANGE_OWNER_ADDRESS = "00000000000000000000000045584348"
     EXCHANGE_MODULE_ADDRESS = core_code_address()
 
@@ -107,6 +109,14 @@ class Client(LibraClient, Base):
         script = Script.gen_script(CodeType.SWAP, *args, ty_args=ty_args, module_address= exchange_module_address)
         return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
+    def swap_withdraw_mine_reward(self, account, is_blocking=True, **kwargs):
+        exchange_module_address = self.get_exchange_module_address()
+        args = []
+        ty_args = []
+
+        script = Script.gen_script(CodeType.WITHDRAW_MINE_REWARD, *args, ty_args=ty_args, module_address=exchange_module_address)
+        return self.submit_script(account, script, is_blocking, **kwargs)
+
     def get_transaction(self, version, fetch_events:bool=True) -> Optional[TransactionView]:
         txs = self.get_transactions(version, 1, fetch_events)
         if len(txs):
@@ -186,6 +196,35 @@ class Client(LibraClient, Base):
                     currencies.append(result)
             return currencies
 
+    def swap_get_reward_balance(self, account_address):
+        exchange_owner_address = self.get_exchange_owner_address()
+        owner_state = self.get_account_state(exchange_owner_address)
+        state = self.get_account_state(account_address)
+        reward_pools = owner_state.swap_get_reward_pools()
+        pool_infos = reward_pools.pool_infos
+        now_time = int(time.time())
+        if now_time > reward_pools.end_time:
+            now_time = reward_pools.end_time
+        pending = 0
+        if now_time > reward_pools.last_reward_time:
+            total_alloc_point = reward_pools.total_alloc_point
+            i = 0
+            while i < len(pool_infos):
+                acc_vls_per_share = 0
+                pool_info = pool_infos[i]
+                i = i + 1
+                lp_supply = pool_info.lp_supply
+                if lp_supply > 0:
+                    reward_per_seconds = reward_pools.total_reward_balance / (reward_pools.end_time - reward_pools.start_time)
+                    time_span = now_time - reward_pools.last_reward_time
+                    vls_reward = time_span * reward_per_seconds * pool_info.alloc_point / total_alloc_point
+                    acc_vls_per_share = pool_info.acc_vls_per_share + vls_reward * self.MULT_FACTOR / lp_supply
+                user_info = state.swap_get_pool_user_info(pool_info.id)
+                if user_info is None:
+                    continue
+                pending += int(user_info.amount * acc_vls_per_share / self.MULT_FACTOR - user_info.reward_debt)
+        return pending
+
     def swap_get_swap_output_amount(self, currency_in, currency_out, amount_in):
         index_in = self.swap_get_currency_index(currency_in)
         index_out = self.swap_get_currency_index(currency_out)
@@ -229,6 +268,7 @@ class Client(LibraClient, Base):
         index_in = self.swap_get_currency_index(currency_in)
         index_out = self.swap_get_currency_index(currency_out)
         return self.get_index_min_input_path(index_in, index_out, amount_out)
+
 
     '''.............................................Called internally.................................................................'''
 
@@ -455,7 +495,3 @@ class Client(LibraClient, Base):
         amounta = liquidity_amount * reserve.get_amountA() // liquidity_total_supply
         amountb = liquidity_amount * reserve.get_amountB() // liquidity_total_supply
         return amounta, amountb, liquidity_amount
-
-
-
-

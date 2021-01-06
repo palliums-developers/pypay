@@ -10,7 +10,7 @@ WITH_AMOUNT_TYPE = [CodeType.BORROW, CodeType.ENTER_BANK, CodeType.EXIT_BANK, Co
                     CodeType.REDEEM, CodeType.REPAY_BORROW]
 
 class TransactionView(LibraTransactionView):
-    type_maps = {
+    bank_type_maps = {
         CodeType.BORROW2: EventBorrow,
         CodeType.BORROW_INDEX: EventBorrow,
         CodeType.BORROW: EventBorrow,
@@ -66,7 +66,7 @@ class TransactionView(LibraTransactionView):
 
     def get_bank_type_events(self, t):
         ret = []
-        event_type = self.type_maps.get(t)
+        event_type = self.bank_type_maps.get(t)
         for event in self.get_bank_events():
             if isinstance(event.get_bank_event(), event_type):
                 ret.append(event)

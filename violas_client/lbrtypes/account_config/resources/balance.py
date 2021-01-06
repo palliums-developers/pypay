@@ -24,10 +24,9 @@ class BalanceResource(Struct, MoveResource):
             [current_typetag]
         )
 
-    @classmethod
-    def access_path_for(cls, currency_typetag):
-        from violas_client.lbrtypes.access_path import Accesses
-        return AccessPath.resource_access_vec(cls.struct_tag_for_currency(currency_typetag), Accesses.empty())
+    # @classmethod
+    # def access_path_for(cls, currency_typetag):
+    #     return cls.struct_tag_for_currency(currency_typetag).access_vector()
 
     # @classmethod
     # def type_params(cls):

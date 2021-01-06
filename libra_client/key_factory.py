@@ -25,12 +25,12 @@ def new_sha3_256():
 
 
 class KeyFactory():
-    MNEMONIC_SALT_PREFIX = b"LIBRA WALLET: mnemonic salt prefix$"
-    MASTER_KEY_SALT = b"LIBRA WALLET: main key salt$"
-    INFO_PREFIX = b"LIBRA WALLET: derived key$"
+    MNEMONIC_SALT_PREFIX = b"DIEM WALLET: mnemonic salt prefix$"
+    MASTER_KEY_SALT = b"DIEM WALLET: main key salt$"
+    INFO_PREFIX = b"DIEM WALLET: derived key$"
 
     @classmethod
-    def to_seed(cls, mnemonic, passphrase="LIBRA"):
+    def to_seed(cls, mnemonic, passphrase="DIEM"):
         mnemonic = mnemonic.encode("utf-8")
         passphrase = cls.MNEMONIC_SALT_PREFIX + passphrase.encode("utf-8")
         if has_sha3():

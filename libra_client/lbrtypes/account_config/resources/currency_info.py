@@ -8,7 +8,7 @@ from libra_client.lbrtypes.account_config import type_tag_for_currency_code, ass
 from libra_client.lbrtypes.access_path import Accesses
 
 class CurrencyInfoResource(Struct, MoveResource):
-    MODULE_NAME = "Libra"
+    MODULE_NAME = "Diem"
     STRUCT_NAME = "CurrencyInfo"
 
     _fields = [
@@ -61,4 +61,8 @@ class CurrencyInfoResource(Struct, MoveResource):
     @classmethod
     def access_path_for(cls, currency_code):
         return AccessPath.resource_access_vec(CurrencyInfoResource.struct_tag_for(currency_code), Accesses.empty())
+
+    @classmethod
+    def access_vector_for(cls, currency_code):
+        return CurrencyInfoResource.struct_tag_for(currency_code).access_vector()
 

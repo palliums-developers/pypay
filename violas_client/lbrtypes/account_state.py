@@ -7,6 +7,7 @@ from violas_client.lbrtypes.on_chain_config.validator_set import ValidatorSet
 from violas_client.lbrtypes.block_metadata import LibraBlockResource
 from violas_client.lbrtypes.access_path import AccessPath
 
+
 class AccountState(Struct):
     _fields = [
         ("ordered_map", {bytes: bytes})
@@ -46,7 +47,7 @@ class AccountState(Struct):
 
     def get_registered_currencies(self):
         from violas_client.lbrtypes.on_chain_config.registered_currencies import RegisteredCurrencies
-        registered_currencies_resource = self.get(RegisteredCurrencies.resource_path().path)
+        registered_currencies_resource = self.get(RegisteredCurrencies.access_vector())
         if registered_currencies_resource:
             return RegisteredCurrencies.deserialize(registered_currencies_resource).currency_codes
 
@@ -102,7 +103,7 @@ class AccountState(Struct):
             return ValidatorConfigResource.deserialize(validator_config_resource)
 
     def get_currency_info_resource(self, currency_code) -> Optional[CurrencyInfoResource]:
-        resource = self.get(CurrencyInfoResource.access_path_for(currency_code))
+        resource = self.get(CurrencyInfoResource.access_vector_for(currency_code))
         if resource:
             return CurrencyInfoResource.deserialize(resource)
 
@@ -115,6 +116,11 @@ class AccountState(Struct):
         resource = self.get(LibraBlockResource.resource_path())
         if resource:
             return LibraBlockResource.deserialize(resource)
+
+    def get_role_id(self):
+        resource = self.get(RoleId.resource_path())
+        if resource:
+            return RoleId.deserialize(resource).role_id
 
     def get_event_handle_by_query_path(self, query_path):
         from violas_client.lbrtypes.block_metadata import NEW_BLOCK_EVENT_PATH

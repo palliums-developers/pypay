@@ -226,3 +226,39 @@ def test_get_currency_min_input_path():
     client.swap_add_liquidity(liquidity_account, "GBP", "USD", 100_000, 100_000)
     path = client.get_currency_min_input_path("GBP", "USD", 20000)
     assert path == client.swap_get_currency_indexs("GBP", "EUR", "USD")
+
+
+def test_withdraw_mine_reward():
+    import time
+    wallet = Wallet.new()
+    client = Client()
+    liquidity_account = wallet.new_account()
+    client.mint_coin(liquidity_account.address, 10_000_000, currency_code="USD",
+                     auth_key_prefix=liquidity_account.auth_key_prefix, is_blocking=True)
+    client.add_currency_to_account(liquidity_account, "GBP")
+    client.add_currency_to_account(liquidity_account, "VLS")
+
+    client.mint_coin(liquidity_account.address, 10_000_000, currency_code="GBP",
+                     auth_key_prefix=liquidity_account.auth_key_prefix, is_blocking=True)
+
+    client.swap_add_liquidity(liquidity_account, "GBP", "USD", 200_000, 100_000)
+    time.sleep(1)
+    amount = client.swap_get_reward_balance(liquidity_account.address_hex)
+    seq = client.swap_withdraw_mine_reward(liquidity_account)
+    tx = client.get_account_transaction(liquidity_account.address_hex, seq)
+    assert amount == tx.get_swap_reward_amount()
+
+def test_swap_get_reward_balance():
+    import time
+    wallet = Wallet.new()
+
+    liquidity_account = wallet.new_account()
+    client.add_currency_to_account(liquidity_account, "EUR")
+    client.mint_coin(liquidity_account.address, 10_000_000, currency_code="EUR", auth_key_prefix=liquidity_account.auth_key_prefix, is_blocking=True)
+    client.add_currency_to_account(liquidity_account, "GBP")
+    client.mint_coin(liquidity_account.address, 10_000_000, currency_code="GBP", auth_key_prefix=liquidity_account.auth_key_prefix, is_blocking=True)
+
+    client.swap_add_liquidity(liquidity_account, "GBP", "EUR", 200_000, 100_000)
+    time.sleep(1)
+    amount = client.swap_get_reward_balance(liquidity_account.address_hex)
+

@@ -18,3 +18,4 @@ class ChildVASP(Struct, MoveResource):
         ("parent_vasp_addr", AccountAddress)
     ]
 
+

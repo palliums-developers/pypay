@@ -5,5 +5,6 @@ from .account import AccountResource
 from .balance import BalanceResource
 from .currency_info import CurrencyInfoResource
 from .dual_attestation import CredentialResource
+from .role_id import RoleId
 from .vasp import ChildVASP, ParentVASP
 from .designated_dealer import DesignatedDealer

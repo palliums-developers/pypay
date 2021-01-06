@@ -37,4 +37,4 @@ def test_is_published():
     a1 = wallet.new_account()
     client.mint_coin(a1.address, 100, auth_key_prefix=a1.auth_key_prefix)
     ac = client.get_account_state(a1.address)
-    assert ac.is_published("Coin1") == True
+    assert ac.is_published("XUS") == True

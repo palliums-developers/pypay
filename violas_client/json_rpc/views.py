@@ -34,10 +34,15 @@ class ParentVASPView(Struct):
         ("base_url_rotation_events_key", str)
     ]
 
+class ChildVaspView(Struct):
+    _fields = [
+        ("parent_vasp_address", str)
+    ]
+
 class AccountRoleView(RustEnum):
     _enums = [
         ("unknown", None),
-        ("child_vasp", str),
+        ("child_vasp", ChildVaspView),
         ("parent_vasp", ParentVASPView),
         ("designated_dealer", DesignatedDealerView)
     ]
@@ -48,7 +53,7 @@ class AccountRoleView(RustEnum):
         if tp == "unknown":
             return cls("unknown", None)
         if tp == ("child_vasp"):
-            return cls("child_vasp", value)
+            return cls("child_vasp", ChildVaspView.from_value(value))
         if tp == ("parent_vasp"):
             return cls("parent_vasp", ParentVASPView.from_value(value))
         if tp == ("designated_dealer"):
@@ -514,7 +519,8 @@ class BlockMetadataView(Struct):
         ("chain_id", Uint8),
         ("script_hash_allow_list", [StrT]),
         ("module_publishing_allowed", bool),
-        ("libra_version", Uint64)
+        ("diem_version", Uint64),
+        ("dual_attestation_limit", Uint64)
     ]
 
     @classmethod

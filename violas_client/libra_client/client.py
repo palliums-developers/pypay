@@ -35,13 +35,13 @@ MAX_GAS_AMOUNT = 1_000_000
 TX_EXPIRATION = 100
 
 NETWORKS = {
-    'libra_testnet':{
-        'url': "https://client.testnet.libra.org",
-        'faucet_server': "http://faucet.testnet.libra.org",
+    'diem_testnet':{
+        'url': "http://testnet.diem.com/v1",
+        'faucet_server': "http://testnet.diem.com/mint",
         'chain_id': NamedChain.TESTNET
     },
     'violas_testnet':{
-        "url": "http://51.140.241.96:50001",
+        "url": "http://13.68.141.242:50001",
         "faucet_file": f"{pre_path}/mint_test.key",
         'chain_id': NamedChain.TESTING
 },
@@ -328,7 +328,9 @@ class Client():
         params = {
             "amount": micro_coins,
             "auth_key": (auth_key_prefix+receiver).hex(),
-            "currency_code": currency_code
+            "currency_code": currency_code,
+            "return_txns": "false",
+            "is_designated_dealer": "false"
         }
         try_time = 3
         while True:

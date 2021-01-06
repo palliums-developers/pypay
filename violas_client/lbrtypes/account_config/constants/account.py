@@ -1,9 +1,9 @@
 from violas_client.move_core_types.language_storage import ModuleId, StructTag, CORE_CODE_ADDRESS
 
-ACCOUNT_MODULE_NAME = "LibraAccount"
+ACCOUNT_MODULE_NAME = "DiemAccount"
 
 # Account
-ACCOUNT_MODULE_IDENTIFIER = "LibraAccount"
+ACCOUNT_MODULE_IDENTIFIER = "DiemAccount"
 
 #/ The ModuleId for the Account module.
 ACCOUNT_MODULE = ModuleId(CORE_CODE_ADDRESS, ACCOUNT_MODULE_IDENTIFIER)

@@ -6,7 +6,7 @@ from violas_client.lbrtypes.account_config.resources import WithdrawCapabilityRe
 
 class LibraTokenResource(Struct, MoveResource):
     MODULE_NAME = "ViolasBank"
-    STRUCT_NAME = "LibraToken"
+    STRUCT_NAME = "DiemToken"
 
     _fields = [
         ("coin", Uint64),

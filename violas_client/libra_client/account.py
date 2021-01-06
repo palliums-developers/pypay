@@ -5,7 +5,6 @@ from violas_client.move_core_types.account_address import AccountAddress
 from violas_client.lbrtypes.account_config import treasury_compliance_account_address, association_address, transaction_fee_address
 from violas_client.lbrtypes.transaction.authenticator import AuthenticationKey
 
-
 AccountStatus = Enum('AccountStatus', ('Local','Persisted','Unknown'))
 
 class Account:

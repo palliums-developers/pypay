@@ -2,10 +2,10 @@ address 0x1 {
 
 module Oracle {
 
-use 0x1::Libra::{Self};
-use 0x1::LibraTimestamp;
+use 0x1::Diem::{Self};
+use 0x1::DiemTimestamp;
 use 0x1::Signer;
-use 0x1::CoreAddresses;
+//use 0x1::CoreAddresses;
 use 0x1::FixedPoint32::{Self, FixedPoint32};
 use 0x1::Event::{ Self, EventHandle };
 
@@ -34,43 +34,47 @@ use 0x1::Event::{ Self, EventHandle };
                 UpdateEvent {                    
                     value : *& exchange_rate.value,
                     timestamp : exchange_rate.timestamp,
-                    currency_code : Libra::currency_code<CoinType>()                    
+                    currency_code : Diem::currency_code<CoinType>()                    
                 }
             );
     }
 
+    fun administrator_address() : address {
+        0x4f524143
+    }
+
     /// update exchange rate, if the exchange rate for CoinType doesn't exist then create it 
     public fun update_exchange_rate<CoinType>(
-        lr_account : &signer, 
+        admin_account : &signer, 
         numerator : u64, 
         denominator: u64
     ) acquires ExchangeRate {
         assert(
-            Signer::address_of(lr_account) == CoreAddresses::LIBRA_ROOT_ADDRESS(),
+            Signer::address_of(admin_account) == administrator_address(), 
             EINVALID_SINGLETON_ADDRESS
         );        
 
-        assert(Libra::is_currency<CoinType>(), ENOT_A_REGISTERED_CURRENCY);        
+        assert(Diem::is_currency<CoinType>(), ENOT_A_REGISTERED_CURRENCY);        
 
-        if(!exists<ExchangeRate<CoinType>>(CoreAddresses::LIBRA_ROOT_ADDRESS())) {
+        if(!exists<ExchangeRate<CoinType>>(administrator_address())) {  
             let exchange_rate = ExchangeRate<CoinType> {
                 value : FixedPoint32::create_from_rational(numerator, denominator), 
-                timestamp : LibraTimestamp::now_microseconds(),
-                update_events : Event::new_event_handle<UpdateEvent>(lr_account)
+                timestamp : DiemTimestamp::now_microseconds(),
+                update_events : Event::new_event_handle<UpdateEvent>(admin_account)
             };
         
             emit_updating_events(&mut exchange_rate);
 
             move_to(
-                lr_account, 
+                admin_account, 
                 exchange_rate,
                 );
         }
         else {
-            let exchange_rate = borrow_global_mut<ExchangeRate<CoinType>>(CoreAddresses::LIBRA_ROOT_ADDRESS());
+            let exchange_rate = borrow_global_mut<ExchangeRate<CoinType>>(administrator_address()); 
 
             exchange_rate.value = FixedPoint32::create_from_rational(numerator, denominator);
-            exchange_rate.timestamp = LibraTimestamp::now_microseconds();
+            exchange_rate.timestamp = DiemTimestamp::now_microseconds();
 
             emit_updating_events(exchange_rate);
         }
@@ -80,9 +84,9 @@ use 0x1::Event::{ Self, EventHandle };
     /// get exchange rate for CoinType
     public fun get_exchange_rate<CoinType>() : (FixedPoint32, u64) acquires ExchangeRate    
     {
-        assert(Libra::is_currency<CoinType>(), ENOT_A_REGISTERED_CURRENCY);        
+        assert(Diem::is_currency<CoinType>(), ENOT_A_REGISTERED_CURRENCY);        
 
-        let exchange_rate = borrow_global<ExchangeRate<CoinType>>(CoreAddresses::LIBRA_ROOT_ADDRESS());
+        let exchange_rate = borrow_global<ExchangeRate<CoinType>>(administrator_address()); //CoreAddresses::Diem_ROOT_ADDRESS()
 
         (*&exchange_rate.value, exchange_rate.timestamp)
     }

@@ -1,8 +1,7 @@
 import copy
 from typing import Optional
 from violas_client.lbrtypes.account_state import AccountState as LibraAccountState
-from violas_client.extypes.exchange_resource import ReservesResource, RegisteredCurrenciesResource, TokensResource
-from violas_client.extypes.exdep_resource import BalanceResource, CurrentRewardPool, NextRewardPool, AllMinersInfo
+from violas_client.extypes.exchange_resource import ReservesResource, RegisteredCurrenciesResource, TokensResource, RewardPoolsResource, PoolUserInfosResource
 from violas_client.move_core_types.language_storage import StructTag, TypeTag
 from violas_client.error import get_exception
 
@@ -12,12 +11,6 @@ class AccountState(LibraAccountState):
         ret = copy.deepcopy(account_state)
         ret.__class__ = cls
         return ret
-
-    @get_exception
-    def swap_get_balance(self, currency_code, exchange_module_address=None) -> Optional[BalanceResource]:
-        type_tag = TypeTag("Struct", StructTag.new(currency_code))
-        resource = self.get(BalanceResource.resource_path_for(type_tag, module_address=self.get_exchange_module_address(exchange_module_address)))
-        return BalanceResource.deserialize(resource).value
 
     @get_exception
     def swap_get_reserves_resource(self, exchange_module_address=None) -> Optional[ReservesResource]:
@@ -34,10 +27,29 @@ class AccountState(LibraAccountState):
         resource = self.get(RegisteredCurrenciesResource.resource_path(module_address=self.get_exchange_module_address(exchange_module_address)))
         return RegisteredCurrenciesResource.deserialize(resource)
 
-    def swap_get_current_reward_pool(self, coina, coinb):
-        tags = self.type_tags_for_pair(coina, coinb)
-        resource = self.get(CurrentRewardPool.resource_path_for(*tags))
-        return CurrentRewardPool.deserialize(resource)
+    @get_exception
+    def swap_get_reward_pools(self) -> Optional[RewardPoolsResource]:
+        key = RewardPoolsResource.resource_path(module_address=self.get_exchange_module_address())
+        resource = self.get(key)
+        return RewardPoolsResource.deserialize(resource)
+
+    @get_exception
+    def swap_get_pool_user_infos(self) -> Optional[PoolUserInfosResource]:
+        key = PoolUserInfosResource.resource_path(module_address=self.get_exchange_module_address())
+        resource = self.get(key)
+        return PoolUserInfosResource.deserialize(resource)
+
+    @get_exception
+    def swap_get_pool_user_info(self, id):
+        pool_user_infos = self.swap_get_pool_user_infos()
+        p_user_infos = pool_user_infos.pool_user_infos
+        for user_info in p_user_infos:
+            if user_info.pool_id == id:
+                return user_info.user_info
+
+    # @get_exception
+    # def swap_get_pool_user_info(self, id, account_address):
+    #     pool_user_info = self.swap_get_pool_user_info
 
     def set_exchange_module_address(self, address):
         if address:

@@ -18,13 +18,13 @@ class AccountState(LibraAccountState):
 
     @get_exception
     def get_tokens_resource(self) -> Optional[TokensResource]:
-        resource = self.ordered_map.get(TokensResource.resource_path_for(module_address=self.get_bank_module_address()))
+        resource = self.ordered_map.get(TokensResource.access_path_for(module_address=self.get_bank_module_address()))
         return TokensResource.deserialize(resource)
 
     @get_exception
     def get_user_info_resource(self):
         resource = self.ordered_map.get(
-            UserInfoResource.resource_path_for(module_address=self.get_bank_module_address()))
+            UserInfoResource.access_path_for(module_address=self.get_bank_module_address()))
         return UserInfoResource.deserialize(resource)
 
     @get_exception
@@ -33,7 +33,7 @@ class AccountState(LibraAccountState):
         if hasattr(self, "token_info_store"):
             return self.token_info_store
         resource = self.ordered_map.get(
-            TokenInfoStoreResource.resource_path_for(module_address=self.get_bank_module_address()))
+            TokenInfoStoreResource.access_path_for(module_address=self.get_bank_module_address()))
         resource = TokenInfoStoreResource.deserialize(resource)
         self.token_info_store = resource
         if accrue_interest:
@@ -64,7 +64,7 @@ class AccountState(LibraAccountState):
         self.require_bank_account()
         type_tag = TypeTag("Struct", StructTag.new(module_name=currency_code))
         resource = self.ordered_map.get(
-            LibraTokenResource.resource_path_for(type_tag, module_address=self.get_bank_module_address())
+            LibraTokenResource.access_path_for(type_tag, module_address=self.get_bank_module_address())
         )
         return LibraTokenResource.deserialize(resource)
 
@@ -155,7 +155,7 @@ class AccountState(LibraAccountState):
 
     def require_bank_account(self):
         resource = self.ordered_map.get(
-            TokenInfoStoreResource.resource_path_for(module_address=self.get_bank_module_address()))
+            TokenInfoStoreResource.access_path_for(module_address=self.get_bank_module_address()))
         assert(resource is not None)
 
 

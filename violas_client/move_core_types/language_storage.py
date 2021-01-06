@@ -1,4 +1,5 @@
 from violas_client.canoser import Struct, RustEnum, BoolT, Uint8, Uint64, Uint128
+from violas_client.canoser.util import int_list_to_bytes
 from .account_address import AccountAddress
 from .identifier import Identifier
 from violas_client.crypto.hash import gen_hasher
@@ -31,6 +32,13 @@ class StructTag(Struct):
         ("name", Identifier),
         ("type_params", [TypeTag])
     ]
+
+    def access_vector(self):
+        ret = list()
+        ret.append(RESOURCE_TAG)
+        ret = int_list_to_bytes(ret)
+        ret += self.serialize()
+        return ret
 
     def hash(self):
         shazer = gen_hasher(b"StructTag")

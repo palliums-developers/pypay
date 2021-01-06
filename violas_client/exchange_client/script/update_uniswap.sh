@@ -6,14 +6,14 @@
 #########################################################################
 #!/bin/bash
 
-for file in $(ls ./move_build_output/modules/*.mv)
+for file in $(ls ./build/modules/*.mv)
 do
 	echo $file
 	python3 ./parse_code.py ./uniswap.data $file
 done
 
 
-for file in $(ls ./move_build_output/scripts/*.mv)
+for file in $(ls ./build/scripts/*.mv)
 do
 	echo $file
 	python3 ./parse_code.py ./uniswap.data $file

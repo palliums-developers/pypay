@@ -33,8 +33,12 @@ class MoveResource():
 
     @classmethod
     def resource_path(cls, module_address=None):
-        return AccessPath.resource_access_vec(cls.struct_tag(module_address=module_address), Accesses.empty())
+        return cls.struct_tag(module_address=module_address).access_vector()
 
     @classmethod
     def resource_path_for(cls, *type_params, module_address=None):
         return AccessPath.resource_access_vec(cls.struct_tag(*type_params, module_address=module_address), Accesses.empty())
+
+    @classmethod
+    def access_path_for(cls, *currency_typetag, module_address=None):
+        return cls.struct_tag(*currency_typetag, module_address=module_address).access_vector()

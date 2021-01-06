@@ -33,6 +33,10 @@ class OnChainConfig():
     def resource_path(cls)-> AccessPath:
         return access_path_for_config(cls.ADDRESS, cls.IDENTIFIER)
 
+    @classmethod
+    def access_vector(cls):
+        return access_vector_for_config(cls.IDENTIFIER)
+
 
 def new_epoch_event_key() -> EventKey:
     return EventKey.new_from_address(config_address(), 0)
@@ -46,16 +50,31 @@ def access_path_for_config(address, config_name: str) -> AccessPath:
     )
     tag = StructTag(
         CORE_CODE_ADDRESS,
-        "LibraConfig",
-        "LibraConfig",
+        "DiemConfig",
+        "DiemConfig",
         [TypeTag("Struct",tag)]
     )
     address = AccountAddress.normalize_to_bytes(address)
     return AccessPath(address, AccessPath.resource_access_vec(tag, []))
 
+def access_vector_for_config(config_name):
+    tag = StructTag(
+        CORE_CODE_ADDRESS,
+        config_name,
+        config_name,
+        []
+    )
+    tag = StructTag(
+        CORE_CODE_ADDRESS,
+        "DiemConfig",
+        "DiemConfig",
+        [TypeTag("Struct",tag)]
+    )
+    return tag.access_vector()
+
 
 class ConfigurationResource(Struct, MoveResource):
-    MODULE_NAME = "LibraConfig"
+    MODULE_NAME = "DiemConfig"
     STRUCT_NAME = "Configuration"
 
     _fields = [

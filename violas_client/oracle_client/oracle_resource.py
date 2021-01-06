@@ -4,7 +4,6 @@ from violas_client.move_core_types.language_storage import StructTag, CORE_CODE_
 from violas_client.lbrtypes.access_path import AccessPath
 from violas_client.lbrtypes.event import EventHandle
 
-
 class UpdateEvent(Struct):
     _fields = [
         ("value", Uint64),
