@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # curl -i http://localhost:5000
 @app.route('/')
-def hello_world():
+def test_hello_world():
     return 'Hello World!'
 
 
@@ -27,12 +27,12 @@ tasks = [
 
 # curl -i http://localhost:5000/todo/api/v1.0/tasks
 @app.route('/todo/api/v1.0/tasks', methods=['GET'])
-def get_tasks():
+def test_get_tasks():
     return jsonify({'tasks':tasks})
 
 # curl -i http://localhost:5000/todo/api/v1.0/tasks/2
 @app.route('/todo/api/v1.0/tasks/<int:task_id>', methods=['GET'])
-def get_task(task_id):
+def test_get_task(task_id):
     task = filter(lambda t: t['id'] == task_id, tasks)
     if len(task) == 0:
         abort(404)
@@ -40,7 +40,7 @@ def get_task(task_id):
 
 # curl -i -H "Content-Type: application/json" -X POST -d '{"title":"Read a book"}' http://localhost:5000/todo/api/v1.0/tasks
 @app.route('/todo/api/v1.0/tasks', methods=['POST'])
-def create_task():
+def test_create_task():
     if not request.json or not 'title' in request.json:
         abort(400)
         task = {
@@ -53,7 +53,7 @@ def create_task():
          return jsonify({'task': task}), 201
 
 @app.errorhandler(404)
-def not_found(error):
+def test_not_found(error):
     return make_response(jsonify({'error':'Not found'), 404)
 
 if __name__ == '__main__':

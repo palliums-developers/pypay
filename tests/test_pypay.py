@@ -4,11 +4,11 @@ app = Flask(__name__)
 
 # curl -i http://localhost:5000
 @app.route('/')
-def index():
+def test_index():
     return 'Bank api!'
 
 @app.route('/1.0/libra/balance', methods=['GET'])
-def libra_balance():
+def test_libra_balance():
     data = {
         "balances": [
             {
@@ -38,7 +38,7 @@ def libra_balance():
 
 # curl -i http://localhost:5000/1.0/violas/balance
 @app.route('/1.0/violas/balance', methods=['GET'])
-def violas_balance():
+def test_violas_balance():
     address = request.args.get("address")
     data = {
         "balances": [
@@ -68,14 +68,14 @@ def violas_balance():
     return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
 
 @app.route('/1.0/violas/value/btc', methods=['GET'])
-def violas_value_btc():
+def test_violas_value_btc():
     data = {
         "BTC": 9823
     }
     return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
 
 @app.route('/1.0/violas/value/violas', methods=['GET'])
-def violas_value_violas():
+def test_violas_value_violas():
     data = {
         "LBR": 0,
         "VLSUSD": 1,
@@ -84,7 +84,7 @@ def violas_value_violas():
     return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
 
 @app.route('/1.0/libra/currency', methods=['GET'])
-def libra_currency():
+def test_libra_currency():
     data = {
         "currencies": [
             {
@@ -113,7 +113,7 @@ def libra_currency():
     return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
 
 @app.route('/1.0/violas/currency', methods=['GET'])
-def violas_currency():
+def test_violas_currency():
     data = {
         "currencies": [
             {
@@ -142,7 +142,7 @@ def violas_currency():
     return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
 
 @app.route('/1.0/violas/currency/published', methods=['GET'])
-def violas_currency_published():
+def test_violas_currency_published():
     data = {
         "published": [
             "LBR",
@@ -153,7 +153,7 @@ def violas_currency_published():
 
 # curl -i http://localhost:5000/1.0/violas/bank/account/info
 @app.route('/1.0/violas/bank/account/info', methods=['GET'])
-def bank_account_info():
+def test_bank_account_info():
     address = request.args.get("address")
     data = {
         "amount": 2000.34,
@@ -165,7 +165,7 @@ def bank_account_info():
 
 # /1.0/violas/bank/product/deposit
 @app.route('/1.0/violas/bank/product/deposit', methods=['GET'])
-def bank_product_deposit():
+def test_bank_product_deposit():
     data = [
         {
             "desc": "deposit 1",
@@ -190,7 +190,7 @@ def bank_product_deposit():
 
 # /1.0/violas/bank/product/borrow
 @app.route('/1.0/violas/bank/product/borrow', methods=['GET'])
-def bank_product_borrow():
+def test_bank_product_borrow():
     data = [
         {
             "desc": "borrow 1",
@@ -215,7 +215,7 @@ def bank_product_borrow():
 
 # /1.0/violas/bank/deposit/info
 @app.route('/1.0/violas/bank/deposit/info', methods=['GET'])
-def bank_deposit_info():
+def test_bank_deposit_info():
     data = {
         "id": "1000001",
         "intor": [
@@ -256,7 +256,7 @@ def bank_deposit_info():
 
 # /1.0/violas/bank/borrow/info
 @app.route('/1.0/violas/bank/borrow/info', methods=['GET'])
-def bank_borrow_info():
+def test_bank_borrow_info():
     data = {
         "id": "2000001",
         "intor": [
@@ -296,7 +296,7 @@ def bank_borrow_info():
 
 # /1.0/violas/bank/deposit/orders
 @app.route('/1.0/violas/bank/deposit/orders', methods=['GET'])
-def bank_deposit_orders():
+def test_bank_deposit_orders():
     address = request.args.get("address")
     offset = int(request.args.get("offset"))
     limit = int(request.args.get("limit"))
@@ -317,7 +317,7 @@ def bank_deposit_orders():
 
 # /1.0/violas/bank/deposit/order/list
 @app.route('/1.0/violas/bank/deposit/order/list', methods=['GET'])
-def bank_deposit_order_list():
+def test_bank_deposit_order_list():
     address = request.args.get("address")
     offset = int(request.args.get("offset"))
     limit = int(request.args.get("limit"))
@@ -337,7 +337,7 @@ def bank_deposit_order_list():
 
 # /1.0/violas/bank/borrow/orders
 @app.route('/1.0/violas/bank/borrow/orders', methods=['GET'])
-def bank_borrow_orders():
+def test_bank_borrow_orders():
     address = request.args.get("address")
     offset = int(request.args.get("offset"))
     limit = int(request.args.get("limit"))
@@ -356,7 +356,7 @@ def bank_borrow_orders():
 
 # /1.0/violas/bank/borrow/order/list
 @app.route('/1.0/violas/bank/borrow/order/list', methods=['GET'])
-def bank_borrow_order_list():
+def test_bank_borrow_order_list():
     address = request.args.get("address")
     offset = int(request.args.get("offset"))
     limit = int(request.args.get("limit"))
@@ -375,7 +375,7 @@ def bank_borrow_order_list():
     return jsonify({'code': 2000, 'data': data[offset : offset+limit], 'message': 'ok'})
 
 @app.errorhandler(404)
-def not_found(error):
+def test_not_found(error):
     return make_response(jsonify({'error':'Not found'}), 404)
 
 if __name__ == '__main__':

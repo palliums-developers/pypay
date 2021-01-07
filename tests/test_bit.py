@@ -3,7 +3,7 @@ import struct, array
 from ctypes import create_string_buffer
 
 
-def create_ex_start(toaddress, sequence, module, outamount, times):
+def test_create_ex_start(toaddress, sequence, module, outamount, times):
     try:
         btoaddress = bytes.fromhex(toaddress)
         bmodule = bytes.fromhex(module)
@@ -21,7 +21,7 @@ def create_ex_start(toaddress, sequence, module, outamount, times):
 
     return datas
 
-def create_ex_end(toaddress, sequence, amount, version):
+def test_create_ex_end(toaddress, sequence, amount, version):
     try:
         btoaddress = bytes.fromhex(toaddress)
         datas = create_string_buffer(len(btoaddress) + 8 + 8 + 8)
@@ -33,7 +33,7 @@ def create_ex_end(toaddress, sequence, amount, version):
         print(e)
     return datas
 
-def create_ex_cancel(toaddress, sequence):
+def test_create_ex_cancel(toaddress, sequence):
     try:
         btoaddress = bytes.fromhex(toaddress)
         datas = create_string_buffer(len(btoaddress) + 8)
@@ -45,7 +45,7 @@ def create_ex_cancel(toaddress, sequence):
         print(e)
     return datas
 
-def create_ex_stop(toaddress, sequence):
+def test_create_ex_stop(toaddress, sequence):
     try:
         btoaddress = bytes.fromhex(toaddress)
         datas = create_string_buffer(len(btoaddress) + 8)
@@ -57,7 +57,7 @@ def create_ex_stop(toaddress, sequence):
         print(e)
     return datas
 
-def create_ex_mark(toaddress, sequence, version, amount):
+def test_create_ex_mark(toaddress, sequence, version, amount):
     try:
         btoaddress = bytes.fromhex(toaddress)
         datas = create_string_buffer(len(btoaddress) + 8 + 8 + 8)
@@ -69,7 +69,7 @@ def create_ex_mark(toaddress, sequence, version, amount):
         print(e)
     return datas
 
-def create_btc_mark(toaddress, sequence, amount, name):
+def test_create_btc_mark(toaddress, sequence, amount, name):
     try:
         btoaddress = bytes.fromhex(toaddress)
         bname = str.encode(name)

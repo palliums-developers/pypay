@@ -9,7 +9,7 @@ from trezorlib.client import get_default_client
 from trezorlib.tools import parse_path
 from trezorlib import btc
 
-def get_bitcoin_address():
+def test_get_bitcoin_address():
     # Use first connected device
     client = get_default_client()
 
@@ -22,7 +22,7 @@ def get_bitcoin_address():
     address = btc.get_address(client, "Bitcoin", bip32_path, True)
     print("Bitcoin address:", address)
 
-def generate_entropy(strength, internal_entropy, external_entropy):
+def test_generate_entropy(strength, internal_entropy, external_entropy):
     '''
     strength - length of produced seed. One of 128, 192, 256
     random - binary stream of random data from external HRNG
@@ -50,7 +50,7 @@ def generate_entropy(strength, internal_entropy, external_entropy):
 
     return entropy_stripped
 
-def mnemonic_check():
+def test_mnemonic_check():
     comp = bytes.fromhex(input("Please enter computer-generated entropy (in hex): ").strip())
     trzr = bytes.fromhex(input("Please enter Trezor-generated entropy (in hex): ").strip())
     word_count = int(input("How many words your mnemonic has? "))
