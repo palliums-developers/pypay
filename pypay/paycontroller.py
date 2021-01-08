@@ -105,7 +105,7 @@ class PayController(QObject):
         self._wallet.write_recovery(fileName)
 
         self._client = Client.new("http://51.140.241.96:50001")
-        self._libraClient = LibraClient("libra_testnet")
+        self._libraClient = LibraClient("diem_testnet")
 
         # libra相关操作
         self._lbr = Libra(self._libraClient, self._wallet.accounts)
