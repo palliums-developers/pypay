@@ -9,13 +9,15 @@ from PyQt5.QtQml import QQmlApplicationEngine
 
 from pypay.paycontroller import PayController
 
+
 application_path = (
     os.path.dirname(sys.executable)
     if getattr(sys, "frozen", False)
     else os.path.dirname(os.path.abspath(__file__))
 )
 
-if __name__ == '__main__':
+
+def main():
     QCoreApplication.setApplicationName("PyPay")
     QCoreApplication.setOrganizationName("Palliums")
     QCoreApplication.setOrganizationDomain("palliums.org")
@@ -44,3 +46,7 @@ if __name__ == '__main__':
     del payController
     
     sys.exit(exitCode)
+
+
+if __name__ == '__main__':
+    main()
