@@ -25,7 +25,7 @@ PyPayPage {
 
         Text {
             id: totalText
-            text: qsTr("Deposit Balance ($)")
+            text: qsTr("存款总额 ($)")
             anchors.top: parent.top
             anchors.topMargin: 16
             anchors.left: parent.left
@@ -73,7 +73,7 @@ PyPayPage {
         }
         Text {
             id: borrowText
-            text: qsTr("Borrow ($)")
+            text: qsTr("可借总额 ($)")
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: borrowImage.right
@@ -104,7 +104,7 @@ PyPayPage {
         }
         Text {
             id: incomeText
-            text: qsTr("Total ($)")
+            text: qsTr("累计收益 ($)")
             color: "#FFFFFF"
             font.pointSize: 12
             anchors.left: incomeImage.right
@@ -147,7 +147,7 @@ PyPayPage {
             }
             Text {
                 id: lastdayincomeText
-                text: qsTr("Yesterday income ")
+                text: qsTr("昨日收益 ")
                 color: "#FB8F0B"
                 font.pointSize: 12
                 verticalAlignment: Text.AlignVCenter
@@ -187,7 +187,7 @@ PyPayPage {
                 icon.width: 16
                 icon.height: 14
                 icon.source: "../icons/deposit_order.svg"
-                text: qsTr("Deposit Order")
+                text: qsTr("存款订单")
                 onTriggered: {
                     showDepositOrderPage()
                 }
@@ -196,7 +196,7 @@ PyPayPage {
                 icon.width: 16
                 icon.height: 14
                 icon.source: "../icons/borrow_order.svg"
-                text: qsTr("Borrow Order")
+                text: qsTr("借款订单")
                 onTriggered: {
                     showBorrowOrderPage()
                 }
@@ -260,7 +260,7 @@ PyPayPage {
             width: 500
 
             TabButton {
-                text: qsTr("Deposit Marker")
+                text: qsTr("存款市场")
                 width: depositBtnText.contentWidth + 16
                 contentItem: Text {
                     id: depositBtnText
@@ -276,7 +276,7 @@ PyPayPage {
             }
 
             TabButton {
-                text: qsTr("Borrow Marker")
+                text: qsTr("借款市场")
                 width: borrowBtnText.contentWidth + 16
                 contentItem: Text {
                     id: borrowBtnText
