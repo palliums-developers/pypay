@@ -22,6 +22,9 @@ class Client(LibraClient, Base):
     EXCHANGE_OWNER_ADDRESS = "00000000000000000000000045584348"
     EXCHANGE_MODULE_ADDRESS = core_code_address()
 
+    DEFAULT_GAS_COIN_NAME = "VLS"
+
+
     def swap_publish_contract(self, sender_account, is_blocking=True, **kwargs):
         module = Module.gen_module(CodeType.EXDEP,sender_account.address)
         self.submit_module(sender_account, module, is_blocking, **kwargs)

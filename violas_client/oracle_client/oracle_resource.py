@@ -38,8 +38,3 @@ class OracleResource(Struct, MoveResource):
             cls.struct_identifier(),
             [current_typetag]
         )
-
-    @classmethod
-    def access_path_for(cls, currency_typetag):
-        from violas_client.lbrtypes.access_path import Accesses
-        return AccessPath.resource_access_vec(cls.struct_tag_for_currency(currency_typetag), Accesses.empty())

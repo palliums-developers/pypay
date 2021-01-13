@@ -8,6 +8,7 @@ from violas_client.lbrtypes.account_config.constants.lbr import CORE_CODE_ADDRES
 class Client(LibraClient):
     ORACLE_OWNER_ADDRESS = "0000000000000000000000004f524143"
     ORACLE_MODULE_ADDRESS = CORE_CODE_ADDRESS
+    DEFAULT_GAS_COIN_NAME = "VLS"
 
     def update_exchange_rate(self, currency_code, numerator, denominator, is_blocking=True, **kwargs):
         args = []

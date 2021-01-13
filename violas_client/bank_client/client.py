@@ -18,6 +18,7 @@ class Client(LibraClient):
 
     BANK_OWNER_ADDRESS = "00000000000000000000000042414e4b"
     BANK_MODULE_ADDRESS = core_code_address()
+    DEFAULT_GAS_COIN_NAME = "VLS"
 
     def bank_publish_module(self, sender_account, is_blocking=True, **kwargs):
         module = Module.gen_module(module_address=sender_account.address)
@@ -103,6 +104,15 @@ class Client(LibraClient):
 
         ty_args = self.get_type_args(currency_code)
         script = Script.gen_script(CodeType.ENTER_BANK, *args, ty_args=ty_args,
+                                   module_address=self.get_bank_module_address())
+        return self.submit_script(sender_account, script, is_blocking, **kwargs)
+
+    def bank_exit(self, sender_account, amount, currency_code, is_blocking=True, **kwargs):
+        args = []
+        args.append(TransactionArgument.to_U64(amount))
+
+        ty_args = self.get_type_args(currency_code)
+        script = Script.gen_script(CodeType.EXIT_BANK, *args, ty_args=ty_args,
                                    module_address=self.get_bank_module_address())
         return self.submit_script(sender_account, script, is_blocking, **kwargs)
 

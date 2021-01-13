@@ -3,7 +3,7 @@ import requests
 from violas_client.json_rpc.views import TransactionView
 from typing import Optional, Union
 
-from violas_client.lbrtypes.account_config.constants.lbr import DEFAULT_COIN_NAME, CORE_CODE_ADDRESS
+from violas_client.lbrtypes.account_config.constants.lbr import CORE_CODE_ADDRESS
 from violas_client.move_core_types.language_storage import TypeTag, StructTag
 from violas_client.move_core_types.account_address import AccountAddress as Address
 from violas_client.libra_client.methods import LibraClient
@@ -19,7 +19,6 @@ from violas_client.lbrtypes.account_config import  association_address, treasury
 from violas_client.lbrtypes.transaction.helper import create_user_txn
 from violas_client.lbrtypes.account_state import AccountState
 from violas_client.lbrtypes.account_config import config_address
-from violas_client.lbrtypes.account_config import DEFAULT_COIN_NAME
 from violas_client.lbrtypes.event import EventKey
 from violas_client.lbrtypes import NamedChain
 
@@ -67,6 +66,8 @@ class Client():
 
     WAIT_TRANSACTION_COUNT = 1000
     WAIT_TRANSACTION_INTERVAL = 0.1
+
+    DEFAULT_GAS_COIN_NAME = "XUS"
 
     def __init__(self, network="bj_testnet", waypoint: Optional[Waypoint]=None):
         ensure(network in NETWORKS, "The specified chain does not exist")
@@ -187,9 +188,8 @@ class Client():
     def mint_coin(self, receiver_address, micro_coins, auth_key_prefix=None, human_name="", data="", add_all_currencies=False, is_blocking=True, currency_module_address=None,
                   currency_code=None,
                   max_gas_amount=MAX_GAS_AMOUNT, gas_unit_price=GAS_UNIT_PRICE, txn_expiration=TXN_EXPIRATION, gas_currency_code=None):
-        from violas_client.lbrtypes.account_config import DEFAULT_COIN_NAME
         if currency_code is None:
-            currency_code = DEFAULT_COIN_NAME
+            currency_code = self.DEFAULT_GAS_COIN_NAME
         if self.get_account_state(receiver_address) is None and self.treasury_compliance_account is not None:
             args = []
             args.append(TransactionArgument.to_U64(0))
@@ -364,7 +364,7 @@ class Client():
         if currency_module_address is None:
             currency_module_address = CORE_CODE_ADDRESS
         if currency_code is None:
-            currency_code = DEFAULT_COIN_NAME
+            currency_code = self.DEFAULT_GAS_COIN_NAME
         if struct_name is None:
             struct_name = currency_code
         currency_module_address = Address.normalize_to_bytes(currency_module_address)
@@ -423,7 +423,7 @@ class Client():
             return gas_currency_code
         if currency_code:
             return currency_code
-        return DEFAULT_COIN_NAME
+        return self.DEFAULT_GAS_COIN_NAME
 
     def return_when_error(value):
         def get_exception(func):
