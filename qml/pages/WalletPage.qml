@@ -29,7 +29,7 @@ Page {
 
         Text {
             id: totalText
-            text: qsTr("Total balance")
+            text: qsTr("总资产")
             anchors.top: parent.top
             anchors.topMargin: 42
             anchors.left: parent.left
@@ -65,7 +65,7 @@ Page {
         // Send
         MyButton2 {
             icon.source: "../icons/send.svg"
-            text: qsTr("Send")
+            text: qsTr("转账")
             anchors.right: receiveBtn.left
             anchors.rightMargin: 30
             anchors.verticalCenter: amountText.verticalCenter
@@ -82,7 +82,7 @@ Page {
         MyButton2 {
             id: receiveBtn
             icon.source: "../icons/receive.svg"
-            text: qsTr("Receive")
+            text: qsTr("收款")
             anchors.right: exchangeBtn.left
             anchors.rightMargin: 30
             anchors.verticalCenter: amountText.verticalCenter
@@ -99,7 +99,7 @@ Page {
         MyButton2 {
             id: exchangeBtn
             icon.source: "../icons/mapping.svg"
-            text: qsTr("Mapping")
+            text: qsTr("映射")
             anchors.right: parent.right
             anchors.rightMargin: 60
             anchors.verticalCenter: amountText.verticalCenter
@@ -131,7 +131,7 @@ Page {
             anchors.topMargin: 34
             anchors.left: whiteRec.left
             anchors.leftMargin: 29
-            text: qsTr("Token")
+            text: qsTr("资产")
             color: "#7D71AA"
         }
         ImageButton {

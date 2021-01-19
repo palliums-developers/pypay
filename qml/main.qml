@@ -131,7 +131,7 @@ ApplicationWindow {
                 anchors.topMargin: 140
                 height: 80
                 icon.source: "icons/walleticon.svg"
-                text: qsTr("Wallet")
+                text: qsTr("钱包")
                 selected: true
                 onClicked: {
                     showWalletPage()
@@ -145,7 +145,7 @@ ApplicationWindow {
                 anchors.topMargin: 10
                 height: 80
                 icon.source: "icons/marketicon.svg"
-                text: qsTr("Market")
+                text: qsTr("市场")
                 onClicked: {
                     showMarketPage()
                 }
@@ -158,7 +158,7 @@ ApplicationWindow {
                 anchors.topMargin: 10
                 height: 80
                 icon.source: "icons/bank.svg"
-                text: qsTr("Bank")
+                text: qsTr("数字银行")
                 onClicked: {
                     showBankPage()
 
@@ -224,7 +224,7 @@ ApplicationWindow {
                 // Download button
                 MyButton {
                     id: downloadBtn
-                    text: qsTr("Download")
+                    text: qsTr("下载")
                     anchors.verticalCenter: parent.verticalCenter
                     background.implicitWidth: 29
                     background.implicitHeight: 14
@@ -292,6 +292,7 @@ ApplicationWindow {
                     id: tsComboBox               
                     width: 150
                     anchors.verticalCenter: parent.verticalCenter
+                    currentIndex: 1
                 }
             }
         }
