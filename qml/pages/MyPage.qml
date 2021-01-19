@@ -73,7 +73,7 @@ Control {
             anchors.topMargin: 16
             // Send
             MyButton4 {
-                icon.source: "../icons/send.svg"
+                icon.source: "../icons/me_send.svg"
                 text: qsTr("转账")
                 width: 69
                 height: 26
@@ -87,7 +87,7 @@ Control {
             // Receive
             MyButton4 {
                 id: receiveBtn
-                icon.source: "../icons/receive.svg"
+                icon.source: "../icons/me_receive.svg"
                 text: qsTr("收款")
                 width: 69
                 height: 26
