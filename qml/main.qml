@@ -117,7 +117,7 @@ ApplicationWindow {
                 height: topRecHeight
                 Image {
                     anchors.centerIn: parent
-                    height: 0.7 * parent.height
+                    height: parent.height * 0.5
                     source: "icons/logo.svg"
                     fillMode: Image.PreserveAspectFit
                 }
