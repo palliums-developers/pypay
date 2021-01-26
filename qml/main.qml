@@ -184,7 +184,7 @@ ApplicationWindow {
                 // Import button
                 MyButton {
                     id: importBtn
-                    text: qsTr("Import")
+                    text: qsTr("导入")
                     anchors.verticalCenter: parent.verticalCenter
                     background.implicitWidth: 29
                     background.implicitHeight: 14
@@ -197,7 +197,7 @@ ApplicationWindow {
                 // Create button
                 MyButton {
                     id: createBtn
-                    text: qsTr("Create")
+                    text: qsTr("创建")
                     anchors.verticalCenter: parent.verticalCenter
                     background.implicitWidth: 29
                     background.implicitHeight: 14
