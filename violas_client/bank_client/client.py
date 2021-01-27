@@ -50,10 +50,28 @@ class Client(LibraClient):
         args.append(TransactionArgument.to_U8Vector(data, hex=False))
 
         ty_args = self.get_type_args(currency_code)
+        script = Script.gen_script(CodeType.BORROW, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
+        return self.submit_script(sender_account, script, is_blocking, **kwargs)
+
+    def bank_borrow2(self, sender_account, amount,  currency_code, data=None, is_blocking=True, **kwargs):
+        args = []
+        args.append(TransactionArgument.to_U64(amount))
+        args.append(TransactionArgument.to_U8Vector(data, hex=False))
+
+        ty_args = self.get_type_args(currency_code)
         script = Script.gen_script(CodeType.BORROW2, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
         return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
     def bank_lock(self, sender_account, amount, currency_code, data=None, is_blocking=True, **kwargs):
+        args = []
+        args.append(TransactionArgument.to_U64(amount))
+        args.append(TransactionArgument.to_U8Vector(data, hex=False))
+
+        ty_args = self.get_type_args(currency_code)
+        script = Script.gen_script(CodeType.LOCK, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
+        return self.submit_script(sender_account, script, is_blocking, **kwargs)
+
+    def bank_lock2(self, sender_account, amount, currency_code, data=None, is_blocking=True, **kwargs):
         args = []
         args.append(TransactionArgument.to_U64(amount))
         args.append(TransactionArgument.to_U8Vector(data, hex=False))
@@ -75,10 +93,28 @@ class Client(LibraClient):
         args.append(TransactionArgument.to_U8Vector(data, hex=False))
 
         ty_args = self.get_type_args(currency_code)
+        script = Script.gen_script(CodeType.REDEEM, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
+        return self.submit_script(sender_account, script, is_blocking, **kwargs)
+
+    def bank_redeem2(self, sender_account, amount, currency_code, data=None, is_blocking=True, **kwargs):
+        args = []
+        args.append(TransactionArgument.to_U64(amount))
+        args.append(TransactionArgument.to_U8Vector(data, hex=False))
+
+        ty_args = self.get_type_args(currency_code)
         script = Script.gen_script(CodeType.REDEEM2, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
         return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
     def bank_repay_borrow(self, sender_account, amount, currency_code, data=None, is_blocking=True, **kwargs):
+        args = []
+        args.append(TransactionArgument.to_U64(amount))
+        args.append(TransactionArgument.to_U8Vector(data, hex=False))
+
+        ty_args = self.get_type_args(currency_code)
+        script = Script.gen_script(CodeType.REPAY_BORROW, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
+        return self.submit_script(sender_account, script, is_blocking, **kwargs)
+
+    def bank_repay_borrow2(self, sender_account, amount, currency_code, data=None, is_blocking=True, **kwargs):
         args = []
         args.append(TransactionArgument.to_U64(amount))
         args.append(TransactionArgument.to_U8Vector(data, hex=False))

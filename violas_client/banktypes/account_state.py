@@ -267,7 +267,7 @@ class AccountState(LibraAccountState):
             try:
                 tokens_resource = self.get_tokens_resource()
                 user_info_resource = self.get_user_info_resource()
-                token_info_store_resource = self.get_token_info_store_resource()
+                token_info_store_resource = self.get_token_info_store_resource(accrue_interest=False)
                 if tokens_resource:
                     amap["tokens_resource"] = tokens_resource.to_json_serializable()
                 if user_info_resource:
