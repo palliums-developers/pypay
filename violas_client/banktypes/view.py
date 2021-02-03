@@ -82,6 +82,16 @@ class TransactionView(LibraTransactionView):
             if len(events):
                 return events[0].get_amount()
 
+    def get_receiver(self):
+        receiver = super().get_receiver()
+        if receiver is not None:
+            return receiver
+        type = self.get_code_type()
+        if type is not None:
+            events = self.get_bank_type_events(type)
+            if len(events):
+                return events[0].get_borrower()
+
     def get_currency_code(self):
         currency_code = super().get_currency_code()
         if currency_code is not None:

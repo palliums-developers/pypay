@@ -151,16 +151,16 @@ class Client(LibraClient, Base):
     def set_exchange_owner_address(self, exchange_owner_address):
         self.exchange_owner_address = exchange_owner_address
 
-    def get_account_blob(self, account_address) -> Optional[AccountState]:
-        blob = super().get_account_blob(account_address)
+    def get_account_blob(self, account_address, from_version=None, to_version=None) -> Optional[AccountState]:
+        blob = super().get_account_blob(account_address, from_version, to_version)
         if blob:
             state = AccountState.new(blob)
             if hasattr(self, "exchange_module_address"):
                 state.set_exchange_module_address(self.exchange_module_address)
             return state
 
-    def get_account_state(self, account_address) -> Optional[AccountState]:
-        blob = super().get_account_blob(account_address)
+    def get_account_state(self, account_address, from_version=None, to_version=None) -> Optional[AccountState]:
+        blob = super().get_account_blob(account_address, from_version, to_version)
         if blob:
             state = AccountState.new(blob)
             if hasattr(self, "exchange_module_address"):

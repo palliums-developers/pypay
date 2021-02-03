@@ -9,8 +9,8 @@ from violas_client.oracle_client import Client as OracleClient
 class Client(ExchangeClient, BankClient, OracleClient, LibraClient):
     DEFAULT_GAS_COIN_NAME = "VLS"
 
-    def get_account_state(self, account_address) -> Optional[AccountState]:
-        state = LibraClient.get_account_state(self, account_address)
+    def get_account_state(self, account_address, from_version=None, to_version=None) -> Optional[AccountState]:
+        state = LibraClient.get_account_state(self, account_address, from_version, to_version)
         if state is not None:
             return AccountState.new(state)
 

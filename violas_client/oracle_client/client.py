@@ -19,8 +19,8 @@ class Client(LibraClient):
         script = gen_script(CodeType.UPDATE_EXCHANGE_RATE, *args, ty_args=ty_args)
         return self.submit_script(self.associate_account, script, is_blocking, **kwargs)
 
-    def get_account_state(self, account_address: Union[bytes, str]) -> Optional[AccountState]:
-        blob = super().get_account_blob(account_address)
+    def get_account_state(self, account_address: Union[bytes, str], from_version=None, to_version=None) -> Optional[AccountState]:
+        blob = super().get_account_blob(account_address, from_version, to_version)
         if blob:
             state = AccountState.new(blob)
             return state

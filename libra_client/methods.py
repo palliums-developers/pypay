@@ -127,10 +127,10 @@ class LibraClient():
     def verify_state_proof(self, state_proof: StateProofView):
         pass
 
-    def get_account_blob(self, address: bytes):
+    def get_account_blob(self, address: bytes, from_version, to_version):
         version = self.trusted_state.get_latest_version()
         batch = JsonRpcBatch.new()
-        batch.add_get_account_state_with_proof_request(address, None, None)
+        batch.add_get_account_state_with_proof_request(address, from_version, to_version)
         responses = self.client.execute(batch)
         response = get_response_from_batch(0, responses)
         ensure(isinstance(response, JsonRpcResponse), f"Failed to get account state blob with error: {response}")

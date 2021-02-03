@@ -179,15 +179,15 @@ class Client(LibraClient):
         script = Script.gen_script(CodeType.CLAIM_INCENTIVE, *args, ty_args=ty_args, module_address=self.get_bank_module_address())
         return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
-    def get_account_blob(self, account_address) -> Optional[AccountState]:
-        blob = super().get_account_blob(account_address)
+    def get_account_blob(self, account_address, from_version=None, to_version=None) -> Optional[AccountState]:
+        blob = super().get_account_blob(account_address, from_version, to_version)
         if blob:
             state = AccountState.new(blob)
             state.set_bank_module_address(self.get_bank_module_address())
             return state
 
-    def get_account_state(self, account_address) -> Optional[AccountState]:
-        blob = super().get_account_blob(account_address)
+    def get_account_state(self, account_address, from_version=None, to_version=None) -> Optional[AccountState]:
+        blob = super().get_account_blob(account_address, from_version, to_version)
         if blob:
             state = AccountState.new(blob)
             state.set_bank_module_address(self.get_bank_module_address())

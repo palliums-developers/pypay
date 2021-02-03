@@ -3,7 +3,7 @@ import requests
 from libra_client.json_rpc.views import TransactionView
 from typing import Optional, Union
 
-from libra_client.lbrtypes.account_config.constants.lbr import DEFAULT_COIN_NAME, CORE_CODE_ADDRESS
+from libra_client.lbrtypes.account_config.constants.lbr import CORE_CODE_ADDRESS
 from libra_client.move_core_types.language_storage import TypeTag, StructTag
 from libra_client.move_core_types.account_address import AccountAddress as Address
 from libra_client.methods import LibraClient
@@ -19,7 +19,6 @@ from libra_client.lbrtypes.account_config import  association_address, treasury_
 from libra_client.lbrtypes.transaction.helper import create_user_txn
 from libra_client.lbrtypes.account_state import AccountState
 from libra_client.lbrtypes.account_config import config_address
-from libra_client.lbrtypes.account_config import DEFAULT_COIN_NAME
 from libra_client.lbrtypes.event import EventKey
 from libra_client.lbrtypes import NamedChain
 
@@ -44,7 +43,7 @@ NETWORKS = {
         "url": "http://13.68.141.242:50001",
         "faucet_file": f"{pre_path}/mint_test.key",
         'chain_id': NamedChain.TESTING
-},
+    },
 
     'bj_testnet': {
         "url": "http://47.93.114.230:50001",
@@ -68,6 +67,8 @@ class Client():
     WAIT_TRANSACTION_COUNT = 1000
     WAIT_TRANSACTION_INTERVAL = 0.1
 
+    DEFAULT_GAS_COIN_NAME = "XUS"
+
     def __init__(self, network="bj_testnet", waypoint: Optional[Waypoint]=None):
         ensure(network in NETWORKS, "The specified chain does not exist")
         chain = NETWORKS[network]
@@ -87,6 +88,7 @@ class Client():
 
         faucet_server = chain.get("faucet_server")
         self.faucet_server = faucet_server
+        self.accounts_seq = dict()
 
     @classmethod
     def new(cls, url, chain_id=NamedChain.TESTING, faucet_file:Optional[str]=None, faucet_server:Optional[str]=None, waypoint:Optional[Waypoint]=None):
@@ -105,6 +107,7 @@ class Client():
         faucet_server = faucet_server
         ret.faucet_server = faucet_server
         ret.chain_id = chain_id.value
+        ret.accounts_seq = dict()
         return ret
 
     def get_balance(self, account_address: Union[bytes, str], currency_code=None, currency_module_address=None)-> Optional[int]:
@@ -138,14 +141,14 @@ class Client():
         state = self.get_account_state(association_address())
         return state.get_currency_info_resource(currency_code)
 
-    def get_account_state(self, account_address: Union[bytes, str]) -> Optional[AccountState]:
-        return self.get_account_blob(account_address)
+    def get_account_state(self, account_address: Union[bytes, str], from_version=None, to_version=None) -> Optional[AccountState]:
+        return self.get_account_blob(account_address, from_version, to_version)
         # address = Address.normalize_to_bytes(account_address)
         # return self.client.get_account_state(address, True)
 
-    def get_account_blob(self, account_address: Union[bytes, str]):
+    def get_account_blob(self, account_address: Union[bytes, str], from_version=None, to_version=None):
         address = Address.normalize_to_bytes(account_address)
-        return self.client.get_account_blob(address)
+        return self.client.get_account_blob(address, from_version, to_version)
 
     def get_account_transaction(self, account_address: Union[bytes, str], sequence_number: int, fetch_events: bool=True) -> TransactionView:
         return self.client.get_txn_by_acc_seq(account_address, sequence_number, fetch_events)
@@ -187,9 +190,8 @@ class Client():
     def mint_coin(self, receiver_address, micro_coins, auth_key_prefix=None, human_name="", data="", add_all_currencies=False, is_blocking=True, currency_module_address=None,
                   currency_code=None,
                   max_gas_amount=MAX_GAS_AMOUNT, gas_unit_price=GAS_UNIT_PRICE, txn_expiration=TXN_EXPIRATION, gas_currency_code=None):
-        from libra_client.lbrtypes.account_config import DEFAULT_COIN_NAME
         if currency_code is None:
-            currency_code = DEFAULT_COIN_NAME
+            currency_code = self.DEFAULT_GAS_COIN_NAME
         if self.get_account_state(receiver_address) is None and self.treasury_compliance_account is not None:
             args = []
             args.append(TransactionArgument.to_U64(0))
@@ -364,7 +366,7 @@ class Client():
         if currency_module_address is None:
             currency_module_address = CORE_CODE_ADDRESS
         if currency_code is None:
-            currency_code = DEFAULT_COIN_NAME
+            currency_code = self.DEFAULT_GAS_COIN_NAME
         if struct_name is None:
             struct_name = currency_code
         currency_module_address = Address.normalize_to_bytes(currency_module_address)
@@ -402,18 +404,23 @@ class Client():
         self.client.submit_transaction(signed_transaction)
         if is_blocking:
             self.wait_for_transaction(sender_address, sequence_number)
+        self.set_seq(sender_address, sequence_number+1)
         return sequence_number
 
     def submit_script(self, sender_account, script, is_blocking=True, gas_currency_code=None, max_gas_amount=MAX_GAS_AMOUNT, gas_unit_price=GAS_UNIT_PRICE, txn_expiration=TXN_EXPIRATION):
         gas_currency_code = self.get_gas_currency_code(gas_currency_code=gas_currency_code)
-        sequence_number = self.get_sequence_number(sender_account.address)
+        sequence_number = self.get_local_seq(sender_account.address)
+        if sequence_number is None:
+            sequence_number = self.get_sequence_number(sender_account.address)
         signed_txn = create_user_txn(TransactionPayload("Script",script), sender_account, sequence_number, max_gas_amount, gas_unit_price, gas_currency_code, txn_expiration, chain_id=self.chain_id)
         self.submit_signed_transaction(signed_txn, is_blocking)
         return sequence_number
 
     def submit_module(self, sender_account, module,  is_blocking=True, gas_currency_code=None, max_gas_amount=MAX_GAS_AMOUNT, gas_unit_price=GAS_UNIT_PRICE, txn_expiration=TXN_EXPIRATION):
         gas_currency_code = self.get_gas_currency_code(gas_currency_code=gas_currency_code)
-        sequence_number = self.get_sequence_number(sender_account.address)
+        sequence_number = self.get_local_seq(sender_account.address)
+        if sequence_number is None:
+            sequence_number = self.get_sequence_number(sender_account.address)
         signed_txn = create_user_txn(TransactionPayload("Module", module), sender_account, sequence_number, max_gas_amount, gas_unit_price, gas_currency_code, txn_expiration, chain_id=self.chain_id)
         self.submit_signed_transaction(signed_txn, is_blocking)
         return sequence_number
@@ -423,7 +430,7 @@ class Client():
             return gas_currency_code
         if currency_code:
             return currency_code
-        return DEFAULT_COIN_NAME
+        return self.DEFAULT_GAS_COIN_NAME
 
     def return_when_error(value):
         def get_exception(func):
@@ -434,3 +441,17 @@ class Client():
                     return value
             return catch_execption_func
         return get_exception
+
+    def get_local_seq(self, addr):
+        if isinstance(addr, bytes):
+            addr = addr.hex()
+        addr = addr.lower()
+        return self.accounts_seq.get(addr)
+
+    def set_seq(self, addr, seq):
+        if isinstance(addr, bytes):
+            addr = addr.hex()
+        addr = addr.lower()
+        self.accounts_seq[addr] = seq
+
+
