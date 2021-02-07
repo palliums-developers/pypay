@@ -17,7 +17,7 @@ ApplicationWindow {
     title: qsTr("Desktop Pay Wallet")
 
     property bool userIsLogin: false
-    property var currencies_show: ["BTC","LBR","VLS"]
+    property var currencies_show: ["BTC","XUS","VLS"]
 
     property double leftRecWidth1 : 200
     property double leftRecWidth2 : 300

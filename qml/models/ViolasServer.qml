@@ -93,10 +93,10 @@ Item {
             show_icon: "../icons/bitcoin.svg"
         }
         ListElement {
-            chain: "libra"
-            name: "LBR"
-            show_name: "LBR"
-            show_icon: "../icons/libra.svg"
+            chain: "diem"
+            name: "XUS"
+            show_name: "XUS"
+            show_icon: "../icons/diem.svg"
         }
         ListElement {
             chain: "violas"
@@ -292,14 +292,14 @@ Item {
             if (resp.code == 2000) {
                 var entries = resp.data.currencies;
                 for (var i=0; i<entries.length; i++) {
-                    if (entries[i].show_name != "LBR" && entries[i].name != "Coin1" && entries[i].name != "Coin2") {
+                    if (entries[i].show_name != "XUS" && entries[i].name != "Coin1" && entries[i].name != "Coin2") {
                         var d = entries[i]
                         model_currencies.append(
                             {
-                                "chain": "libra",
+                                "chain": "diem",
                                 "name": d.name,
                                 "show_name": d.show_name,
-                                "show_icon": "../icons/libra.svg"
+                                "show_icon": "../icons/diem.svg"
                             }
                         )
                     }
@@ -313,7 +313,7 @@ Item {
             if (resp.code == 2000) {
                 var entries = resp.data.currencies;
                 for (var i=0; i<entries.length; i++) {
-                    if (entries[i].show_name != "VLS" || entries[i].name != "LBR") {
+                    if (entries[i].show_name != "VLS" || entries[i].name != "XUS") {
                         var d = entries[i]
                         model_currencies.append(
                             {
@@ -581,7 +581,7 @@ Item {
     function get_rate(chain, token) {
         if (chain == "bitcoin") {
             return value_bitcoin
-        } else if (token == "VLS" || token == "LBR") {
+        } else if (token == "VLS" || token == "XUS") {
             return 0
         } else {
             return values_violas[token]
@@ -591,7 +591,7 @@ Item {
     function format_balance(chain, balance) {
         if (chain == 'bitcoin') {
             return (balance / 100000000).toFixed(8)
-        } else if (chain == 'libra' || chain == 'violas') {
+        } else if (chain == 'diem' || chain == 'violas') {
             return (balance / 1000000).toFixed(6)
         } else {
             return balance

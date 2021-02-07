@@ -15,23 +15,23 @@ WorkerScript.onMessage = function(msg) {
         if (msg.balances_libra.length == 0) {
             msg.model.append(
                 {
-                    'chain': 'libra',
-                    'name': 'LBR',
-                    'show_icon': "../icons/libra.svg",
-                    'show_name': "LBR",
+                    'chain': 'diem',
+                    'name': 'XUS',
+                    'show_icon': "../icons/diem.svg",
+                    'show_name': "XUS",
                     'balance': 0
                 }
             )
         } else {
             for (var i=0; i<msg.balances_libra.length; i++) {
                 var d = msg.balances_libra[i]
-                if (d.name == 'LBR') {
+                if (d.name == 'XUS') {
                     msg.model.append(
                         {
-                            'chain': 'libra',
-                            'name': 'LBR',
-                            'show_icon': "../icons/libra.svg",
-                            'show_name': 'LBR',
+                            'chain': 'diem',
+                            'name': 'XUS',
+                            'show_icon': "../icons/diem.svg",
+                            'show_name': 'XUS',
                             'balance': d[d.name]
                         }
                     );
