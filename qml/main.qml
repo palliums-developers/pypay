@@ -14,7 +14,7 @@ ApplicationWindow {
     minimumWidth: 960
     minimumHeight: 540
     visible: true
-    title: qsTr("Desktop Pay Wallet")
+    title: qsTr("ViolasPay桌面钱包")
 
     property bool userIsLogin: false
     property var currencies_show: ["BTC","XUS","VLS"]
