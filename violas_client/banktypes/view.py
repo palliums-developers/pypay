@@ -37,7 +37,7 @@ class TransactionView(LibraTransactionView):
         CodeType.UPDATE_PRICE: EventUpdatePrice,
         CodeType.UPDATE_RATE_MODEL: EventUpdateRateModel,
         CodeType.SET_INCENTIVE_RATE: EventSetIncentiveRate,
-        CodeType.CLAIM_INCENTIVE: EventClaimIncentive
+        CodeType.CLAIM_INCENTIVE: EventClaimIncentive,
 
         CodeType.REPAY_BORROW2_MASTER: EventRepayBorrow,
         CodeType.REPAY_BORROW_MASTER: EventRepayBorrow,

@@ -402,9 +402,9 @@ class Client():
         sender_address = signed_transaction.get_sender()
         sequence_number = signed_transaction.get_sequence_number()
         self.client.submit_transaction(signed_transaction)
+        self.set_seq(sender_address, sequence_number+1)
         if is_blocking:
             self.wait_for_transaction(sender_address, sequence_number)
-        self.set_seq(sender_address, sequence_number+1)
         return sequence_number
 
     def submit_script(self, sender_account, script, is_blocking=True, gas_currency_code=None, max_gas_amount=MAX_GAS_AMOUNT, gas_unit_price=GAS_UNIT_PRICE, txn_expiration=TXN_EXPIRATION):
