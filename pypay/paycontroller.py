@@ -25,9 +25,10 @@ from pypay.violas import Violas
 
 
 class PayController(QObject):
-    def __init__(self, parent = None, engine = None):
+    def __init__(self, parent = None, engine = None, app_path = None):
         super().__init__(parent)
         self._engine = engine
+        self._app_path = app_path
         self._system_locale_name = QLocale().name()
         print(self._system_locale_name)
         self._lbrThread = QThread(parent=self)
@@ -344,7 +345,7 @@ class PayController(QObject):
     def change_locale(self, locale_name):
         app = QCoreApplication.instance()
         translator = QTranslator()
-        translator.load('i18n/' + locale_name + '.qm')
+        translator.load(self._app_path + '/i18n/' + locale_name + '.qm')
         app.installTranslator(translator)
         self._engine.retranslate()
 

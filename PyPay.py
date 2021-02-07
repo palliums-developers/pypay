@@ -31,7 +31,7 @@ def main():
     QGuiApplication.setWindowIcon(QIcon(file));
 
     engine = QQmlApplicationEngine()
-    payController = PayController(None, engine)
+    payController = PayController(None, engine, application_path)
     engine.rootContext().setContextProperty("payController", payController)
     file = os.path.join(application_path, "qml/main.qml")
     engine.load(QUrl.fromLocalFile(file))
