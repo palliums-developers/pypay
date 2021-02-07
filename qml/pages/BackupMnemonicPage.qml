@@ -26,7 +26,7 @@ Page {
 
     Text {
         id: titleText
-        text: qsTr("Backup Mnemonic")
+        text: qsTr("备份助记词")
         font.pointSize: 20
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -35,7 +35,7 @@ Page {
     }
     Text {
         id: title2Text
-        text: qsTr("Please write mnemonic words on paper")
+        text: qsTr("请将这些词按顺序写在纸上")
         font.pointSize: 16
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -80,7 +80,7 @@ Page {
         }
         Text {
             anchors.verticalCenter: noPictureImage.verticalCenter
-            text: qsTr("Don't picture or copy, it will not safe")
+            text: qsTr("不要截屏或复制到剪切板，这将可能被第三方恶意软件收集，造成资产损失")
             color: "#3B3847"
             font.pointSize: 12
             width: mnemonicGrid.width - 40 - 10
@@ -93,7 +93,7 @@ Page {
         anchors.top: tipRow.bottom
         anchors.topMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("Next")
+        text: qsTr("下一步")
         width: 200
         height: 40
         onClicked: {

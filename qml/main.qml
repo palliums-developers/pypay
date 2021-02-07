@@ -77,9 +77,14 @@ ApplicationWindow {
         property bool mnemonicIsBackup: false
         property string password: ""
         property string currencies: currencies_show.join(",")
+        property string locale_name: ""
     }
 
     Component.onCompleted: {
+        if (appSettings.locale_name == "") {
+            appSettings.locale_name = server.system_locale_name
+        }
+        server.change_locale(appSettings.locale_name)
         if (appSettings.walletIsCreate) {
             server.create_wallet()
             currencies_show = appSettings.currencies.split(",")
@@ -292,7 +297,25 @@ ApplicationWindow {
                     id: tsComboBox               
                     width: 150
                     anchors.verticalCenter: parent.verticalCenter
-                    currentIndex: 1
+                    currentIndex: {
+                        if (appSettings.locale_name == "en_US") {
+                            return 0
+                        } else if (appSettings.locale_name == "zh_CN") {
+                            return 1
+                        } else {
+                            return 1
+                        }
+                    }
+                    onActivated: {
+                        if (index == 0) {
+                            appSettings.locale_name = "en_US"
+                        } else if (index == 1) {
+                            appSettings.locale_name = "zh_CN"
+                        } else {
+                            appSettings.locale_name = "zh_CN"
+                        }
+                        server.change_locale(appSettings.locale_name)
+                    }
                 }
             }
         }

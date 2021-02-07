@@ -27,7 +27,7 @@ Page {
 
     Text {
         id: titleText
-        text: qsTr("Get mnemonic")
+        text: qsTr("获取助记词")
         font.pointSize: 20
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -36,7 +36,7 @@ Page {
     }
     Text {
         id: title2Text
-        text: qsTr("equal to have wallet control right")
+        text: qsTr("等于拥有钱包资产所有权")
         font.pointSize: 16
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -76,7 +76,7 @@ Page {
             anchors.left: backupRec.left
             anchors.leftMargin: 8
             anchors.verticalCenter: backupRec.verticalCenter
-            text: qsTr("Backup mnemonic")
+            text: qsTr("备份组记词")
             font.pointSize: 12
             color: "#3B3847"
         }
@@ -88,7 +88,7 @@ Page {
             anchors.topMargin: 8
             font.pointSize: 12
             color: "#3B3847"
-            text: qsTr("Write mnemonic on paper, you can use it restore wallet")
+            text: qsTr("使用纸和笔正确抄写助记词，如果你的手机丢失、被盗、损坏，Keystore将可以恢复你的资产")
         }
 
         Rectangle {
@@ -106,7 +106,7 @@ Page {
             anchors.left: offlineRec.left
             anchors.leftMargin: 8
             anchors.verticalCenter: offlineRec.verticalCenter
-            text: qsTr("Offline store")
+            text: qsTr("离线保管")
             font.pointSize: 12
             color: "#3B3847"
         }
@@ -118,7 +118,7 @@ Page {
             anchors.topMargin: 8
             font.pointSize: 12
             color: "#3B3847"
-            text: qsTr("Save mnemonic offline network")
+            text: qsTr("请妥善保管至隔离网络的安全的地方，请勿将助记词在联网环境下分享和存储，比如邮件、相册、社交应用等")
         }
     }
 
@@ -127,7 +127,7 @@ Page {
         anchors.top: textItem.bottom
         anchors.topMargin: 56 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("Backup Now")
+        text: qsTr("开始备份")
         width: 200
         height: 40
         onClicked: {
@@ -140,7 +140,7 @@ Page {
         anchors.top: backupBtn.bottom
         anchors.topMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("Backup Later")
+        text: qsTr("稍后备份")
         width: 200
         height: 40
         onClicked: {

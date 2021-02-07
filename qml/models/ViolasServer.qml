@@ -5,6 +5,7 @@ Item {
     //property var url_violas: "https://api4.violas.io"
     property var url_violas: "http://localhost:5000"
     property var data_dir: payController.data_dir
+    property var system_locale_name: payController.system_locale_name
     property var mnemonic: ""
     property var mnemonic_random: ""
     property var address_bitcoin: ""
@@ -173,6 +174,9 @@ Item {
         target: payController
         function onChanged_data_dir() {
             data_dir = payController.data_dir
+        }
+        function onChanged_system_locale_name() {
+            system_locale_name = payController.system_locale_name
         }
         function onChanged_address_bitcoin() {
             address_bitcoin = payController.address_bitcoin
@@ -620,5 +624,9 @@ Item {
 
     function gen_random_mnemonic() {
         payController.gen_random_mnemonic()
+    }
+
+    function change_locale(locale_name) {
+        payController.change_locale(locale_name)
     }
 }

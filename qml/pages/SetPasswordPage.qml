@@ -27,7 +27,7 @@ Page {
 
     Text {
         id: titleText
-        text: qsTr("Create Password")
+        text: qsTr("创建密码")
         font.pointSize: 20
         color: "#3C3848"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -41,7 +41,7 @@ Page {
         anchors.topMargin: 56 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
         width: 0.65 * parent.width
-        placeholderText: qsTr("Input password")
+        placeholderText: qsTr("输入密码")
         imageSource: eyeIsClose ? "../icons/eye_close.svg" : "../icons/eye_open.svg"
     }
 
@@ -51,7 +51,7 @@ Page {
         anchors.topMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
         width: 0.65 * parent.width
-        placeholderText: qsTr("Confirm password")
+        placeholderText: qsTr("确认密码")
         imageSource: eyeIsClose ? "../icons/eye_close.svg" : "../icons/eye_open.svg"
     }
 
@@ -60,7 +60,7 @@ Page {
         anchors.top: confirmText.bottom
         anchors.topMargin: 160 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("Create")
+        text: qsTr("创建")
         width: 200
         height: 40
         onClicked: {
@@ -121,7 +121,7 @@ Page {
         }
         Text {
             id: checkText
-            text: qsTr("I agree<b>《Server and Policy》</b>")
+            text: qsTr("同意<b>《服务及隐私策略》</b>")
             color: "#999999"
             MouseArea {
                 anchors.fill: parent

@@ -13,8 +13,9 @@ from mnemonic import Mnemonic
 from bip32utils import BIP32Key
 from bit import PrivateKeyTestnet, wif_to_key
 
-from PyQt5.QtCore import QObject, pyqtProperty, pyqtSignal, pyqtSlot, QUrl, QThread, QTimer
+from PyQt5.QtCore import QObject, pyqtProperty, pyqtSignal, pyqtSlot, QUrl, QThread, QTimer, QCoreApplication, QTranslator, QLocale
 from PyQt5.QtGui import QClipboard, QGuiApplication, QDesktopServices
+from PyQt5.QtQml import QQmlApplicationEngine
 
 from violas_client import Wallet, Client
 from libra_client import Client as LibraClient
@@ -24,8 +25,11 @@ from pypay.violas import Violas
 
 
 class PayController(QObject):
-    def __init__(self, parent = None):
+    def __init__(self, parent = None, engine = None):
         super().__init__(parent)
+        self._engine = engine
+        self._system_locale_name = QLocale().name()
+        print(self._system_locale_name)
         self._lbrThread = QThread(parent=self)
         self._vlsThread = QThread(parent=self)
         self._wallet = None
@@ -104,7 +108,7 @@ class PayController(QObject):
 
         self._wallet.write_recovery(fileName)
 
-        self._client = Client.new("http://51.140.241.96:50001")
+        self._client = Client.new("http://13.68.141.242:50001")
         self._libraClient = LibraClient("diem_testnet")
 
         # libra相关操作
@@ -330,6 +334,19 @@ class PayController(QObject):
         print("currency: ", currency)
         thread = threading.Thread(target = violas_publish_currency, args=(currency,))
         thread.start()
+
+    changed_system_locale_name = pyqtSignal()
+    @pyqtProperty(str, notify=changed_system_locale_name)
+    def system_locale_name(self):
+        return str(self._system_locale_name)
+
+    @pyqtSlot(str)
+    def change_locale(self, locale_name):
+        app = QCoreApplication.instance()
+        translator = QTranslator()
+        translator.load('i18n/' + locale_name + '.qm')
+        app.installTranslator(translator)
+        self._engine.retranslate()
 
 def violas_publish_currency(*currency):
     for cur in currency:

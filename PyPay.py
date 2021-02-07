@@ -30,9 +30,8 @@ def main():
     file = os.path.join(application_path, "qml/icons/pypay.png")
     QGuiApplication.setWindowIcon(QIcon(file));
 
-    payController = PayController()
-
     engine = QQmlApplicationEngine()
+    payController = PayController(None, engine)
     engine.rootContext().setContextProperty("payController", payController)
     file = os.path.join(application_path, "qml/main.qml")
     engine.load(QUrl.fromLocalFile(file))
@@ -44,7 +43,7 @@ def main():
 
     del engine
     del payController
-    
+
     sys.exit(exitCode)
 
 

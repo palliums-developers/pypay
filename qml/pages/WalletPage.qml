@@ -276,7 +276,7 @@ Page {
         Row {
             id: tipRow1
             anchors.left: parent.left
-            anchors.leftMargin: 8
+            anchors.leftMargin: 120
             anchors.right: parent.right
             anchors.top: backgroundImage.bottom
             anchors.topMargin: 28
@@ -290,7 +290,7 @@ Page {
             spacing: 5
             Text {
                 id: tipText1
-                text: qsTr("助记词没有备份，请备份")
+                text: qsTr("您的身份助记词未备份，请务必备份助记词")
                 font.pointSize: 14
                 color: "#3D3949"
                 width: tipRow1.width - spacing - row1Rec.width - 8
@@ -301,7 +301,7 @@ Page {
         Row {
             id: tipRow2
             anchors.left: parent.left
-            anchors.leftMargin: 8
+            anchors.leftMargin: 120
             anchors.right: parent.right
             anchors.top: tipRow1.bottom
             anchors.topMargin: 5
@@ -317,7 +317,7 @@ Page {
             spacing: 5
             Text {
                 id: tipText2
-                text: qsTr("助记词用于恢复资产")
+                text: qsTr("助记词可用于恢复身份下钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失")
                 font.pointSize: 14
                 color: "#3D3949"
                 width: tipRow2.width - spacing - row2Rec.width - 8

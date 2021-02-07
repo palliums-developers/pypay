@@ -30,7 +30,7 @@ Page {
 
     Text {
         id: titleText
-        text: qsTr("Confirm mnemonic")
+        text: qsTr("确认助记词")
         font.pointSize: 20
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -39,7 +39,7 @@ Page {
     }
     Text {
         id: title2Text
-        text: qsTr("Click mnemonic on order")
+        text: qsTr("请顺序点击助记词，以确认您正确备份")
         font.pointSize: 16
         color: "#3B3847"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -130,7 +130,7 @@ Page {
         anchors.top: gridRow.bottom
         anchors.topMargin: 82 / 952 * parent.height
         anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("Complited")
+        text: qsTr("完成")
         width: 200
         height: 40
         onClicked: {
@@ -153,7 +153,7 @@ Page {
         visible: false
         font.pointSize: 14
         color: "#FD6565"
-        text: qsTr("Mnemonic order is not right")
+        text: qsTr("助记词顺序不正确")
     }
 
     Timer {
