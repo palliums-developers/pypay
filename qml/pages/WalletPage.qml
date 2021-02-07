@@ -162,7 +162,7 @@ Page {
             anchors.top: noImage.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: noImage.horizontalCenter
-            text: qsTr("No Token")
+            text: qsTr("无资产")
             color: "#E0E0E0"
             visible: !appSettings.walletIsCreate
         }
@@ -266,7 +266,7 @@ Page {
                     fillMode: Image.PreserveAspectFit
                 }
                 Text {
-                    text: qsTr("Security Tip")
+                    text: qsTr("安全提示")
                     font.pointSize: 20
                     color: "#FFFFFF"
                     anchors.verticalCenter: warningIcon.verticalCenter
@@ -290,7 +290,7 @@ Page {
             spacing: 5
             Text {
                 id: tipText1
-                text: qsTr("Your mnemonic is not banckup, please backup")
+                text: qsTr("助记词没有备份，请备份")
                 font.pointSize: 14
                 color: "#3D3949"
                 width: tipRow1.width - spacing - row1Rec.width - 8
@@ -317,7 +317,7 @@ Page {
             spacing: 5
             Text {
                 id: tipText2
-                text: qsTr("Mnemonic can restore wallet tokens")
+                text: qsTr("助记词用于恢复资产")
                 font.pointSize: 14
                 color: "#3D3949"
                 width: tipRow2.width - spacing - row2Rec.width - 8
@@ -332,7 +332,7 @@ Page {
             anchors.top: tipRow2.bottom
             anchors.topMargin: 46
             anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("Backup Now")
+            text: qsTr("立即备份")
             width: 200
             height: 40
             onClicked: {
