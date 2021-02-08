@@ -93,6 +93,7 @@ class PayController(QObject):
             account = self._wallet.new_account()
             account1 = self._wallet.new_account()
         self._address_violas = self._wallet.accounts[0].address_hex
+        print("violas key prefix: " , self._wallet.accounts[0].auth_key_prefix.hex())
         self.changed_address_violas.emit()
         self._address_libra = self._wallet.accounts[1].address_hex
         self.changed_address_libra.emit()

@@ -58,7 +58,7 @@ WorkerScript.onMessage = function(msg) {
                         'name': d.name,
                         'show_icon': "../icons/violas.svg",
                         'show_name': d.show_name,
-                        'balance': d[d.name]
+                        'balance': d.balance
                     }
                 );
             }
