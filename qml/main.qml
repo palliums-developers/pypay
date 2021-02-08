@@ -76,7 +76,7 @@ ApplicationWindow {
         property bool walletIsCreate: false
         property bool mnemonicIsBackup: false
         property string password: ""
-        property string currencies: currencies_show.join(",")
+        property string currencies: ""
         property string locale_name: ""
     }
 

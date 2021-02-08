@@ -162,10 +162,11 @@ Item {
                     var show_name = model_tokens.get(i).show_name
                     var balance = model_tokens.get(i).balance
                     if (appWindow.currencies_show.includes(show_name)) {
-                        value_tmp += get_rate(chain, show_name) * format_balance(chain, balance)
+                        //value_tmp += get_rate(chain, show_name) * format_balance(chain, balance)
+                        value_tmp += 1 * format_balance(chain, balance)
                     }
                 }
-                value_total = value_tmp
+                value_total = value_tmp.toFixed(8)
             }
         }
     }

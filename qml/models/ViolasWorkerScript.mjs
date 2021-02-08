@@ -55,15 +55,27 @@ WorkerScript.onMessage = function(msg) {
                 if (d.name == 'XUS' || d.name == 'XDX') {
                     continue
                 }
-                msg.model.append(
-                    {
-                        'chain': 'violas',
-                        'name': d.name,
-                        'show_icon': "../icons/violas.svg",
-                        'show_name': d.show_name,
-                        'balance': d.balance
-                    }
-                );
+                if (d.name == 'VLS') {
+                    msg.model.insert(2, 
+                        {
+                            'chain': 'violas',
+                            'name': d.name,
+                            'show_icon': "../icons/violas.svg",
+                            'show_name': d.show_name,
+                            'balance': d.balance
+                        }
+                    )
+                } else {
+                    msg.model.append(
+                        {
+                            'chain': 'violas',
+                            'name': d.name,
+                            'show_icon': "../icons/violas.svg",
+                            'show_name': d.show_name,
+                            'balance': d.balance
+                        }
+                    )
+                }
             }
         }
         msg.model.sync();

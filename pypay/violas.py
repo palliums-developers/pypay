@@ -52,15 +52,12 @@ class Violas(QObject):
         pass
 
     # add cur of account
-    @pyqtSlot(str, bool)
-    def requestAddCurOfAccount(self, cur, isShow):
-        if isShow:
-            try:
-                self._client.add_currency_to_account(self._accounts[0], cur)
-            except Exception as result:
-                print(result)
-        else:
-            pass
+    @pyqtSlot(str)
+    def add_currency(self, cur):
+        try:
+            self._client.add_currency_to_account(self._accounts[0], cur)
+        except Exception as result:
+            print(result)
 
     # exchange rates
     

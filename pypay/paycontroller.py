@@ -76,8 +76,6 @@ class PayController(QObject):
     def mnemonic_random(self):
         return self._mnemonic_random
 
-    requestLBRAddCurOfAccount = pyqtSignal(str, bool)
-    requestVLSAddCurOfAccount = pyqtSignal(str, bool)
     request_violas_bank_max_borrow_amount = pyqtSignal(str)
 
     # 钱包
@@ -115,14 +113,13 @@ class PayController(QObject):
         # libra相关操作
         self._lbr = Libra(self._libraClient, self._wallet.accounts)
         self._lbrThread.finished.connect(self._lbr.deleteLater)
-        self.requestLBRAddCurOfAccount.connect(self._lbr.requestAddCurOfAccount)
         self._lbr.moveToThread(self._lbrThread)
         self._lbrThread.start()
 
         # violas相关操作
         self._vls = Violas(self._client, self._wallet.accounts)
         self._vlsThread.finished.connect(self._vls.deleteLater)
-        self.requestVLSAddCurOfAccount.connect(self._vls.requestAddCurOfAccount)
+        self.request_violas_add_currency.connect(self._vls.add_currency)
         self.request_violas_bank_max_borrow_amount.connect(self._vls.get_bank_max_borrow_amount)
         self._vls.get_bank_max_borrow_amount_result.connect(self.get_violas_bank_max_borrow_amount)
         self._vls.moveToThread(self._vlsThread)
@@ -333,12 +330,11 @@ class PayController(QObject):
     def violas_bank_max_borrow_amount(self):
         return self._violas_bank_max_borrow_amount
 
+    request_violas_add_currency = pyqtSignal(str)
     @pyqtSlot(str, str)
     def publish_currency(self, chain, currency):
-        print("chain: ", chain)
-        print("currency: ", currency)
-        thread = threading.Thread(target = violas_publish_currency, args=(currency,))
-        thread.start()
+        if chain == 'violas':
+            self.request_violas_add_currency.emit(currency)
 
     changed_system_locale_name = pyqtSignal()
     @pyqtProperty(str, notify=changed_system_locale_name)
