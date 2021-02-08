@@ -253,7 +253,7 @@ Item {
         request('GET', url_violas + '/1.0/violas/value/btc', null, 
             function(resp) {
                 if (resp.code == 2000) {
-                    value_bitcoin = resp.data["BTC"]
+                    value_bitcoin = resp.data[0]["rate"]
                 }
             });
     }
