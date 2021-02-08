@@ -25,7 +25,7 @@ Control {
         }
         Text {
             id: titleText
-            text: qsTr("Add Token")
+            text: qsTr("添加币种")
             color: "#333333"
             font.pointSize: 16
             font.weight: Font.Medium
@@ -71,7 +71,7 @@ Control {
                 MySwitch {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    visible: show_name != "BTC" && show_name != "LBR" && show_name != "VLS"
+                    visible: show_name != "BTC" && show_name != "XUS" && show_name != "VLS"
                     checkable: true
                     checked: appWindow.currencies_show.includes(show_name)
                     onClicked: {

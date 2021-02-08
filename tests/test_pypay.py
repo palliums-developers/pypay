@@ -13,28 +13,17 @@ def test_libra_balance():
         "balances": [
             {
                 "LBR": 10000000,
-                "name": "LBR",
+                "name": "XUS",
                 "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
-                "show_name": "LBR",
-                "address": ""
-            },
-            {
-                "Coin1": 1000,
-                "name": "Coin1",
-                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
-                "show_name": "Coin1",
-                "address": ""
-            },
-            {
-                "Coin2": 1000,
-                "name": "Coin2",
-                "show_icon": "http://52.27.228.84:4000/1.0/violas/icon/libra.png",
-                "show_name": "Coin2",
+                "show_name": "XUS",
                 "address": ""
             }
         ]
     }
     return jsonify({'code': 2000, 'data': data, 'message': 'ok'})
+
+
+"""
 
 # curl -i http://localhost:5000/1.0/violas/balance
 @app.route('/1.0/violas/balance', methods=['GET'])
@@ -373,6 +362,9 @@ def test_bank_borrow_order_list():
                 "total_count": count
             })
     return jsonify({'code': 2000, 'data': data[offset : offset+limit], 'message': 'ok'})
+
+
+"""
 
 @app.errorhandler(404)
 def test_not_found(error):

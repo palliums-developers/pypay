@@ -1,5 +1,5 @@
 WorkerScript.onMessage = function(msg) {
-    if (msg.action = 'getBalances') {
+    if (msg.action = 'request_update_model_tokens') {
         msg.model.clear()
         // bitcoin
         msg.model.append(
@@ -11,7 +11,7 @@ WorkerScript.onMessage = function(msg) {
                 'balance': msg.balance_bitcoin
             }
         )
-        // libra
+        // diem
         if (msg.balances_libra.length == 0) {
             msg.model.append(
                 {
@@ -64,6 +64,6 @@ WorkerScript.onMessage = function(msg) {
             }
         }
         msg.model.sync();
-        WorkerScript.sendMessage({'action': 'update_model_tokens', 'status': 'success'})
+        WorkerScript.sendMessage({'action': 'result_update_model_tokens', 'status': 'success'})
     }
 }

@@ -2,8 +2,8 @@
 import QtQuick 2.15
 
 Item {
-    //property var url_violas: "https://api4.violas.io"
-    property var url_violas: "http://localhost:5000"
+    property var url_violas: "https://api4.violas.io"   // 内部测试链
+    //property var url_violas: "http://localhost:5000"
     property var data_dir: payController.data_dir
     property var system_locale_name: payController.system_locale_name
     property var mnemonic: ""
@@ -139,10 +139,10 @@ Item {
         triggeredOnStart: true
         onTriggered: {
             if (appSettings.walletIsCreate) {
-                var params_libra = { "address": address_libra }
-                var params_violas = { "address": address_violas }
-                get_currencies_published(params_violas)
+                var params_libra = { "addr": address_libra , "currency": "XUS" }
                 get_balance_libra(params_libra)
+                var params_violas = { "addr": address_violas }
+                get_currencies_published(params_violas)
                 get_balance_violas(params_violas, function() {
                     update_model_tokens()
                 })
@@ -155,7 +155,7 @@ Item {
         id: worker
         source: "ViolasWorkerScript.mjs"
         onMessage: {
-            if (messageObject.action == 'update_model_tokens') {
+            if (messageObject.action == 'result_update_model_tokens') {
                 var value_tmp = 0
                 for (var i = 0; i < model_tokens.count; i++) {
                     var chain = model_tokens.get(i).chain
@@ -180,14 +180,17 @@ Item {
         }
         function onChanged_address_bitcoin() {
             address_bitcoin = payController.address_bitcoin
+            console.log("bitcoin address: ", address_bitcoin)
         }
         function onChanged_address_libra() {
             address_libra = payController.address_libra
+            console.log("diem address: ", address_libra)
         }
         function onChanged_address_violas() {
             address_violas = payController.address_violas
             var params = { "address": address_violas }
             get_value_violas(params)
+            console.log("violas address: ", address_violas)
         }
         function onChanged_mnemonic() {
             mnemonic = payController.mnemonic
@@ -218,9 +221,9 @@ Item {
             if(xhr.readyState === XMLHttpRequest.DONE) {
                 if(cb) {
                     try {
-                        //print('request: ' + verb + ' ' + url)
+                        print('request: ' + verb + ' ' + url)
                         if (xhr.status == 200) {
-                            //print(xhr.responseText.toString())
+                            print(xhr.responseText.toString())
                             var res = JSON.parse(xhr.responseText.toString())
                             cb(res);
                         } else {
@@ -573,7 +576,7 @@ Item {
 
     function update_model_tokens() {
         var msg = {
-            'action': 'update_model_tokens',
+            'action': 'request_update_model_tokens',
             'balance_bitcoin': balance_bitcoin,
             'balances_libra': balances_libra,
             'balances_violas': balances_violas,
