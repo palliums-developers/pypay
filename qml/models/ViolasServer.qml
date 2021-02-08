@@ -299,7 +299,7 @@ Item {
             if (resp.code == 2000) {
                 var entries = resp.data.currencies;
                 for (var i=0; i<entries.length; i++) {
-                    if (entries[i].show_name != "XUS" && entries[i].name != "Coin1" && entries[i].name != "Coin2") {
+                    if (entries[i].show_name != "XUS" && entries[i].name != "XDX") {
                         var d = entries[i]
                         model_currencies.append(
                             {
@@ -320,7 +320,7 @@ Item {
             if (resp.code == 2000) {
                 var entries = resp.data.currencies;
                 for (var i=0; i<entries.length; i++) {
-                    if (entries[i].show_name != "VLS" || entries[i].name != "XUS") {
+                    if (entries[i].show_name != "VLS" && entries[i].name != "XUS" && entries[i].name != "XDX") {
                         var d = entries[i]
                         model_currencies.append(
                             {

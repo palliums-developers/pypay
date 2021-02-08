@@ -52,6 +52,9 @@ WorkerScript.onMessage = function(msg) {
         } else {
             for (var i=0; i<msg.balances_violas.length; i++) {
                 var d = msg.balances_violas[i]
+                if (d.name == 'XUS' || d.name == 'XDX') {
+                    continue
+                }
                 msg.model.append(
                     {
                         'chain': 'violas',
