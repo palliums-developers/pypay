@@ -40,7 +40,9 @@ class PayController(QObject):
         self._mnemonic_random = ''
         self._mnemonicConfirm = ''
         self._isConfirming = False
+        self._key_prefix_hex_violas = ''
         self._address_violas = ''
+        self._key_prefix_hex_libra = ''
         self._address_libra = ''
         self._bitKey = None
         self._address_bitcoin = ''
@@ -74,8 +76,6 @@ class PayController(QObject):
     def mnemonic_random(self):
         return self._mnemonic_random
 
-    requestActiveLibraAccount = pyqtSignal()
-    requestActiveViolasAccount = pyqtSignal()
     requestLBRAddCurOfAccount = pyqtSignal(str, bool)
     requestVLSAddCurOfAccount = pyqtSignal(str, bool)
     request_violas_bank_max_borrow_amount = pyqtSignal(str)
@@ -84,17 +84,16 @@ class PayController(QObject):
     @pyqtSlot()
     def create_wallet(self):
         fileName = self._data_dir / "pypay.wallet"
-        isFirstCreateWallet = True
         if os.path.exists(fileName):
             self._wallet = Wallet.recover(fileName)
-            isFirstCreateWallet = False
         else:
             self._wallet = Wallet.new()
             account = self._wallet.new_account()
             account1 = self._wallet.new_account()
+        self._key_prefix_hex_violas =  self._wallet.accounts[0].auth_key_prefix.hex()
         self._address_violas = self._wallet.accounts[0].address_hex
-        print("violas key prefix: " , self._wallet.accounts[0].auth_key_prefix.hex())
         self.changed_address_violas.emit()
+        self._key_prefix_hex_libra =  self._wallet.accounts[1].auth_key_prefix.hex()
         self._address_libra = self._wallet.accounts[1].address_hex
         self.changed_address_libra.emit()
         self._mnemonic = self._wallet.mnemonic
@@ -116,7 +115,6 @@ class PayController(QObject):
         # libra相关操作
         self._lbr = Libra(self._libraClient, self._wallet.accounts)
         self._lbrThread.finished.connect(self._lbr.deleteLater)
-        self.requestActiveLibraAccount.connect(self._lbr.requestActiveAccount)  # active account
         self.requestLBRAddCurOfAccount.connect(self._lbr.requestAddCurOfAccount)
         self._lbr.moveToThread(self._lbrThread)
         self._lbrThread.start()
@@ -124,16 +122,11 @@ class PayController(QObject):
         # violas相关操作
         self._vls = Violas(self._client, self._wallet.accounts)
         self._vlsThread.finished.connect(self._vls.deleteLater)
-        self.requestActiveViolasAccount.connect(self._vls.requestActiveAccount) # active account
         self.requestVLSAddCurOfAccount.connect(self._vls.requestAddCurOfAccount)
         self.request_violas_bank_max_borrow_amount.connect(self._vls.get_bank_max_borrow_amount)
         self._vls.get_bank_max_borrow_amount_result.connect(self.get_violas_bank_max_borrow_amount)
         self._vls.moveToThread(self._vlsThread)
         self._vlsThread.start()
-
-        if isFirstCreateWallet:
-            self.requestActiveLibraAccount.emit()
-            self.requestActiveViolasAccount.emit()
 
     @pyqtSlot(str)
     def create_wallet_from_mnemonic(self, mnemonic):
@@ -163,11 +156,21 @@ class PayController(QObject):
             self._mnemonicConfirm = val
         self.mnemonicConfirmChanged.emit()
 
+    changed_key_prefix_hex_violas = pyqtSignal()
+    @pyqtProperty(str, notify=changed_key_prefix_hex_violas)
+    def key_prefix_hex_violas(self):
+        return self._key_prefix_hex_violas
+
     # 地址
     changed_address_violas = pyqtSignal()
     @pyqtProperty(str, notify=changed_address_violas)
     def address_violas(self):
         return self._address_violas
+
+    changed_key_prefix_hex_libra = pyqtSignal()
+    @pyqtProperty(str, notify=changed_key_prefix_hex_libra)
+    def key_prefix_hex_libra(self):
+        return self._key_prefix_hex_libra
 
     # libra地址
     changed_address_libra = pyqtSignal()
@@ -349,10 +352,3 @@ class PayController(QObject):
         translator.load(self._app_path + '/i18n/' + locale_name + '.qm')
         app.installTranslator(translator)
         self._engine.retranslate()
-
-def violas_publish_currency(*currency):
-    for cur in currency:
-        print(threading.current_thread().getName() + " " + cur)
-
-def func_test():
-    pass

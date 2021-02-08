@@ -76,11 +76,11 @@ Control {
                     checked: appWindow.currencies_show.includes(show_name)
                     onClicked: {
                         if (appWindow.currencies_show.includes(show_name)) {
-                            appWindow.currencies_show.splice(appWindow.currencies_show.indexOf(show_name), 1)
+                            appWindow.currencies_show.splice(appWindow.currencies_show.indexOf(show_name), 1)       // 从appWindow.currencies_show中删除
                         } else {
                             appWindow.currencies_show.push(show_name)
                             if (!server.currencies_published.includes(show_name)) {
-                                //payController.publish_currency(chain, name)
+                                server.publish_currency(chain, name)
                             }
                         }
                         server.update_model_tokens()

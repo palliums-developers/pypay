@@ -185,12 +185,30 @@ Item {
         function onChanged_address_libra() {
             address_libra = payController.address_libra
             console.log("diem address: ", address_libra)
+            console.log("diem key_prefix_hex: ", payController.key_prefix_hex_libra)
+            if (appSettings.walletIsCreate == false) {
+                var params = { 
+                    "address": address_libra, 
+                    "auth_key_perfix": payController.key_prefix_hex_libra, 
+                    "currency": "XUS",
+                }
+                get_libra_mint(params)
+            }
         }
         function onChanged_address_violas() {
             address_violas = payController.address_violas
             var params = { "address": address_violas }
             get_value_violas(params)
             console.log("violas address: ", address_violas)
+            console.log("diem key_prefix_hex: ", payController.key_prefix_hex_violas)
+            if (appSettings.walletIsCreate == false) {
+                var params = { 
+                    "address": address_violas ,
+                    "auth_key_perfix": payController.key_prefix_hex_violas,
+                    "currency": "VLS",
+                }
+                get_violas_mint(params)
+            }
         }
         function onChanged_mnemonic() {
             mnemonic = payController.mnemonic
@@ -247,6 +265,24 @@ Item {
         request('GET', 'https://api.exchangeratesapi.io/latest?base=USD', null, function(resp) {
             rates = resp.rates;
         });
+    }
+
+    function get_libra_mint(params) {
+        request('GET', url_violas + '/1.0/libra/mint' + formatParams(params), null, 
+            function(resp) {
+                if (resp.code == 2000) {
+                    console.log("diem account actived")
+                }
+            });
+    }
+
+    function get_violas_mint(params) {
+        request('GET', url_violas + '/1.0/violas/mint' + formatParams(params), null, 
+            function(resp) {
+                if (resp.code == 2000) {
+                    console.log("violas account actived")
+                }
+            });
     }
 
     function get_value_bitcoin() {
@@ -631,5 +667,9 @@ Item {
 
     function change_locale(locale_name) {
         payController.change_locale(locale_name)
+    }
+
+    function publish_currency(chain, currency) {
+        payController.publish_currency(chain, currency)
     }
 }
