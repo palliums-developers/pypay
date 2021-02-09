@@ -15,7 +15,7 @@ Item {
     property var balances_libra: []
     property var balances_violas: []
     property var value_bitcoin: 0
-    property var values_violas: {}
+    property var values_violas: {'VLS':0}
     property var value_total: 0
     property var rates: {}
     property var currencies_published: []
@@ -162,11 +162,10 @@ Item {
                     var show_name = model_tokens.get(i).show_name
                     var balance = model_tokens.get(i).balance
                     if (appWindow.currencies_show.includes(show_name)) {
-                        //value_tmp += get_rate(chain, show_name) * format_balance(chain, balance)
-                        value_tmp += 1 * format_balance(chain, balance)
+                        value_tmp += get_rate(chain, show_name) * format_balance(chain, balance)
                     }
                 }
-                value_total = value_tmp.toFixed(8)
+                value_total = value_tmp.toFixed(2)
             }
         }
     }
@@ -299,7 +298,11 @@ Item {
         request('GET', url_violas + '/1.0/violas/value/violas' + formatParams(params), null, 
             function(resp) {
                 if (resp.code == 2000) {
-                    values_violas = resp.data
+                    var entries = resp.data
+                    for (var i=0; i<entries.length; i++) {
+                        values_violas[entries[i].name] = entries[i].rate
+                    }
+                    //console.log(JSON.stringify(values_violas))
                 }
             });
     }

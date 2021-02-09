@@ -217,8 +217,7 @@ Page {
                         anchors.right: parent.right
                     }
                     Text {
-                        //text: appSettings.eyeIsOpen ? "≈$" + server.get_rate(chain, show_name) * server.format_balance(chain, balance) : "******"
-                        text: appSettings.eyeIsOpen ? "≈$" + 1 * server.format_balance(chain, balance) : "******"
+                        text: appSettings.eyeIsOpen ? "≈$" + (server.get_rate(chain, show_name) * server.format_balance(chain, balance)).toFixed(2) : "******"
                         color: "#ADADAD"
                         font.pointSize: 12
                         anchors.right: amountText.right
