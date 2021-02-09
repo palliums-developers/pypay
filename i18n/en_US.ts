@@ -38,7 +38,7 @@
     <name>AddCoinPage</name>
     <message>
         <location filename="../qml/pages/AddCoinPage.qml" line="28"/>
-        <source>Add Token</source>
+        <source>添加币种</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -351,21 +351,21 @@
     <name>CoinDetailPage</name>
     <message>
         <location filename="../qml/pages/CoinDetailPage.qml" line="30"/>
-        <source>Token Detail</source>
+        <source>币种详情</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/CoinDetailPage.qml" line="135"/>
+        <location filename="../qml/pages/CoinDetailPage.qml" line="139"/>
         <source>全部</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/CoinDetailPage.qml" line="155"/>
+        <location filename="../qml/pages/CoinDetailPage.qml" line="166"/>
         <source>转入</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/CoinDetailPage.qml" line="175"/>
+        <location filename="../qml/pages/CoinDetailPage.qml" line="193"/>
         <source>转出</source>
         <translation type="unfinished"></translation>
     </message>
@@ -969,18 +969,23 @@
 <context>
     <name>SendPage</name>
     <message>
-        <location filename="../qml/pages/SendPage.qml" line="34"/>
+        <location filename="../qml/pages/SendPage.qml" line="35"/>
         <source>转账</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/SendPage.qml" line="50"/>
+        <location filename="../qml/pages/SendPage.qml" line="51"/>
         <source>输入地址</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/pages/SendPage.qml" line="58"/>
         <source>输入金额</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SendPage.qml" line="71"/>
+        <source>余额: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1076,7 +1081,42 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransactionDetailPage.qml" line="54"/>
+        <location filename="../qml/pages/TransactionDetailPage.qml" line="51"/>
+        <source>转账成功</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransactionDetailPage.qml" line="51"/>
+        <source>收款成功</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransactionDetailPage.qml" line="64"/>
+        <source>时间: 	</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransactionDetailPage.qml" line="69"/>
+        <source>交易号: 	</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransactionDetailPage.qml" line="74"/>
+        <source>金额: 	</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransactionDetailPage.qml" line="79"/>
+        <source>收款地址: 	</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransactionDetailPage.qml" line="84"/>
+        <source>付款地址: 	</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransactionDetailPage.qml" line="92"/>
         <source>浏览器查询更详细信息</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1089,13 +1129,28 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/WalletManagePage.qml" line="44"/>
+        <location filename="../qml/pages/WalletManagePage.qml" line="45"/>
+        <source>助记词管理:	</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/WalletManagePage.qml" line="49"/>
         <source>隐藏助记词 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/WalletManagePage.qml" line="44"/>
+        <location filename="../qml/pages/WalletManagePage.qml" line="49"/>
         <source>显示助记词 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/WalletManagePage.qml" line="82"/>
+        <source>地址管理:	</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/WalletManagePage.qml" line="91"/>
+        <source>删除钱包</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1104,7 +1159,7 @@
     <message>
         <location filename="../qml/pages/WalletPage.qml" line="32"/>
         <source>总资产</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Total</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalletPage.qml" line="60"/>
@@ -1114,47 +1169,47 @@
     <message>
         <location filename="../qml/pages/WalletPage.qml" line="68"/>
         <source>转账</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Send</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalletPage.qml" line="85"/>
         <source>收款</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Receive</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalletPage.qml" line="102"/>
         <source>映射</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mapping</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalletPage.qml" line="134"/>
         <source>资产</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Token</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalletPage.qml" line="165"/>
         <source>无资产</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No token</translation>
     </message>
     <message>
-        <location filename="../qml/pages/WalletPage.qml" line="269"/>
+        <location filename="../qml/pages/WalletPage.qml" line="281"/>
         <source>安全提示</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Security tip</translation>
     </message>
     <message>
-        <location filename="../qml/pages/WalletPage.qml" line="293"/>
+        <location filename="../qml/pages/WalletPage.qml" line="305"/>
         <source>您的身份助记词未备份，请务必备份助记词</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Your mnemonic is not backup, please backup now</translation>
     </message>
     <message>
-        <location filename="../qml/pages/WalletPage.qml" line="320"/>
+        <location filename="../qml/pages/WalletPage.qml" line="332"/>
         <source>助记词可用于恢复身份下钱包资产，防止忘记密码、应用删除、手机丢失等情况导致资产损失</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">You can use mnemonic restore your token</translation>
     </message>
     <message>
-        <location filename="../qml/pages/WalletPage.qml" line="335"/>
+        <location filename="../qml/pages/WalletPage.qml" line="347"/>
         <source>立即备份</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Backup Now</translation>
     </message>
 </context>
 <context>
@@ -1162,37 +1217,37 @@
     <message>
         <location filename="../qml/main.qml" line="17"/>
         <source>ViolasPay桌面钱包</source>
-        <translation type="unfinished">ViolasPay Desktop Wallet</translation>
+        <translation type="unfinished">ViolasPay Desktop wallet</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="134"/>
+        <location filename="../qml/main.qml" line="139"/>
         <source>钱包</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Wallet</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="148"/>
+        <location filename="../qml/main.qml" line="153"/>
         <source>市场</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Market</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="161"/>
+        <location filename="../qml/main.qml" line="166"/>
         <source>数字银行</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bank</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="187"/>
+        <location filename="../qml/main.qml" line="192"/>
         <source>导入</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Import</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="200"/>
+        <location filename="../qml/main.qml" line="205"/>
         <source>创建</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Create</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="227"/>
+        <location filename="../qml/main.qml" line="232"/>
         <source>下载</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Download</translation>
     </message>
 </context>
 </TS>
