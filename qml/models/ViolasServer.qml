@@ -709,6 +709,10 @@ Item {
         payController.create_wallet()
     }
 
+    function delete_wallet() {
+        payController.delete_wallet()
+    }
+
     function create_wallet_from_mnemonic(mnemonic) {
         payController.create_wallet_from_mnemonic(mnemonic)
     }

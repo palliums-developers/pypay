@@ -7,6 +7,7 @@ import qrcode
 import qrcode.image
 import logging
 import pathlib
+import shutil
 import json
 
 from mnemonic import Mnemonic
@@ -133,6 +134,14 @@ class PayController(QObject):
         with open(fileName, 'w') as f:
             f.write(mnemonic + ';2')
         self.create_wallet()
+
+    # 删除钱包
+    @pyqtSlot()
+    def delete_wallet(self):
+        try:
+            shutil.rmtree(self._data_dir)
+        except FileExistsError:
+            pass
 
     @pyqtSlot()
     def gen_random_mnemonic(self):
