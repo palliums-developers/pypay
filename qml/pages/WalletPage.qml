@@ -14,6 +14,7 @@ Page {
     signal sendClicked
     signal receiveClicked
     signal exchangeClicked
+    signal mineRewardClicked
 
     background: Rectangle {
         color: "#F7F7F9"
@@ -134,6 +135,31 @@ Page {
             text: qsTr("资产")
             color: "#7D71AA"
         }
+
+        Image {
+            id: mineRewardImage
+            anchors.verticalCenter: tokenText.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            height: 35
+            width: 200
+            source: "../icons/mineReward.png"
+            //fillMode: Image.PreserveAspectFit
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 32
+                color: "#FFFFFF"
+                font.pointSize: 16
+                text: qsTr("挖矿领福利")
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    mineRewardClicked()
+                }
+            }
+        }
+
         ImageButton {
             id: addImage
             visible: appSettings.walletIsCreate

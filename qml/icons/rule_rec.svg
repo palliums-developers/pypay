@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="135px" height="34px" viewBox="0 0 135 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59 (86127) - https://sketch.com -->
+    <title>矩形 4</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="-3.82680573%" y1="69.6429866%" x2="96.888442%" y2="69.6429866%" id="linearGradient-1">
+            <stop stop-color="#7038FD" stop-opacity="0.868225524" offset="0%"></stop>
+            <stop stop-color="#7038FD" stop-opacity="0" offset="100%"></stop>
+            <stop stop-color="#7038FD" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="78.4066929%" x2="90.1181194%" y2="78.4066929%" id="linearGradient-2">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#7038FD" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="激励挖矿-总收益备份-2" transform="translate(-1267.000000, -169.000000)" fill="url(#linearGradient-1)" stroke="url(#linearGradient-2)" stroke-width="0.72">
+            <g id="矩形-4" transform="translate(1267.000000, 169.000000)">
+                <rect id="矩形" transform="translate(68.000000, 17.000000) scale(-1, 1) rotate(-180.000000) translate(-68.000000, -17.000000) " x="1" y="1" width="134" height="32" rx="15.12"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -354,6 +354,9 @@ ApplicationWindow {
                 onExchangeClicked: {
                     walletStack.push(exchangePage)
                 }
+                onMineRewardClicked: {
+                    walletStack.push(mineRewardPage)
+                }
             }
 
             // Receive
@@ -400,9 +403,9 @@ ApplicationWindow {
             Component {
                 id: mineRewardPage
                 MineRewardPage {
-                    //onBackArrowClicked: {
-                    //    walletStack.pop()
-                    //}
+                    onBackArrowClicked: {
+                        walletStack.pop()
+                    }
                 }
             }
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1071px" height="382px" viewBox="0 0 1071 382" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59 (86127) - https://sketch.com -->
+    <title>蒙版 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="6.35540541%" y1="43.6272164%" x2="80.5677202%" y2="61.3188148%" id="linearGradient-1">
+            <stop stop-color="#9339F3" offset="0%"></stop>
+            <stop stop-color="#7038FD" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="激励挖矿-总收益备份-2" transform="translate(-321.000000, -134.000000)" fill="url(#linearGradient-1)">
+            <g id="蒙版-2" transform="translate(321.000000, 134.000000)">
+                <path d="M24,0.00105017945 L1046,0.0457703212 C1059.25442,0.0474005038 1069.99895,10.7923966 1070,24.0468205 L1070,358 C1070,371.254834 1059.25483,382 1046,382 L24,382 C10.745166,382 1.623249e-15,371.254834 0,358 L0,24 C-0.00105015648,10.745166 10.7441158,2.4348735e-15 23.9989498,0 C23.9992999,-6.4304931e-20 23.99965,7.6588691e-09 24,0.00105017945 Z" id="蒙版"></path>
+            </g>
+        </g>
+    </g>
+</svg>
