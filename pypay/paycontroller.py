@@ -98,12 +98,13 @@ class PayController(QObject):
         self.changed_mnemonic.emit()
 
         # bitcoin testnet
-        #mnemo = Mnemonic("english")
-        #entropy = mnemo.to_entropy(self._mnemonic)
-        #m = BIP32Key.fromEntropy(entropy, False, True)
-        #wif = m.WalletImportFormat()
-        #self._bitKey = wif_to_key(wif)
-        #self._address_bitcoin = self._bitKey.segwit_address
+        mnemo = Mnemonic("english")
+        entropy = mnemo.to_entropy(self._mnemonic)
+        m = BIP32Key.fromEntropy(entropy, False, True)
+        wif = m.WalletImportFormat()
+        self._bitKey = wif_to_key(wif)
+        self._address_bitcoin = self._bitKey.segwit_address
+        self.changed_address_bitcoin.emit()
 
         self._wallet.write_recovery(fileName)
 
@@ -222,9 +223,11 @@ class PayController(QObject):
         if chain == 'bitcoin':
             qrURL = 'bitcoin' + ':' + self._address_bitcoin
             token = 'bitcoin-BTC'
-        elif chain == 'libra' or chain == 'violas':
-            qrURL = chain + '-' + name + ':' + self._addr
+        elif chain == 'diem' or chain == 'violas':
+            tmp_addr = self._address_violas if chain == 'violas' else self._address_libra
+            qrURL = chain + '://tdm' + tmp_addr + '?c=' + name
             token = chain + '-' + name
+        print("qr url: ", qrURL)
         qr.add_data(qrURL)
         qr.make(fit=True)
 

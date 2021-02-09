@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
+
 import "../controls"
 
 Rectangle {
@@ -24,8 +25,8 @@ Rectangle {
             source: {
                 if (chain == "bitcoin") {
                     return "../icons/bitcoin.svg"
-                } else if (chain == "libra") {
-                    return "../icons/libra.svg"
+                } else if (chain == "diem") {
+                    return "../icons/diem.svg"
                 } else if (chain == "violas") {
                     return "../icons/violas.svg"
                 } else {
@@ -96,14 +97,14 @@ Rectangle {
             ListView {
                 id: listView
                 anchors.fill: parent
-                model: payController.tokenModel
+                model: server.model_tokens
                 spacing: 8
                 clip: true
                 ScrollIndicator.vertical: ScrollIndicator { }
                 delegate: Rectangle {
                     width: listView.width
-                    height: (tokenEntry.isShow && (root.isShowViolasCoin ? true : tokenEntry.chain != 'violas')) ? 60 : -8
-                    visible: tokenEntry.isShow && (root.isShowViolasCoin ? true : tokenEntry.chain != 'violas')
+                    height: appWindow.currencies_show.includes(show_name) ? 60 : -8
+                    visible: appWindow.currencies_show.includes(show_name)
                     radius: 8
                     color: "#EBEBF1"
                     RowLayout {
@@ -111,11 +112,11 @@ Rectangle {
                         MyImage {
                             id: itemImage
                             source: {
-                                if (tokenEntry.chain == "bitcoin") {
+                                if (chain == "bitcoin") {
                                     return "../icons/bitcoin.svg"
-                                } else if (tokenEntry.chain == "libra") {
-                                    return "../icons/libra.svg"
-                                } else if (tokenEntry.chain == "violas") {
+                                } else if (chain == "diem") {
+                                    return "../icons/diem.svg"
+                                } else if (chain == "violas") {
                                     return "../icons/violas.svg"
                                 } else {
                                     return ""
@@ -128,7 +129,7 @@ Rectangle {
                             Layout.leftMargin: 8
                         }
                         Text {
-                            text: tokenEntry.name
+                            text: name
                             Layout.fillWidth: true
                             Layout.leftMargin: 8
                         }
@@ -136,8 +137,8 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            chain = tokenEntry.chain
-                            name = tokenEntry.name
+                            root.chain = chain
+                            root.name = name
                             popup.close()
                             tokenSelected()
                         }

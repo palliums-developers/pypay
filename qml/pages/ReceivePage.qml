@@ -76,7 +76,15 @@ Page {
         spacing: 16
         Text {
             id: addrText
-            text: root.chain == "bitcoin" ? server.address_bitcoin : server.address_violas      // TODO
+            text: {
+                if (root.chain == "bitcoin") {
+                    return server.address_bitcoin
+                } else if (root.chain == "diem") {
+                    return server.address_libra
+                } else {
+                    return server.address_violas
+                }
+            }
             color: "#382F44"
             font.weight: Font.Medium
             font.pointSize: 18
@@ -89,7 +97,7 @@ Page {
             height: 23
             MouseArea {
                 anchors.fill: parent
-                onClicked: server.copy(addrText.text)
+                onClicked: server.copy_text(addrText.text)
             }
         }
     }
