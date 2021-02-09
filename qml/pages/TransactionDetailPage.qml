@@ -33,17 +33,55 @@ Control {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        Text {
-            id: txidText
+        Image {
+            id: statusImage
             anchors.top: titleText.bottom
-            anchors.topMargin: 200
+            anchors.topMargin: 88
             anchors.horizontalCenter: parent.horizontalCenter
-            //text: payController.currentBitTransactionEntry.txid
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    server.copy(txidText.text)
-                }
+            source: "../icons/success_detail.svg"
+            width: 38
+            fillMode: Image.PreserveAspectFit
+        }
+        
+        Text {
+            id: statusText
+            anchors.top: statusImage.bottom
+            anchors.topMargin: 10
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: server.violas_transaction_detail["sender"] == server.address_violas ? qsTr("转账成功") : qsTr("收款成功")
+            font.pointSize: 16
+            color: "#00D1AF"
+        }
+        
+        Column {
+            anchors.top: statusImage.bottom
+            anchors.topMargin: 50
+            anchors.left: parent.left
+            //anchors.leftMargin: 20
+            Text {
+                font.pointSize: 12
+                color: "#999999"
+                text: qsTr("时间: \t") + server.format_timestamp(server.violas_transaction_detail["confirmed_time"])
+            }
+            Text {
+                font.pointSize: 12
+                color: "#999999"
+                text: qsTr("交易号: \t") + server.violas_transaction_detail["version"]
+            }
+            Text {
+                font.pointSize: 12
+                color: "#999999"
+                text: qsTr("金额: \t") + server.format_balance('violas', server.violas_transaction_detail["amount"])
+            }
+            Text {
+                font.pointSize: 12
+                color: "#999999"
+                text: qsTr("收款地址: \t") + server.violas_transaction_detail["receiver"]
+            }
+            Text {
+                font.pointSize: 12
+                color: "#999999"
+                text: qsTr("付款地址: \t") + server.violas_transaction_detail["sender"]
             }
         }
 

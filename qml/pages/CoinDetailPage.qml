@@ -9,7 +9,7 @@ Control {
     padding: 8
 
     signal goBack
-    signal transactionDetailOpened
+    property string addr: ""
 
     contentItem: Item {
         Image {
@@ -84,14 +84,18 @@ Control {
                         Text {
                             id: addrText
                             text: {
-                                if (server.token_requested_wallet.chain == 'bitcoin')
+                                if (server.token_requested_wallet.chain == 'bitcoin') {
+                                    root.addr = server.address_bitcoin
                                     return server.address_bitcoin
-                                else if (server.token_requested_wallet.chain == 'diem')
+                                } else if (server.token_requested_wallet.chain == 'diem') {
+                                    root.addr = server.address_libra
                                     return server.address_libra
-                                else if (server.token_requested_wallet.chain == 'violas')
+                                } else if (server.token_requested_wallet.chain == 'violas') {
+                                    root.addr = server.address_violas
                                     return server.address_violas
-                                else
-                                    return 'noknown'
+                                } else {
+                                    return 'noknown chain'
+                                }
                             }
                             color: "#5C5C5C"
                             font.weight: Font.Medium
@@ -140,10 +144,17 @@ Control {
                     onClicked: {
                         rowBar.disableSelect()
                         parent.isSelected = !parent.isSelected
-                        if (payController.currentTokenEntry.chain == "libra") {
-                            payController.requestLBRHistory(payController.currentTokenEntry.addr, payController.currentTokenEntry.name, -1, 0, 100)
-                        } else if (payController.currentTokenEntry.chain == "violas") {
-                            payController.requestVLSHistory(payController.currentTokenEntry.addr, payController.currentTokenEntry.name, -1, 0, 100)
+                        if (server.token_requested_wallet.chain == "diem") {
+                            //
+                        } else if (server.token_requested_wallet.chain == "violas") {
+                            var addr = server.address_violas
+                            var name = server.token_requested_wallet.show_name
+                            var offset = 0
+                            var limit = 20
+                            var params = { "addr": addr , "currency": name , "offset": offset, "limit": limit}
+                            server.get_history_violas(params)
+                        } else if (server.token_requested_wallet.chain == 'bitcoin') {
+                            //
                         } else {
                             console.log("invaild")
                         }
@@ -160,10 +171,17 @@ Control {
                     onClicked: {
                         rowBar.disableSelect()
                         parent.isSelected = !parent.isSelected
-                        if (payController.currentTokenEntry.chain == "libra") {
-                            payController.requestLBRHistory(payController.currentTokenEntry.addr, payController.currentTokenEntry.name, 1, 0, 100)
-                        } else if (payController.currentTokenEntry.chain == "violas") {
-                            payController.requestVLSHistory(payController.currentTokenEntry.addr, payController.currentTokenEntry.name, 1, 0, 100)
+                        if (server.token_requested_wallet.chain == "diem") {
+                            //
+                        } else if (server.token_requested_wallet.chain == "violas") {
+                            var addr = server.address_violas
+                            var name = server.token_requested_wallet.show_name
+                            var flows = 1
+                            var offset = 0
+                            var limit = 20
+                            var params = { "addr": addr , "currency": name , "flows": flows, "offset": offset, "limit": limit}
+                            server.get_history_violas(params)
+                        } else if (server.token_requested_wallet.chain == 'bitcoin') {
                         } else {
                             console.log("invaild")
                         }
@@ -180,10 +198,17 @@ Control {
                     onClicked: {
                         rowBar.disableSelect()
                         parent.isSelected = !parent.isSelected
-                        if (payController.currentTokenEntry.chain == "libra") {
-                            payController.requestLBRHistory(payController.currentTokenEntry.addr, payController.currentTokenEntry.name, 0, 0, 100)
-                        } else if (payController.currentTokenEntry.chain == "violas") {
-                            payController.requestVLSHistory(payController.currentTokenEntry.addr, payController.currentTokenEntry.name, 0, 0, 100)
+                        if (server.token_requested_wallet.chain == "diem") {
+                            //
+                        } else if (server.token_requested_wallet.chain == "violas") {
+                            var addr = server.address_violas
+                            var name = server.token_requested_wallet.show_name
+                            var flows = 0
+                            var offset = 0
+                            var limit = 20
+                            var params = { "addr": addr , "currency": name , "flows": flows, "offset": offset, "limit": limit}
+                            server.get_history_violas(params)
+                        } else if (server.token_requested_wallet.chain == 'bitcoin') {
                         } else {
                             console.log("invaild")
                         }
@@ -200,46 +225,68 @@ Control {
             anchors.right: ima.right
             anchors.rightMargin: 16
             anchors.bottom: parent.bottom
-            model: payController.historyModel
+            model: server.model_history
             spacing: 8
             clip: true
             ScrollIndicator.vertical: ScrollIndicator { }
             delegate: Rectangle {
                 width: listView.width
                 height: 40
+                radius: 5
                 color: "#EBEBF1"
                 Image {
                     id: itemImage
-                    source: "../icons/history.svg"
+                    source: sender == root.addr ? "../icons/send_history.svg" : "../icons/receive_history.svg"
                     width: 24
                     fillMode: Image.PreserveAspectFit
                     anchors.left: parent.left
                     anchors.leftMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                Text {
-                    id: versionText
-                    text: historyEntry.version
+                Column {
                     anchors.left: itemImage.right
                     anchors.leftMargin: 16
                     anchors.verticalCenter: parent.verticalCenter
-                    color: "#333333"
-                    font.pointSize: 12
+                    Text {
+                        id: versionText
+                        text: version
+                        color: "#333333"
+                        font.pointSize: 12
+                    }
+                    Text {
+                        id: dateTime
+                        text: server.format_timestamp(confirmed_time)
+                        color: "#BCBCBC"
+                        font.pointSize: 10
+                    }
                 }
                 Text {
                     id: amountText
-                    text: historyEntry.amount
+                    text: server.format_balance('violas', amount)
                     anchors.right: parent.right
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter   
-                    color: "#333333"
+                    color: sender == root.addr ? "#FB8F0B" : "#13B788"
                     font.pointSize: 12
                 }
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        //payController.currentBitTransactionEntry = bitTransactionEntry
-                        transactionDetailOpened()
+                        server.violas_transaction_detail = {
+                            'amount':  amount,
+                            'confirmed_time': confirmed_time,
+                            'currency': currency,
+                            'expiration_time': expiration_time,
+                            'gas': gas,
+                            'gas_currency': gas_currency,
+                            'receiver': receiver,
+                            'sender': sender,
+                            'sequence_number': sequence_number,
+                            'status': status,
+                            'type': type,
+                            'version': version
+                        }
+                        transactionDetail.open()
                     }
                 }
             }

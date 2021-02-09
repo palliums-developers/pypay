@@ -15,10 +15,13 @@ Item {
     property var balances_libra: []
     property var balances_violas: []
     property var value_bitcoin: 0
-    property var values_violas: {'VLS':0}
+    property var values_violas: {'VLS':0, 'GNIUSD':0, 'NEOUSD':0, 'PAMUSD':0, 'VBUSD':0, 'VHUSD':0, 'VLSUSD':0, 'VUSDC':0, 'vBTC':47965.534999999916, 'vUSDT':1, 'vWBTC':0}
     property var value_total: 0
     property var rates: {}
     property var currencies_published: []
+    //property var violas_transaction_detail: {"amount": 0, "confirmed_time":0, "currency":"", "expiration_time":0, "gas":0, "gas_currency":"", "receiver":"", "sender":"", "sequence_number":0, "status":"", "type":"", "version":0}
+    property var violas_transaction_detail: {}
+
     property var account_bank: {
         "amount": 0.0,
         "borrow": 0.0,
@@ -73,6 +76,7 @@ Item {
 
     property alias model_tokens: model_tokens
     property alias model_currencies: model_currencies
+    property alias model_history: model_history
     property alias model_products_deposit: model_products_deposit
     property alias model_products_borrow: model_products_borrow
     property alias model_intors: model_intors
@@ -105,6 +109,9 @@ Item {
             show_name: "VLS"
             show_icon: "../icons/violas.svg"
         }
+    }
+    ListModel {
+        id: model_history
     }
     ListModel {
         id: model_products_deposit
@@ -200,7 +207,7 @@ Item {
             var params = { "address": address_violas }
             get_value_violas(params)
             console.log("violas address: ", address_violas)
-            console.log("diem key_prefix_hex: ", payController.key_prefix_hex_violas)
+            console.log("violas key_prefix_hex: ", payController.key_prefix_hex_violas)
             if (appSettings.walletIsCreate == false) {
                 var params = { 
                     "address": address_violas ,
@@ -239,7 +246,7 @@ Item {
             if(xhr.readyState === XMLHttpRequest.DONE) {
                 if(cb) {
                     try {
-                        //print('request: ' + verb + ' ' + url)
+                        print('request: ' + verb + ' ' + url)
                         if (xhr.status == 200) {
                             //print(xhr.responseText.toString())
                             var res = JSON.parse(xhr.responseText.toString())
@@ -371,6 +378,34 @@ Item {
                             }
                         )
                     }
+                }
+            }
+        });
+    }
+
+    function get_history_violas(params) {
+        model_history.clear()
+        request('GET', url_violas + '/1.0/violas/transaction' + formatParams(params), null, function(resp) {
+            if (resp.code == 2000) {
+                var entries = resp.data;
+                for (var i=0; i<entries.length; i++) {
+                    var d = entries[i]
+                    model_history.append(
+                        {
+                            "amount": d.amount,
+                            "confirmed_time": d.confirmed_time,
+                            "currency": d.currency,
+                            "expiration_time": d.expiration_time, 
+                            "gas": d.gas,
+                            "gas_currency": d.gas_currency,
+                            "receiver": d.receiver == null ? "" : d.receiver,
+                            "sender": d.sender == null ? "" : d.sender,
+                            "sequence_number": d.sequence_number,
+                            "status": d.status,
+                            "type": d.type,
+                            "version": d.version
+                        }
+                    )
                 }
             }
         });
@@ -613,6 +648,13 @@ Item {
     }
 
     ////////////////////////////////
+
+    function format_timestamp(timestamp)    // timestamp 秒
+    {
+        var ptDate = new Date(timestamp*1000)
+        return ptDate.toLocaleString(Qt.locale("de_DE"), "yyyy-MM-dd HH:mm:ss    ")
+
+    }
 
     function update_model_tokens() {
         var msg = {

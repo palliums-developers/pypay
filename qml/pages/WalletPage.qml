@@ -233,6 +233,18 @@ Page {
                             'show_name': show_name,
                             'balance': balance
                         }
+                        var addr = ""
+                        if (chain == 'violas') {
+                            addr = server.address_violas
+                        } else if (chain == 'diem') {
+                            addr = server.address_libra
+                        } else {
+                            addr = ""
+                        }
+                        var offset = 0
+                        var limit = 20
+                        var params = { "addr": addr , "currency": name , "offset": offset, "limit": limit}
+                        server.get_history_violas(params)
                         coinDetailPage.open()
                     }
                 }

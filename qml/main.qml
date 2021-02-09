@@ -606,24 +606,27 @@ ApplicationWindow {
                     onGoBack: {
                         coinDetailPage.close()
                     }
-                    onTransactionDetailOpened: {
-                        coinDetail.visible = false
-                        transactionDetail.visible = true
-                    }
-                }
-                TransactionDetailPage {
-                    id: transactionDetail
-                    anchors.fill: parent
-                    visible: false
-                    onGoBack: {
-                        coinDetail.visible = true
-                        transactionDetail.visible = false
-                    }
                 }
             }
-            onOpened: {
-                coinDetail.visible = true
-                transactionDetail.visible = false
+        }
+
+        // Transaction detail
+        Popup {
+            id: transactionDetail
+            x: parent.width - width
+            y: topRec.height
+            width: 436
+            height: parent.height - topRec.height
+            background: Rectangle {
+                border.color: "lightsteelblue"
+            }
+            contentItem: Item {
+                TransactionDetailPage {
+                    anchors.fill: parent
+                    onGoBack: {
+                        transactionDetail.close()
+                    }
+                }
             }
         }
 
