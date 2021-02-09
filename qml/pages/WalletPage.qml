@@ -57,7 +57,7 @@ Page {
             anchors.top: totalText.bottom
             anchors.topMargin: 20
             anchors.left: totalText.left
-            text: appSettings.eyeIsOpen ? qsTr("$ ") + server.value_total : "******"
+            text: appSettings.eyeIsOpen ? qsTr("$ ") + (server.value_total).toFixed(2) : "******"
             font.pointSize: 20
             color: "#FFFFFF"
         }

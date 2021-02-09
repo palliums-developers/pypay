@@ -165,7 +165,7 @@ Item {
                         value_tmp += get_rate(chain, show_name) * format_balance(chain, balance)
                     }
                 }
-                value_total = value_tmp.toFixed(2)
+                value_total = value_tmp
             }
         }
     }
@@ -239,9 +239,9 @@ Item {
             if(xhr.readyState === XMLHttpRequest.DONE) {
                 if(cb) {
                     try {
-                        print('request: ' + verb + ' ' + url)
+                        //print('request: ' + verb + ' ' + url)
                         if (xhr.status == 200) {
-                            print(xhr.responseText.toString())
+                            //print(xhr.responseText.toString())
                             var res = JSON.parse(xhr.responseText.toString())
                             cb(res);
                         } else {

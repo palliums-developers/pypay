@@ -27,7 +27,7 @@ Control {
         }
         Text {
             id: titleText
-            text: qsTr("Token Detail")
+            text: qsTr("币种详情")
             color: "#333333"
             font.pointSize: 16
             font.weight: Font.Medium
@@ -68,13 +68,13 @@ Control {
                         }
                     }
                     Text {
-                        text: appSettings.eyeIsOpen ? server.format_balance(server.token_requested_wallet.balance) : "******"
+                        text: appSettings.eyeIsOpen ? server.format_balance(server.token_requested_wallet.chain, server.token_requested_wallet.balance) : "******"
                         color: "#333333"
                         font.weight: Font.Bold
                         font.pointSize: 18
                     }
                     Text {
-                        text: appSettings.eyeIsOpen ? "≈$" + server.format_balance(server.token_requested_wallet.balance) * server.format_balance(server.reqeust_token.chain, server.token_requested_wallet.name) : "******"
+                        text: appSettings.eyeIsOpen ? "≈$" + (server.get_rate(server.token_requested_wallet.chain, server.token_requested_wallet.show_name) * server.format_balance(server.token_requested_wallet.chain, server.token_requested_wallet.balance)).toFixed(2) : "******"
                         color: "#999999"
                         font.weight: Font.Normal
                         font.pointSize: 12
@@ -86,9 +86,9 @@ Control {
                             text: {
                                 if (server.token_requested_wallet.chain == 'bitcoin')
                                     return server.address_bitcoin
-                                else if (server.token_requested_wallet_chain == 'libra')
+                                else if (server.token_requested_wallet.chain == 'diem')
                                     return server.address_libra
-                                else if (server.token_requested_wallet_chain == 'violas')
+                                else if (server.token_requested_wallet.chain == 'violas')
                                     return server.address_violas
                                 else
                                     return 'noknown'
