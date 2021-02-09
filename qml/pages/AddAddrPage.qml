@@ -82,7 +82,9 @@ Control {
             width: 200
             height: 40
             onClicked: {
-                //payController.addAddrBook(commentTextField.text, addrTextField.text)
+                server.model_address_book.append({ 'name': commentTextField.text, 'address': addrTextField.text })
+                commentTextField.text = ""
+                addrTextField.text = ""
                 goBack()
             }
         }

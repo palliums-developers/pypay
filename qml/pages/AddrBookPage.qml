@@ -57,7 +57,7 @@ Control {
             anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.bottom: parent.bottom
-            //model: payController.addrBookModel
+            model: server.model_address_book
             spacing: 2
             clip: true
             ScrollIndicator.vertical: ScrollIndicator { }
@@ -70,12 +70,12 @@ Control {
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
-                        text: addrBookEntry.name
+                        text: name
                         color: "#333333"
                         font.pointSize: 14
                     }
                     Text {
-                        text: addrBookEntry.addr
+                        text: address
                         color: "#999999"
                         font.pointSize: 10
                     }
@@ -102,13 +102,6 @@ Control {
                     anchors.bottomMargin: 2
                     height: 1
                     color: "#DEDFE0"
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        //payController.currentSelectedAddr = addrBookEntry.addr
-                        goBack()                       
-                    }
                 }
             }
         }

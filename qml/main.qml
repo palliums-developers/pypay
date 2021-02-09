@@ -661,30 +661,34 @@ ApplicationWindow {
             }
             contentItem: Item {
                 AddrBookPage {
-                    id: addrBook
                     anchors.fill: parent
                     onGoBack: {
                         addrBookPage.close()
                     }
                     onAddAddrClicked: {
-                        addrBook.visible = false
-                        addAddrPage.visible = true
-                        console.log("main add addr")
-                    }
-                }
-                AddAddrPage {
-                    id: addAddrPage
-                    anchors.fill: parent
-                    visible: false
-                    onGoBack: {
-                        addrBook.visible = true
-                        addAddrPage.visible = false
+                        addAddrPage.open()
                     }
                 }
             }
-            onOpened: {
-                addrBook.visible = true
-                addAddrPage.visible = false
+        }
+
+        // Add addr
+        Popup {
+            id: addAddrPage
+            x: parent.width - width
+            y: topRec.height
+            width: 436
+            height: parent.height - topRec.height
+            background: Rectangle {
+                border.color: "lightsteelblue"
+            }
+            contentItem: Item {
+                AddAddrPage {
+                    anchors.fill: parent
+                    onGoBack: {
+                        addAddrPage.close()
+                    }
+                }
             }
         }
     }

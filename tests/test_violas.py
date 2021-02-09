@@ -107,4 +107,4 @@ if __name__ == '__main__':
     balance = client.get_balance(account.address, "VLS")
     print("balance: ", balance)
     
-    client.transfer_coin(account, "41b0a522c282503c880b9e4bfc11615e", 10_000)                                          
+    client.transfer_coin(account, "e0bf8ccf9f29a66d7a8316e7ed939e6f", 10_000)                                          

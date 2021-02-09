@@ -76,6 +76,7 @@ Item {
     property alias model_tokens: model_tokens
     property alias model_currencies: model_currencies
     property alias model_history: model_history
+    property alias model_address_book: model_address_book
     property alias model_products_deposit: model_products_deposit
     property alias model_products_borrow: model_products_borrow
     property alias model_intors: model_intors
@@ -111,6 +112,9 @@ Item {
     }
     ListModel {
         id: model_history
+    }
+    ListModel {
+        id: model_address_book
     }
     ListModel {
         id: model_products_deposit
