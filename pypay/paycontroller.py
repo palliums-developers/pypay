@@ -195,12 +195,12 @@ class PayController(QObject):
 
     # 发送
     @pyqtSlot(str, str, str, str)
-    def sendCoin(self, addr, amount, chain, name):
+    def send_coin(self, addr, amount, chain, name):
         amount = float(amount)
         if chain == 'bitcoin':
             amount = int(amount * 1_0000_0000)
             pass
-        elif chain == 'libra':
+        elif chain == 'diem':
             amount = int(amount * 1_000_000)
             self._libraClient.transfer_coin(self._wallet.accounts[0], 
                     addr, amount, currency_code=name)

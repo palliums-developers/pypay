@@ -8,10 +8,11 @@ Page {
     id: root
     signal backArrowClicked
     signal sendClicked
+    property double currency_balance: 0
 
     function getBalnace(chain, name) {
         console.log("chain: ", chain, "name: ", name)
-        //payController.getCurBalance(chain, name)
+        root.currency_balance =  server.get_currency_balance(chain, name)
     }
 
     ImageButton {
@@ -48,7 +49,6 @@ Page {
         TextFieldAddr {
             id: addrTextField
             placeholderText: qsTr("输入地址")
-            //text: payController.currentSelectedAddr
             onAddrClicked: {
                 addrBookPage.open()
             }
@@ -68,7 +68,7 @@ Page {
     // 余额
     Text {
         id: balanceText
-        //text: qsTr("余额: ") + payController.curBalance
+        text: qsTr("余额: ") + root.currency_balance
         anchors.left: inputColumn.left
         anchors.leftMargin: 10
         anchors.top: inputColumn.bottom
@@ -160,7 +160,7 @@ Page {
                 tipText.visible = true
                 tipTimer.running = true
             } else {
-                //payController.sendCoin(addrTextField.text, amountTextField.text,  amountTextField.chain, amountTextField.name)
+                server.send_coin(addrTextField.text, amountTextField.text,  amountTextField.chain, amountTextField.name)
                 backArrowClicked()
             }
         }

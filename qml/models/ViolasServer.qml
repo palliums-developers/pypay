@@ -19,7 +19,6 @@ Item {
     property var value_total: 0
     property var rates: {}
     property var currencies_published: []
-    //property var violas_transaction_detail: {"amount": 0, "confirmed_time":0, "currency":"", "expiration_time":0, "gas":0, "gas_currency":"", "receiver":"", "sender":"", "sequence_number":0, "status":"", "type":"", "version":0}
     property var violas_transaction_detail: {}
 
     property var account_bank: {
@@ -649,11 +648,9 @@ Item {
 
     ////////////////////////////////
 
-    function format_timestamp(timestamp)    // timestamp 秒
-    {
+    function format_timestamp(timestamp) {    // timestamp 秒
         var ptDate = new Date(timestamp*1000)
         return ptDate.toLocaleString(Qt.locale("de_DE"), "yyyy-MM-dd HH:mm:ss    ")
-
     }
 
     function update_model_tokens() {
@@ -687,6 +684,15 @@ Item {
         }
     }
 
+    function get_currency_balance(chain, currency) {
+        for (var i = 0; i < model_tokens.count; i++) {
+            var obj = model_tokens.get(i)
+            if (obj["chain"] == chain && obj["name"] == currency) {
+                return format_balance(chain, obj["balance"])
+            }
+        }
+    }
+
     function open_url(url) {
         payController.open_url(url)
     }
@@ -702,10 +708,6 @@ Item {
     function create_wallet_from_mnemonic(mnemonic) {
         payController.create_wallet_from_mnemonic(mnemonic)
     }
-    
-    function gen_qr(chain, show_name) {
-        payController.gen_qr(chain, show_name)
-    }
 
     function gen_random_mnemonic() {
         payController.gen_random_mnemonic()
@@ -717,5 +719,13 @@ Item {
 
     function publish_currency(chain, currency) {
         payController.publish_currency(chain, currency)
+    }
+    
+    function gen_qr(chain, show_name) {
+        payController.gen_qr(chain, show_name)
+    }
+
+    function send_coin(address, amount, chain, currency) {
+        payController.send_coin(address, amount, chain, currency)
     }
 }
