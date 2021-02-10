@@ -413,7 +413,9 @@ ApplicationWindow {
             Component {
                 id: inviteRewardPage
                 InviteRewardPage {
-                    
+                    onBackArrowClicked: {
+                        walletStack.pop()
+                    }
                 }
             }
 
