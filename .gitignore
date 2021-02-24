@@ -20,3 +20,5 @@ pypay/qml/icons/qr_*.png
 *.spec
 
 qml/.DS_Store
+
+.venv/
