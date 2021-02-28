@@ -315,7 +315,8 @@ PyPayPage {
                     radius: 14
                     MyImage {
                         id: itemImage
-                        source: logo
+                        //source: logo
+                        source: "../icons/violas.svg"
                         radius: 20
                         width: 40
                         anchors.left: parent.left
@@ -379,7 +380,8 @@ PyPayPage {
                     radius: 14
                     MyImage {
                         id: itemImage
-                        source: logo
+                        //source: logo
+                        source: "../icons/violas.svg"
                         radius: 20
                         width: 40
                         anchors.left: parent.left
