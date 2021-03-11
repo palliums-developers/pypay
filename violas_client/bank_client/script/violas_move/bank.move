@@ -284,6 +284,7 @@ address 0x1 {
 		update_incentive_borrow_index(i);
 		i = i + 2;
 	    };
+<<<<<<< HEAD
 
 	    let utilities : vector<u64> = Vector::empty();
 	    let total_utility =  0;
@@ -311,6 +312,35 @@ address 0x1 {
 		i = i + 2;
 	    };
 
+=======
+
+	    let utilities : vector<u64> = Vector::empty();
+	    let total_utility =  0;
+	    i = 0;
+	    loop {
+    		if(i == len) break;
+		let tokeninfos = borrow_global<TokenInfoStore>(contract_address());
+		let ti = Vector::borrow(& tokeninfos.tokens, i);
+		let utility = mantissa_mul(ti.total_borrows, token_price(i));
+		Vector::push_back(&mut utilities, utility);
+		total_utility = total_utility + utility; 
+		i = i + 2;
+	    };
+
+	    i = 0;
+	    loop {
+    		if(i == len) break;
+		let tokeninfos = borrow_global_mut<TokenInfoStore>(contract_address());
+		let utility = Vector::borrow(&utilities, i/2);
+		let ti = Vector::borrow_mut(&mut tokeninfos.tokens, i);
+		ti.incentive_speed = 0;
+		if (total_utility > 0) {
+		    ti.incentive_speed = mantissa_mul(tokeninfos.incentive_rate, mantissa_div(*utility, total_utility))
+		};
+		i = i + 2;
+	    };
+
+>>>>>>> master
 	}
 
 	fun update_incentive_supply_index(tokenidx: u64) acquires TokenInfoStore {
@@ -684,7 +714,11 @@ address 0x1 {
     	    let sender = Signer::address_of(account);
     	    assert(!exists<Tokens>(sender), 113);
     	    move_to(account, Tokens{ ts: Vector::empty(), borrows: Vector::empty(), last_exchange_rates: Vector::empty(), incentive_supply_indexes: Vector::empty(), incentive_borrow_indexes: Vector::empty() });
+<<<<<<< HEAD
 	    
+=======
+
+>>>>>>> master
     	    move_to(account, UserInfo{
     		violas_events: Event::new_event_handle<ViolasEvent>(account),
     		data: *&userdata,
@@ -1363,6 +1397,7 @@ address 0x1 {
     	    DiemAccount::restore_withdraw_capability(withdraw_capability);
 	    
     	    bank_mint(libratoken.index, sender, amount);
+<<<<<<< HEAD
 
     	    let input = EventEnterBank {
     		currency_code: Diem::currency_code<CoinType>(),
@@ -1393,6 +1428,38 @@ address 0x1 {
     		amount: amount,
     	    };
 
+=======
+
+    	    let input = EventEnterBank {
+    		currency_code: Diem::currency_code<CoinType>(),
+    		tokenidx: libratoken.index,
+    		amount: amount,
+    	    };
+	    
+    	    emit_events(account, 13, BCS::to_bytes(&input), Vector::empty());
+    	    //debug_print(&input);
+	}
+
+	public fun exit_bank<CoinType>(account: &signer, amount: u64) acquires DiemToken, TokenInfoStore, Tokens, UserInfo {
+    	    let sender = Signer::address_of(account);
+    	    require_published(sender);
+    	    require_enabled();
+
+    	    let libratoken = borrow_global_mut<DiemToken<CoinType>>(contract_address());
+	    
+    	    let tokeninfos = borrow_global<TokenInfoStore>(contract_address());
+    	    DiemAccount::pay_from<CoinType>(Option::borrow(&tokeninfos.withdraw_capability), sender, amount, Vector::empty(), Vector::empty());
+	    
+    	    let t = withdraw_from(libratoken.index, sender, amount);
+    	    bank_burn(t);
+
+    	    let input = EventEnterBank {
+    		currency_code: Diem::currency_code<CoinType>(),
+    		tokenidx: libratoken.index,
+    		amount: amount,
+    	    };
+
+>>>>>>> master
     	    emit_events(account, 14, BCS::to_bytes(&input), Vector::empty());
     	    //debug_print(&input);
 	}
@@ -1439,6 +1506,7 @@ address 0x1 {
 	// 	let borrowinfo = Vector::borrow(& tokens.borrows, tokenidx);
 
 	// 	let amount = safe_sub(balance, borrowinfo.principal);
+<<<<<<< HEAD
 	
 	// 	let price = token_price(tokenidx);
 	// 	let base_amount = mantissa_mul(amount, price);
@@ -1507,6 +1575,23 @@ address 0x1 {
     	//     //debug_print(&input);
 	// }
 		   
+=======
+	
+	// 	let price = token_price(tokenidx);
+	// 	let base_amount = mantissa_mul(amount, price);
+
+	// 	if(base_amount > 0 && DiemAccount::balance<VLS>(contract_address()) > base_amount) {
+	// 	    let tokeninfos = borrow_global<TokenInfoStore>(contract_address());
+	// 	    DiemAccount::pay_from<VLS>(Option::borrow(&tokeninfos.withdraw_capability), sender, base_amount, Vector::empty(), Vector::empty());
+	// 	} else { base_amount = 0; };
+	// 	base_amount
+	// }
+
+	// fun debug_print<T>(_x: &T) {
+	// 	Debug::print(x);
+	// }
+	
+>>>>>>> master
     }
 
 }

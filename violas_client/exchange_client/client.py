@@ -311,7 +311,8 @@ class Client(LibraClient, Base):
             amountB += 1
         return amountB
 
-    def get_output_amount_without_fee(self, amount_in, reserve_in, reserve_out):
+    @staticmethod
+    def get_output_amount_without_fee(amount_in, reserve_in, reserve_out):
         amount_out = amount_in * reserve_out // (reserve_in + amount_in)
         return amount_out
     
@@ -327,7 +328,8 @@ class Client(LibraClient, Base):
             amounts.append(amount_out)
         return amounts
 
-    def get_output_amount(self, amount_in, reserve_in, reserve_out):
+    @staticmethod
+    def get_output_amount(amount_in, reserve_in, reserve_out):
         assert reserve_in > 0 and reserve_out > 0
         amount_inWithFee = amount_in * 9997
         numerator = amount_inWithFee * reserve_out
@@ -335,7 +337,8 @@ class Client(LibraClient, Base):
         amount_out = numerator // denominator
         return amount_out
 
-    def get_input_amount(self, amount_out, reserve_in, reserve_out):
+    @staticmethod
+    def get_input_amount(amount_out, reserve_in, reserve_out):
         assert reserve_in > 0 and reserve_out > 0
         numerator = reserve_in * amount_out * 10000
         denominator = (reserve_out - amount_out) * 9997

@@ -11,3 +11,15 @@ do
 	echo $file
 	python3 ./parse_code.py ./oracle_data $file
 done
+
+for file in $(ls ./stdlib/*.mv)
+do
+	echo $file
+	python3 ./parse_code.py ./oracle_data $file
+done
+
+for file in $(ls ./currencies/*.mv)
+do
+	echo $file
+	python3 ./parse_code.py ./oracle_data $file
+done

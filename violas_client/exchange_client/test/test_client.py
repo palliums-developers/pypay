@@ -233,15 +233,14 @@ def test_withdraw_mine_reward():
     wallet = Wallet.new()
     client = Client()
     liquidity_account = wallet.new_account()
-    client.mint_coin(liquidity_account.address, 10_000_000, currency_code="USD",
+    client.mint_coin(liquidity_account.address, 10_000_000, currency_code="vBTC",
                      auth_key_prefix=liquidity_account.auth_key_prefix, is_blocking=True)
-    client.add_currency_to_account(liquidity_account, "GBP")
-    client.add_currency_to_account(liquidity_account, "VLS")
+    client.add_currency_to_account(liquidity_account, "vUSDT")
 
-    client.mint_coin(liquidity_account.address, 10_000_000, currency_code="GBP",
+    client.mint_coin(liquidity_account.address, 10_000_000, currency_code="vUSDT",
                      auth_key_prefix=liquidity_account.auth_key_prefix, is_blocking=True)
 
-    client.swap_add_liquidity(liquidity_account, "GBP", "USD", 200_000, 100_000)
+    client.swap_add_liquidity(liquidity_account, "vBTC", "vUSDT", 200_000, 100_000)
     time.sleep(1)
     amount = client.swap_get_reward_balance(liquidity_account.address_hex)
     seq = client.swap_withdraw_mine_reward(liquidity_account)

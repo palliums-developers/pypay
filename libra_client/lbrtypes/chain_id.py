@@ -6,3 +6,4 @@ class NamedChain(IntEnum):
     TESTNET = 2
     DEVNET = 3
     TESTING = 4
+    PREMAINNET = 5

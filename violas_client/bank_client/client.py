@@ -291,6 +291,7 @@ class Client(LibraClient):
                     exchange_rate = owner_state.get_exchange_rate(index)
                     amount = state.get_lock_amount(index, exchange_rate)
                     currency_code = self.bank_get_currency_code(index)
+                    print("violas", account_address, currency_code, exchange_rate, amount)
                     result[currency_code] = amount
         token_info_stores = owner_state.get_token_info_store_resource()
         sum = 0
