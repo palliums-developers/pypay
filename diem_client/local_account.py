@@ -12,10 +12,10 @@ from .serde_types import uint64
 
 from .auth_key import AuthKey
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple, Union
 from dataclasses import dataclass, field
 from copy import copy
-import time
+import time, json
 
 
 @dataclass
@@ -87,8 +87,11 @@ class LocalAccount:
     def compliance_public_key_bytes(self) -> bytes:
         return utils.public_key_bytes(self.compliance_key.public_key())
 
-    def account_identifier(self, subaddress: Optional[bytes] = None) -> str:
+    def account_identifier(self, subaddress: Union[str, bytes, None] = None) -> str:
         return identifier.encode_account(self.account_address, subaddress, self.hrp)
+
+    def decode_account_identifier(self, encoded_id: str) -> Tuple[diem_types.AccountAddress, Optional[bytes]]:
+        return identifier.decode_account(encoded_id, self.hrp)
 
     def sign(self, txn: diem_types.RawTransaction) -> diem_types.SignedTransaction:
         """Create signed transaction for given raw transaction"""
@@ -139,3 +142,10 @@ class LocalAccount:
         d["private_key"] = utils.private_key_bytes(self.private_key).hex()
         d["compliance_key"] = utils.private_key_bytes(self.compliance_key).hex()
         return d
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), indent=2)
+
+    def write_to_file(self, path: str) -> None:
+        with open(path, "w") as f:
+            f.write(self.to_json())

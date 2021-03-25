@@ -10,7 +10,7 @@ See https://dip.diem.com/dip-4 for more details
 
 
 from dataclasses import dataclass
-import typing
+import typing, warnings
 
 from . import diem_types, serde_types, bcs, jsonrpc, utils
 
@@ -64,8 +64,11 @@ def decode_structure(
     if not bytes_or_str:
         return None
     b = bytes_or_str if isinstance(bytes_or_str, bytes) else bytes.fromhex(bytes_or_str)
-    metadata = diem_types.Metadata.bcs_deserialize(b)
-    return metadata.decode_structure()
+    try:
+        metadata = diem_types.Metadata.bcs_deserialize(b)
+        return metadata.decode_structure()
+    except serde_types.DeserializationError:
+        return None
 
 
 def refund_metadata(original_transaction_version: int, reason: diem_types.RefundReason) -> bytes:
@@ -122,12 +125,7 @@ def general_metadata(
 
     Give from_subaddress None for the case transferring from non-custodial to custodial account.
     Give to_subaddress None for the case transferring from custodial to non-custodial account.
-
-    Returns empty bytes array if from_subaddress and to_subaddress both are None.
     """
-
-    if from_subaddress is None and to_subaddress is None:
-        return b""
 
     metadata = diem_types.Metadata__GeneralMetadata(
         value=diem_types.GeneralMetadata__GeneralMetadataVersion0(
@@ -181,6 +179,10 @@ def refund_metadata_from_event(event: jsonrpc.Event) -> typing.Optional[bytes]:
     Raises InvalidEventMetadataForRefundError if metadata can't be decoded as
     diem_types.GeneralMetadata__GeneralMetadataVersion0 for creating the refund metadata
     """
+
+    warnings.warn(
+        "`refund_metadata_from_event` is deprecated, prefer `refund_metadata` to create `diem_types.Metadata__RefundMetadata` BCS serialized bytes"
+    )
 
     if not event.data.metadata:
         return b""
