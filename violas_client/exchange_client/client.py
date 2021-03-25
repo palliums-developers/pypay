@@ -218,7 +218,7 @@ class Client(LibraClient, Base):
                 i = i + 1
                 lp_supply = pool_info.lp_supply
                 if lp_supply > 0:
-                    reward_per_seconds = reward_pools.total_reward_balance / (reward_pools.end_time - reward_pools.start_time)
+                    reward_per_seconds = reward_pools.reward_per_second
                     time_span = now_time - reward_pools.last_reward_time
                     vls_reward = time_span * reward_per_seconds * pool_info.alloc_point / total_alloc_point
                     acc_vls_per_share = pool_info.acc_vls_per_share + vls_reward * self.MULT_FACTOR / lp_supply

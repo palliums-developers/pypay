@@ -3,7 +3,7 @@ from violas_client.move_core_types.language_storage import core_code_address
 
 import time
 
-client = Client("bj_testnet")
+client = Client("violas_testnet")
 
 def approximately_equal_to(a, b):
     a = int(a)

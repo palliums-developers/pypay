@@ -27,7 +27,7 @@ class AccountState(LibraAccountState):
         resource = self.get(RegisteredCurrenciesResource.resource_path(module_address=self.get_exchange_module_address(exchange_module_address)))
         return RegisteredCurrenciesResource.deserialize(resource)
 
-    @get_exception
+    # @get_exception
     def swap_get_reward_pools(self) -> Optional[RewardPoolsResource]:
         key = RewardPoolsResource.resource_path(module_address=self.get_exchange_module_address())
         resource = self.get(key)

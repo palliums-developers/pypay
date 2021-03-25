@@ -65,6 +65,8 @@ class Client():
 
     DEFAULT_GAS_COIN_NAME = "XUS"
 
+    ACCOUNTS_SEQS = dict()
+
     def __init__(self, network="violas_testnet", waypoint: Optional[Waypoint]=None, chain_id=None):
         ensure(network in NETWORKS, "The specified chain does not exist")
         chain = NETWORKS[network]
@@ -83,7 +85,6 @@ class Client():
 
         faucet_server = chain.get("faucet_server")
         self.faucet_server = faucet_server
-        self.accounts_seq = dict()
         self.chain_id = chain_id or self.get_metadata().chain_id
 
     @classmethod
@@ -443,12 +444,12 @@ class Client():
         if isinstance(addr, bytes):
             addr = addr.hex()
         addr = addr.lower()
-        return self.accounts_seq.get(addr)
+        return self.__class__.ACCOUNTS_SEQS.get(addr)
 
     def set_seq(self, addr, seq):
         if isinstance(addr, bytes):
             addr = addr.hex()
         addr = addr.lower()
-        self.accounts_seq[addr] = seq
+        self.__class__.ACCOUNTS_SEQS[addr] = seq
 
 

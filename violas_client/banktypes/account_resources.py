@@ -101,6 +101,8 @@ class TokenInfoResource(Struct):
         ("incentive_borrow_index", Uint64),
         ("incentive_borrow_timestamp", Uint64),
 
+        ("price_oracle_last_timestamp", Uint64),
+
         ("data", str),
         ("bulletin_first", str),
         ("bulletins", [str]),

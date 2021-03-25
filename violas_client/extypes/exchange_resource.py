@@ -97,6 +97,7 @@ class RewardPoolsResource(Struct, MoveResource):
         ("end_time", Uint64),
         ("last_reward_time", Uint64),
         ("total_reward_balance", Uint64),
+        ("reward_per_second", Uint64),
         ("total_alloc_point", Uint64),
         ("pool_infos", [PoolInfoResource]),
     ]

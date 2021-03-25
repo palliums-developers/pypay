@@ -11,8 +11,7 @@ from typing import Optional
 from violas_client.error import LibraError
 from violas_client.banktypes.bank_error import BankError
 from violas_client.move_core_types.language_storage import core_code_address
-from violas_client.lbrtypes.account_config import association_address
-from violas_client.banktypes.utils import mantissa_div, mantissa_mul, new_mantissa
+from violas_client.banktypes.utils import mantissa_div, mantissa_mul
 
 class Client(LibraClient):
 
@@ -83,7 +82,6 @@ class Client(LibraClient):
     def bank_publish(self, sender_account, data=None, is_blocking=True, **kwargs):
         args = []
         args.append(TransactionArgument.to_U8Vector(data, hex=False))
-
         script = Script.gen_script(CodeType.PUBLISH, *args, ty_args=[], module_address=self.get_bank_module_address())
         return self.submit_script(sender_account, script, is_blocking, **kwargs)
 
@@ -291,7 +289,6 @@ class Client(LibraClient):
                     exchange_rate = owner_state.get_exchange_rate(index)
                     amount = state.get_lock_amount(index, exchange_rate)
                     currency_code = self.bank_get_currency_code(index)
-                    print("violas", account_address, currency_code, exchange_rate, amount)
                     result[currency_code] = amount
         token_info_stores = owner_state.get_token_info_store_resource()
         sum = 0
@@ -413,6 +410,7 @@ class Client(LibraClient):
         state = self.get_account_state(self.get_bank_module_address())
         return state.get_utilization_rate(currency_code)
 
+    @LibraClient.return_when_error(False)
     def bank_is_published(self, account_address):
         return self.get_account_state(account_address).bank_is_published()
 
